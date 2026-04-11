@@ -382,19 +382,24 @@ var CONFIG = {
 // IF the sheet is published: File → Share → Publish to web)
 // ============================================================
 function fetchSheetData(sheetId) {
-  // Google Sheets public JSON API — sheet must be published
   var url = "https://docs.google.com/spreadsheets/d/" + sheetId +
             "/gviz/tq?tqx=out:json";
-  return fetch(url)
-    .then(function(r) {
+
+  return Promise.race([
+    fetch(url).then(function(r) {
       if (!r.ok) throw new Error("HTTP " + r.status);
       return r.text();
-    })
-    .then(function(text) {
-      // Google wraps the JSON in a callback — strip it
+    }).then(function(text) {
       var json = text.replace(/^[^(]+\(/, "").replace(/\);?\s*$/, "");
       return JSON.parse(json);
-    });
+    }),
+
+    new Promise(function(_, reject) {
+      setTimeout(function() {
+        reject(new Error("Timeout fetching sheet"));
+      }, 5000); // 5 sec timeout
+    })
+  ]);
 }
 
 function countVotes(data, responseCol, team1Name, team2Name) {
