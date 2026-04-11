@@ -465,8 +465,8 @@ function renderMatch(match, votes, odds, hasError) {
     '<div class="teams-row">' +
       '<div class="team-tile t1">' +
         '<div class="team-name">' + match.team1Name + '</div>' +
-        '<div class="odds-number">₹' + (votes.t1 > 0 ? odds.payout1 : '—') + '</div>' +
-        '<div class="odds-sublabel">if wins</div>' +
+        '<div class="odds-number">' + (votes.t1 > 0 ? odds.payout1 + ' pts': '—') + '</div>' +
+        '<div class="odds-sublabel">points if wins</div>' +
         '<div class="votes-row">' +
           '<div class="vote-stat">' +
             '<div class="vote-num" style="color:var(--t1)">' + votes.t1 + '</div>' +
@@ -481,8 +481,8 @@ function renderMatch(match, votes, odds, hasError) {
 
       '<div class="team-tile t2">' +
         '<div class="team-name">' + match.team2Name + '</div>' +
-        '<div class="odds-number">₹' + (votes.t2 > 0 ? odds.payout2 : '—') + '</div>' +
-        '<div class="odds-sublabel">if wins</div>' +
+        '<div class="odds-number">' + (votes.t2 > 0 ? odds.payout2 + ' pts': '—') + '</div>' +
+        '<div class="odds-sublabel">points if wins</div>' +
         '<div class="votes-row">' +
           '<div class="vote-stat">' +
             '<div class="vote-num" style="color:var(--t2)">' + votes.t2 + '</div>' +
@@ -499,7 +499,7 @@ function renderMatch(match, votes, odds, hasError) {
     '<div class="pool-bar">' +
       '<div>' +
         '<div class="pool-label">TOTAL POOL</div>' +
-        '<div class="pool-value">₹' + odds.pool.toLocaleString() + '</div>' +
+        '<div class="pool-value">' + odds.pool.toLocaleString() + ' pts''</div>' +
       '</div>' +
       '<div class="total-votes">' + odds.total + ' total votes</div>' +
     '</div>';
