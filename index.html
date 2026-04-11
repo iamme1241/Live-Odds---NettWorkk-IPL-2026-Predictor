@@ -311,8 +311,8 @@
     <div class="how-text">
       Every vote adds <span>100 points</span> to the pool.<br>
       If your team wins, you share the <span>entire pool</span> with other correct predictors.<br>
-      Fewer votes on your team = <span>higher payout</span>. More votes = <span>lower payout</span>.<br>
-      Example: Pool ₹700 — 5 pick SRH, 2 pick RCB → SRH wins = <span>₹140 each</span>. RCB wins = <span>₹350 each</span>.
+      Fewer votes on your team = <span>higher odds</span>. More votes = <span>lower odds</span>.<br>
+      Example: Pool of 700 points — 5 pick SRH, 2 pick RCB → SRH wins = <span>140 points each</span>. RCB wins = <span>350 points each</span>.
     </div>
   </div>
 
@@ -338,8 +338,8 @@ var CONFIG = {
   // Points added per vote (your rule: 100 per person)
   pointsPerVote: 100,
 
-  // How often to auto-refresh (milliseconds). 30000 = 30 seconds.
-  refreshInterval: 30000,
+  // How often to auto-refresh (milliseconds). 3000 = 3 seconds.
+  refreshInterval: 3000,
 
   // Each match is one Google Form + one Google Sheet.
   // Add one entry per match.
@@ -353,16 +353,16 @@ var CONFIG = {
 
   matches: [
     {
-      matchLabel:  "Match 34",
+      matchLabel:  "Match 18 - CSK vs DC,
       date:        "April 11, 2026 — 7:30 PM IST",
-      team1Name:   "SRH",
-      team2Name:   "RCB",
-      sheetId:     "PASTE_YOUR_GOOGLE_SHEET_ID_HERE",
+      team1Name:   "Chennai Super Kings (CSK)",
+      team2Name:   "Delhi Capitals (DC)",
+      sheetId:     "14FnLn62N00UrthjsuNwDomehTQOxzSqpJ6MKBhOAz14",
       // Column numbers below refer to the Google Sheet columns
       // where Form responses are stored. Usually col 1 = timestamp,
       // col 2 = name/email, col 3 = answer.
       // Set responseCol to the column that contains team name choices.
-      responseCol: 3,
+      responseCol: 4,
     },
     // Add more matches:
     // {
