@@ -6,289 +6,118 @@
 <title>IPL Predictor — Live Odds</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:       #0A0E1A;
-    --card:     #111827;
-    --border:   #1F2937;
-    --text:     #F1F5F9;
-    --muted:    #64748B;
-    --t1:       #00FFD1;   /* team 1 — cyan */
-    --t2:       #FF6B6B;   /* team 2 — coral */
-    --gold:     #FF9500;
-    --green:    #10B981;
-    --bad:      #EF4444;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Barlow Condensed', sans-serif;
-    min-height: 100vh;
-    padding: 0 0 60px;
-  }
+:root {
+  --bg:      #080D1A;
+  --card:    #0F172A;
+  --card2:   #1E293B;
+  --border:  #334155;
+  --text:    #F1F5F9;
+  --muted:   #64748B;
+  --t1:      #00E5B8;
+  --t2:      #FF5370;
+  --gold:    #FFD60A;
+  --green:   #10B981;
+  --danger:  #EF4444;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Barlow Condensed',sans-serif;min-height:100vh;padding-bottom:80px}
 
-  /* ── TOP BAR ── */
-  .topbar {
-    background: var(--card);
-    border-bottom: 2px solid var(--t1);
-    padding: 14px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .topbar-title {
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    color: var(--t1);
-    text-transform: uppercase;
-  }
-  .topbar-sub {
-    font-size: 12px;
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-    margin-top: 2px;
-  }
-  .live-badge {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: #0F1F14;
-    border: 1px solid var(--green);
-    border-radius: 20px;
-    padding: 4px 12px;
-    font-size: 12px;
-    color: var(--green);
-    font-family: 'DM Mono', monospace;
-  }
-  .live-dot {
-    width: 7px; height: 7px;
-    background: var(--green);
-    border-radius: 50%;
-    animation: blink 1.2s ease-in-out infinite;
-  }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+/* TOP BAR */
+.topbar{background:var(--card);border-bottom:2px solid var(--t1);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-title{font-size:20px;font-weight:800;letter-spacing:1px;color:var(--t1)}
+.topbar-sub{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:2px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.live-badge{display:flex;align-items:center;gap:5px;background:#0A1F14;border:1px solid var(--green);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--green);font-family:'DM Mono',monospace}
+.live-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:blink 1.2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+.settings-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:20px;font-family:'Barlow Condensed',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
+.settings-btn:hover{border-color:var(--t1);color:var(--t1)}
 
-  /* ── MAIN LAYOUT ── */
-  .container { max-width: 740px; margin: 0 auto; padding: 28px 16px; }
+/* SETTINGS PANEL */
+.settings-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;overflow-y:auto;padding:20px}
+.settings-overlay.open{display:flex;align-items:flex-start;justify-content:center}
+.settings-panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;width:100%;max-width:600px;margin:auto}
+.settings-title{font-size:20px;font-weight:700;color:var(--t1);margin-bottom:4px}
+.settings-sub{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:20px}
+.settings-section{margin-bottom:20px}
+.settings-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-family:'DM Mono',monospace}
+.match-entry{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;position:relative}
+.match-entry-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.match-entry-num{font-size:13px;font-weight:700;color:var(--t1)}
+.delete-btn{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:2px 6px;border-radius:4px;transition:color .2s}
+.delete-btn:hover{color:var(--danger)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.form-grid.full{grid-template-columns:1fr}
+.form-field{display:flex;flex-direction:column;gap:4px}
+.form-field label{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace}
+.form-field input{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;outline:none;transition:border-color .2s}
+.form-field input:focus{border-color:var(--t1)}
+.form-field input::placeholder{color:var(--muted)}
+.add-match-btn{background:transparent;border:1px dashed var(--border);border-radius:10px;width:100%;padding:12px;color:var(--muted);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:14px;transition:all .2s;margin-top:4px}
+.add-match-btn:hover{border-color:var(--t1);color:var(--t1)}
+.btn-row{display:flex;gap:10px;margin-top:20px}
+.btn-save{background:var(--t1);border:none;color:#080D1A;padding:10px 24px;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;cursor:pointer;flex:1;transition:opacity .2s}
+.btn-save:hover{opacity:.9}
+.btn-cancel{background:transparent;border:1px solid var(--border);color:var(--muted);padding:10px 20px;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:15px;cursor:pointer}
+.help-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);line-height:1.8}
+.help-box span{color:var(--text)}
 
-  /* ── MATCH CARD ── */
-  .match-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-    margin-bottom: 28px;
-  }
-  .match-header {
-    padding: 14px 20px;
-    background: #0D1422;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .match-number {
-    font-size: 11px;
-    font-family: 'DM Mono', monospace;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-  .match-date {
-    font-size: 11px;
-    font-family: 'DM Mono', monospace;
-    color: var(--muted);
-  }
-  .match-title {
-    font-size: 26px;
-    font-weight: 800;
-    text-align: center;
-    padding: 18px 20px 0;
-    letter-spacing: 0.5px;
-  }
-  .vs { color: var(--muted); font-size: 18px; margin: 0 8px; }
+/* MAIN CONTENT */
+.container{max-width:740px;margin:0 auto;padding:24px 16px}
 
-  /* ── ODDS BAR ── */
-  .odds-section { padding: 20px 20px 0; }
-  .odds-label {
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-    font-family: 'DM Mono', monospace;
-  }
-  .odds-bar-wrap {
-    background: #1F2937;
-    border-radius: 8px;
-    height: 14px;
-    overflow: hidden;
-    display: flex;
-    gap: 2px;
-  }
-  .bar-t1 {
-    background: var(--t1);
-    height: 100%;
-    transition: width 0.7s cubic-bezier(.4,0,.2,1);
-    border-radius: 6px 0 0 6px;
-  }
-  .bar-t2 {
-    background: var(--t2);
-    height: 100%;
-    flex: 1;
-    transition: width 0.7s cubic-bezier(.4,0,.2,1);
-    border-radius: 0 6px 6px 0;
-  }
+/* HOW IT WORKS */
+.how-it-works{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:22px}
+.how-title{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase}
+.how-text{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);line-height:1.9}
+.how-text span{color:var(--text)}
 
-  /* ── TEAM TILES ── */
-  .teams-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    padding: 16px 20px 20px;
-  }
-  .team-tile {
-    border-radius: 12px;
-    padding: 16px;
-    text-align: center;
-  }
-  .team-tile.t1 { background: #001A14; border: 1px solid var(--t1); }
-  .team-tile.t2 { background: #1A0A0A; border: 1px solid var(--t2); }
-  .team-name {
-    font-size: 20px;
-    font-weight: 800;
-    margin-bottom: 10px;
-    letter-spacing: 0.5px;
-  }
-  .team-tile.t1 .team-name { color: var(--t1); }
-  .team-tile.t2 .team-name { color: var(--t2); }
+/* MATCH CARD */
+.match-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:24px}
+.match-header{padding:12px 18px;background:#0A1020;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.match-number{font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.match-date{font-size:11px;font-family:'DM Mono',monospace;color:var(--muted)}
+.match-title{font-size:24px;font-weight:800;text-align:center;padding:16px 18px 0;letter-spacing:.5px}
+.vs{color:var(--muted);font-size:16px;margin:0 8px}
 
-  .odds-number {
-    font-family: 'DM Mono', monospace;
-    font-size: 32px;
-    font-weight: 500;
-    line-height: 1;
-  }
-  .team-tile.t1 .odds-number { color: var(--t1); }
-  .team-tile.t2 .odds-number { color: var(--t2); }
-  .odds-sublabel {
-    font-size: 10px;
-    color: var(--muted);
-    margin-top: 4px;
-    font-family: 'DM Mono', monospace;
-    text-transform: uppercase;
-  }
-  .votes-row {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid #ffffff15;
-  }
-  .vote-stat { text-align: center; }
-  .vote-num {
-    font-size: 18px;
-    font-weight: 700;
-    font-family: 'DM Mono', monospace;
-  }
-  .vote-label {
-    font-size: 9px;
-    color: var(--muted);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
+/* ODDS BAR */
+.odds-section{padding:16px 18px 0}
+.odds-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;font-family:'DM Mono',monospace}
+.odds-bar-wrap{background:#1E293B;border-radius:8px;height:12px;overflow:hidden;display:flex}
+.bar-t1{background:var(--t1);height:100%;transition:width .8s cubic-bezier(.4,0,.2,1);min-width:4px;border-radius:6px 0 0 6px}
+.bar-t2{background:var(--t2);height:100%;flex:1;transition:flex .8s;min-width:4px;border-radius:0 6px 6px 0}
 
-  /* ── POOL INFO ── */
-  .pool-bar {
-    background: #0D1422;
-    border-top: 1px solid var(--border);
-    padding: 12px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .pool-label { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
-  .pool-value { font-size: 20px; font-weight: 700; color: var(--gold); }
-  .total-votes { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
+/* TEAM TILES */
+.teams-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 18px 18px}
+.team-tile{border-radius:12px;padding:14px;text-align:center}
+.team-tile.t1{background:#001813;border:1px solid var(--t1)}
+.team-tile.t2{background:#1A0A0A;border:1px solid var(--t2)}
+.team-name{font-size:18px;font-weight:800;margin-bottom:8px;letter-spacing:.5px;line-height:1.2}
+.team-tile.t1 .team-name{color:var(--t1)}
+.team-tile.t2 .team-name{color:var(--t2)}
+.odds-number{font-family:'DM Mono',monospace;font-size:28px;font-weight:500;line-height:1}
+.team-tile.t1 .odds-number{color:var(--t1)}
+.team-tile.t2 .odds-number{color:var(--t2)}
+.odds-sublabel{font-size:10px;color:var(--muted);margin-top:4px;font-family:'DM Mono',monospace;text-transform:uppercase}
+.votes-row{display:flex;justify-content:space-around;margin-top:8px;padding-top:8px;border-top:1px solid #ffffff12}
+.vote-stat{text-align:center}
+.vote-num{font-size:16px;font-weight:700;font-family:'DM Mono',monospace}
+.vote-label{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
 
-  /* ── EXPLANATION ── */
-  .how-it-works {
-    background: #0D1422;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 18px 20px;
-    margin-bottom: 24px;
-  }
-  .how-title {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--gold);
-    margin-bottom: 10px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-  .how-text {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.8;
-  }
-  .how-text span { color: var(--text); }
+/* POOL BAR */
+.pool-bar{background:#0A1020;border-top:1px solid var(--border);padding:10px 18px;display:flex;justify-content:space-between;align-items:center}
+.pool-label{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace}
+.pool-value{font-size:18px;font-weight:700;color:var(--gold)}
+.total-votes{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace}
 
-  /* ── EMPTY / LOADING STATES ── */
-  .loading {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-  }
-  .spinner {
-    display: inline-block;
-    width: 24px; height: 24px;
-    border: 2px solid var(--border);
-    border-top-color: var(--t1);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin-bottom: 12px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .error-box {
-    background: #1A0808;
-    border: 1px solid var(--bad);
-    border-radius: 10px;
-    padding: 16px 20px;
-    margin: 20px 0;
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    color: #FCA5A5;
-  }
-
-  .refresh-btn {
-    background: transparent;
-    border: 1px solid var(--t1);
-    color: var(--t1);
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 13px;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .refresh-btn:hover { background: #001A14; }
-
-  .last-updated {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    text-align: center;
-    margin-top: 16px;
-  }
+/* STATES */
+.loading{text-align:center;padding:60px 20px;color:var(--muted);font-family:'DM Mono',monospace;font-size:13px}
+.spinner{display:inline-block;width:22px;height:22px;border:2px solid var(--border);border-top-color:var(--t1);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-box{background:#1A0808;border:1px solid var(--danger);border-radius:10px;padding:14px 18px;margin:16px 0;font-family:'DM Mono',monospace;font-size:12px;color:#FCA5A5;line-height:1.8}
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);font-family:'DM Mono',monospace;font-size:13px}
+.refresh-btn{background:transparent;border:1px solid var(--t1);color:var(--t1);padding:6px 14px;border-radius:20px;font-family:'Barlow Condensed',sans-serif;font-size:13px;cursor:pointer;transition:background .2s;display:inline-block;margin-top:8px}
+.refresh-btn:hover{background:#001813}
+.last-updated{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-align:center;margin-top:14px}
 </style>
 </head>
 <body>
@@ -296,169 +125,250 @@
 <div class="topbar">
   <div>
     <div class="topbar-title">IPL Predictor — Live Odds</div>
-    <div class="topbar-sub" id="subtitle">Loading match data...</div>
+    <div class="topbar-sub" id="subtitle">Loading...</div>
   </div>
-  <div class="live-badge">
-    <div class="live-dot"></div>
-    LIVE
+  <div class="topbar-right">
+    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+    <button class="settings-btn" onclick="openSettings()">⚙ Manage Matches</button>
+  </div>
+</div>
+
+<!-- Settings panel -->
+<div class="settings-overlay" id="settings-overlay">
+  <div class="settings-panel">
+    <div class="settings-title">Manage Matches</div>
+    <div class="settings-sub">Changes save in browser — no redeployment needed.</div>
+
+    <div class="help-box">
+      <b style="color:var(--text)">Sheet ID:</b> the long code in your Google Sheet URL.<br>
+      <code style="color:var(--t1)">docs.google.com/spreadsheets/d/<span style="color:#FFD60A">THIS_PART</span>/edit</code><br><br>
+      <b style="color:var(--text)">Response column:</b> which column has the team choice answer.<br>
+      Usually col 1=Timestamp, col 2=Name/Email, col 3=Answer → enter <span>3</span>.<br><br>
+      <b style="color:var(--text)">Team names must exactly match your Form options</b> (e.g. "CSK" or "Chennai Super Kings (CSK)").
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-label">Points per vote</div>
+      <div class="form-grid full">
+        <div class="form-field">
+          <label>Points added to pool per vote</label>
+          <input type="number" id="cfg-points-per-vote" value="100" min="1">
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-label">Matches</div>
+    <div id="match-entries"></div>
+    <button class="add-match-btn" onclick="addMatchEntry()">+ Add match</button>
+
+    <div class="btn-row">
+      <button class="btn-save" onclick="saveSettings()">Save & Refresh</button>
+      <button class="btn-cancel" onclick="closeSettings()">Cancel</button>
+    </div>
   </div>
 </div>
 
 <div class="container">
-
   <div class="how-it-works">
     <div class="how-title">How odds work</div>
     <div class="how-text">
       Every vote adds <span>100 points</span> to the pool.<br>
-      If your team wins, you share the <span>entire pool</span> with other correct predictors.<br>
-      Fewer votes on your team = <span>higher odds</span>. More votes = <span>lower odds</span>.<br>
-      Example: Pool of 700 points — 5 pick SRH, 2 pick RCB → SRH wins = <span>140 points each</span>. RCB wins = <span>350 points each</span>.
+      Winners share the <span>entire pool</span> equally among correct predictors.<br>
+      Fewer votes on your team = <span>higher payout</span>. More votes = <span>lower payout</span>.<br>
+      Example: 7 votes total → pool of 700 pts. 5 pick SRH, 2 pick RCB.<br>
+      SRH wins → <span>140 pts each</span>. RCB wins → <span>350 pts each</span>.
     </div>
   </div>
 
   <div id="matches-container">
-    <div class="loading">
-      <div class="spinner"></div><br>
-      Fetching live votes from Google Sheets...
+    <div class="empty-state">
+      No matches configured yet.<br>
+      Click <b style="color:var(--t1)">⚙ Manage Matches</b> to add your first match.
     </div>
   </div>
 
   <div class="last-updated" id="last-updated"></div>
-  <div style="text-align:center;margin-top:12px;">
-    <button class="refresh-btn" onclick="loadAllMatches()">↻ Refresh</button>
+  <div style="text-align:center;margin-top:10px">
+    <button class="refresh-btn" onclick="loadAllMatches()">↻ Refresh now</button>
   </div>
-
 </div>
 
 <script>
-// ============================================================
-// CONFIGURATION — edit these for your league
-// ============================================================
-var CONFIG = {
-  // Points added per vote (your rule: 100 per person)
-  pointsPerVote: 100,
+// ─────────────────────────────────────────────────────────────
+// STORAGE — everything lives in localStorage.
+// Users configure matches via the settings panel.
+// No code changes, no redeployment, ever.
+// ─────────────────────────────────────────────────────────────
+var STORAGE_KEY = "ipl_predictor_config";
+var REFRESH_MS  = 30000;
 
-  // How often to auto-refresh (milliseconds). 30000 = 30 seconds.
-  refreshInterval: 30000,
+function loadConfig() {
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return { pointsPerVote: 100, matches: [] };
+}
 
-  // Each match is one Google Form + one Google Sheet.
-  // Add one entry per match.
-  // sheetId: the long ID from the Google Sheet URL
-  //   (https://docs.google.com/spreadsheets/d/ >>> THIS PART <<< /edit)
-  // team1Col: which column in the sheet has Team 1 votes (1-indexed)
-  // team2Col: which column in the sheet has Team 2 votes (1-indexed)
-  // team1Name, team2Name: full team names
-  // matchLabel: displayed above the match
-  // date: display string for match date/time
+function saveConfig(cfg) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg));
+}
 
-  matches: [
-    {
-      matchLabel:  "Match 18 - CSK vs DC",
-      date:        "April 11, 2026 — 7:30 PM IST",
-      team1Name:   "Chennai Super Kings (CSK)",
-      team2Name:   "Delhi Capitals (DC)",
-      sheetId:     "14FnLn62N00UrthjsuNwDomehTQOxzSqpJ6MKBhOAz14",
-      // Column numbers below refer to the Google Sheet columns
-      // where Form responses are stored. Usually col 1 = timestamp,
-      // col 2 = name/email, col 3 = answer.
-      // Set responseCol to the column that contains team name choices.
-      responseCol: 4
-    },
-    // Add more matches:
-    // {
-    //   matchLabel:  "Match 35",
-    //   date:        "April 12, 2026 — 3:30 PM IST",
-    //   team1Name:   "MI",
-    //   team2Name:   "CSK",
-    //   sheetId:     "ANOTHER_SHEET_ID",
-    //   responseCol: 3,
-    // },
-  ]
-};
+// ─────────────────────────────────────────────────────────────
+// SETTINGS UI
+// ─────────────────────────────────────────────────────────────
+var entryCount = 0;
 
-// ============================================================
-// DATA FETCHING
-// Uses the Google Sheets JSON feed (public, no auth needed
-// IF the sheet is published: File → Share → Publish to web)
-// ============================================================
-function fetchSheetData(sheetId) {
-  var url = "https://docs.google.com/spreadsheets/d/" + sheetId +
-            "/gviz/tq?tqx=out:json";
+function openSettings() {
+  var cfg = loadConfig();
+  document.getElementById("cfg-points-per-vote").value = cfg.pointsPerVote || 100;
+  var container = document.getElementById("match-entries");
+  container.innerHTML = "";
+  entryCount = 0;
+  (cfg.matches || []).forEach(function(m) { addMatchEntry(m); });
+  document.getElementById("settings-overlay").classList.add("open");
+}
 
+function closeSettings() {
+  document.getElementById("settings-overlay").classList.remove("open");
+}
+
+function addMatchEntry(data) {
+  entryCount++;
+  var n   = entryCount;
+  var m   = data || {};
+  var div = document.createElement("div");
+  div.className = "match-entry";
+  div.id = "entry-" + n;
+  div.innerHTML =
+    '<div class="match-entry-header">' +
+      '<span class="match-entry-num">Match ' + n + '</span>' +
+      '<button class="delete-btn" onclick="removeEntry(' + n + ')">✕</button>' +
+    '</div>' +
+    '<div class="form-grid">' +
+      '<div class="form-field"><label>Match label</label>' +
+        '<input id="e'+n+'-label" placeholder="Match 34 - SRH vs RCB" value="' + (m.matchLabel||"") + '"></div>' +
+      '<div class="form-field"><label>Date / time</label>' +
+        '<input id="e'+n+'-date" placeholder="April 11 — 7:30 PM IST" value="' + (m.date||"") + '"></div>' +
+      '<div class="form-field"><label>Team 1 name (must match Form option)</label>' +
+        '<input id="e'+n+'-t1" placeholder="Chennai Super Kings (CSK)" value="' + (m.team1Name||"") + '"></div>' +
+      '<div class="form-field"><label>Team 2 name (must match Form option)</label>' +
+        '<input id="e'+n+'-t2" placeholder="Delhi Capitals (DC)" value="' + (m.team2Name||"") + '"></div>' +
+    '</div>' +
+    '<div class="form-grid full" style="margin-top:8px">' +
+      '<div class="form-field"><label>Google Sheet ID (from URL)</label>' +
+        '<input id="e'+n+'-sheet" placeholder="14FnLn62N00Urt..." value="' + (m.sheetId||"") + '"></div>' +
+    '</div>' +
+    '<div class="form-grid" style="margin-top:8px">' +
+      '<div class="form-field"><label>Response column number</label>' +
+        '<input id="e'+n+'-col" type="number" placeholder="3" value="' + (m.responseCol||3) + '" min="1"></div>' +
+      '<div class="form-field"><label>Status</label>' +
+        '<input id="e'+n+'-status" placeholder="upcoming / live / closed" value="' + (m.status||"live") + '"></div>' +
+    '</div>';
+  document.getElementById("match-entries").appendChild(div);
+}
+
+function removeEntry(n) {
+  var el = document.getElementById("entry-" + n);
+  if (el) el.remove();
+}
+
+function saveSettings() {
+  var cfg = { pointsPerVote: parseInt(document.getElementById("cfg-points-per-vote").value)||100, matches:[] };
+  var entries = document.querySelectorAll(".match-entry");
+  entries.forEach(function(el) {
+    var n = el.id.replace("entry-","");
+    var sheetId = (document.getElementById("e"+n+"-sheet")||{}).value||"";
+    if (!sheetId.trim()) return; // skip entries with no sheet ID
+    cfg.matches.push({
+      matchLabel:  (document.getElementById("e"+n+"-label")||{}).value||"Match",
+      date:        (document.getElementById("e"+n+"-date")||{}).value||"",
+      team1Name:   (document.getElementById("e"+n+"-t1")||{}).value||"Team 1",
+      team2Name:   (document.getElementById("e"+n+"-t2")||{}).value||"Team 2",
+      sheetId:     sheetId.trim(),
+      responseCol: parseInt((document.getElementById("e"+n+"-col")||{}).value)||3,
+      status:      (document.getElementById("e"+n+"-status")||{}).value||"live",
+    });
+  });
+  saveConfig(cfg);
+  closeSettings();
+  loadAllMatches();
+}
+
+// ─────────────────────────────────────────────────────────────
+// DATA FETCHING — Google Sheets public JSON feed
+// The sheet must be published: File → Share → Publish to web
+// ─────────────────────────────────────────────────────────────
+function fetchSheet(sheetId) {
+  var url = "https://docs.google.com/spreadsheets/d/" + sheetId + "/gviz/tq?tqx=out:json";
   return Promise.race([
-    fetch(url).then(function(r) {
+    fetch(url, { cache:"no-cache" }).then(function(r) {
       if (!r.ok) throw new Error("HTTP " + r.status);
       return r.text();
     }).then(function(text) {
+      // Strip Google's callback wrapper: /*O_o*/\ngoogle.visualization.Query.setResponse({...});
+      var match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/);
+      if (match) return JSON.parse(match[1]);
+      // Fallback strip
       var json = text.replace(/^[^(]+\(/, "").replace(/\);?\s*$/, "");
       return JSON.parse(json);
     }),
-
-    new Promise(function(_, reject) {
-      setTimeout(function() {
-        reject(new Error("Timeout fetching sheet"));
-      }, 5000); // 5 sec timeout
-    })
+    new Promise(function(_, reject) { setTimeout(function(){ reject(new Error("timeout")); }, 8000); })
   ]);
 }
 
 function countVotes(data, responseCol, team1Name, team2Name) {
-  // data.table.rows = array of row objects
-  // Each row has .c array of cell objects with .v value
-  var rows  = (data.table && data.table.rows) ? data.table.rows : [];
-  var colIdx = responseCol - 1; // 0-indexed
-  var count1 = 0, count2 = 0;
-
+  var rows = (data && data.table && data.table.rows) ? data.table.rows : [];
+  var idx  = responseCol - 1;
+  var c1 = 0, c2 = 0;
   rows.forEach(function(row) {
-    if (!row.c || !row.c[colIdx]) return;
-    var val = row.c[colIdx].v;
-    if (!val) return;
-    var v = String(val).trim().toUpperCase();
-    // Match team name — check if the response contains the team abbreviation
-    if (v.indexOf(team1Name.toUpperCase()) >= 0) count1++;
-    else if (v.indexOf(team2Name.toUpperCase()) >= 0) count2++;
+    if (!row.c || row.c[idx] == null || row.c[idx].v == null) return;
+    var v = String(row.c[idx].v).trim().toUpperCase();
+    if (v.indexOf(team1Name.trim().toUpperCase()) >= 0) c1++;
+    else if (v.indexOf(team2Name.trim().toUpperCase()) >= 0) c2++;
   });
-
-  return { t1: count1, t2: count2 };
+  return { t1: c1, t2: c2 };
 }
 
-function calcOdds(match, votes) {
-  var total     = votes.t1 + votes.t2;
-  var pool      = total * CONFIG.pointsPerVote;
-  var payout1   = votes.t1 > 0 ? Math.round(pool / votes.t1) : pool;
-  var payout2   = votes.t2 > 0 ? Math.round(pool / votes.t2) : pool;
-  var pct1      = total > 0 ? Math.round((votes.t1 / total) * 100) : 50;
-  var pct2      = 100 - pct1;
-  return { total, pool, payout1, payout2, pct1, pct2 };
+function calcOdds(pointsPerVote, votes) {
+  var total   = votes.t1 + votes.t2;
+  var pool    = total * pointsPerVote;
+  var payout1 = votes.t1 > 0 ? Math.round(pool / votes.t1) : "—";
+  var payout2 = votes.t2 > 0 ? Math.round(pool / votes.t2) : "—";
+  var pct1    = total > 0 ? Math.round(votes.t1 / total * 100) : 50;
+  return { total:total, pool:pool, payout1:payout1, payout2:payout2, pct1:pct1, pct2:100-pct1 };
 }
 
-// ============================================================
+// ─────────────────────────────────────────────────────────────
 // RENDERING
-// ============================================================
+// ─────────────────────────────────────────────────────────────
 function renderMatch(match, votes, odds, hasError) {
   var el = document.createElement("div");
   el.className = "match-card";
-
   if (hasError) {
     el.innerHTML =
       '<div class="match-header"><span class="match-number">' + match.matchLabel + '</span></div>' +
-      '<div class="error-box">Could not load data for this match.<br>' +
-      'Make sure the Google Sheet is published (File → Share → Publish to web) ' +
-      'and the Sheet ID in CONFIG.matches is correct.</div>';
+      '<div class="error-box">Could not load data.<br>' +
+      '1. Open the Google Sheet → File → Share → Publish to web → Publish.<br>' +
+      '2. Double-check the Sheet ID in ⚙ Manage Matches.<br>' +
+      '3. Make sure "Response column" matches where team choices appear in the sheet.</div>';
     return el;
   }
+
+  var p1Str = (typeof odds.payout1 === "number") ? odds.payout1.toLocaleString() + " pts" : "—";
+  var p2Str = (typeof odds.payout2 === "number") ? odds.payout2.toLocaleString() + " pts" : "—";
+  var poolStr = odds.pool.toLocaleString() + " pts";
 
   el.innerHTML =
     '<div class="match-header">' +
       '<span class="match-number">' + match.matchLabel + '</span>' +
-      '<span class="match-date">' + match.date + '</span>' +
+      '<span class="match-date">' + (match.date||"") + '</span>' +
     '</div>' +
     '<div class="match-title">' +
       '<span style="color:var(--t1)">' + match.team1Name + '</span>' +
       '<span class="vs">vs</span>' +
       '<span style="color:var(--t2)">' + match.team2Name + '</span>' +
     '</div>' +
-
     '<div class="odds-section">' +
       '<div class="odds-label">Vote share</div>' +
       '<div class="odds-bar-wrap">' +
@@ -466,92 +376,81 @@ function renderMatch(match, votes, odds, hasError) {
         '<div class="bar-t2"></div>' +
       '</div>' +
     '</div>' +
-
     '<div class="teams-row">' +
       '<div class="team-tile t1">' +
         '<div class="team-name">' + match.team1Name + '</div>' +
-        '<div class="odds-number">' + (votes.t1 > 0 ? odds.payout1 : '—') + '</div>' +
-        '<div class="odds-sublabel">points if wins</div>' +
+        '<div class="odds-number">' + p1Str + '</div>' +
+        '<div class="odds-sublabel">if wins</div>' +
         '<div class="votes-row">' +
-          '<div class="vote-stat">' +
-            '<div class="vote-num" style="color:var(--t1)">' + votes.t1 + '</div>' +
-            '<div class="vote-label">votes</div>' +
-          '</div>' +
-          '<div class="vote-stat">' +
-            '<div class="vote-num" style="color:var(--t1)">' + odds.pct1 + '%</div>' +
-            '<div class="vote-label">picked</div>' +
-          '</div>' +
+          '<div class="vote-stat"><div class="vote-num" style="color:var(--t1)">' + votes.t1 + '</div><div class="vote-label">votes</div></div>' +
+          '<div class="vote-stat"><div class="vote-num" style="color:var(--t1)">' + odds.pct1 + '%</div><div class="vote-label">picked</div></div>' +
         '</div>' +
       '</div>' +
-
       '<div class="team-tile t2">' +
         '<div class="team-name">' + match.team2Name + '</div>' +
-        '<div class="odds-number">' + (votes.t2 > 0 ? odds.payout2 : '—') + '</div>' +
-        '<div class="odds-sublabel">points if wins</div>' +
+        '<div class="odds-number">' + p2Str + '</div>' +
+        '<div class="odds-sublabel">if wins</div>' +
         '<div class="votes-row">' +
-          '<div class="vote-stat">' +
-            '<div class="vote-num" style="color:var(--t2)">' + votes.t2 + '</div>' +
-            '<div class="vote-label">votes</div>' +
-          '</div>' +
-          '<div class="vote-stat">' +
-            '<div class="vote-num" style="color:var(--t2)">' + odds.pct2 + '%</div>' +
-            '<div class="vote-label">picked</div>' +
-          '</div>' +
+          '<div class="vote-stat"><div class="vote-num" style="color:var(--t2)">' + votes.t2 + '</div><div class="vote-label">votes</div></div>' +
+          '<div class="vote-stat"><div class="vote-num" style="color:var(--t2)">' + odds.pct2 + '%</div><div class="vote-label">picked</div></div>' +
         '</div>' +
       '</div>' +
     '</div>' +
-
     '<div class="pool-bar">' +
-      '<div>' +
-        '<div class="pool-label">TOTAL POOL</div>' +
-        '<div class="pool-value">' + odds.pool.toLocaleString() + '</div>' +
-      '</div>' +
+      '<div><div class="pool-label">TOTAL POOL</div><div class="pool-value">' + poolStr + '</div></div>' +
       '<div class="total-votes">' + odds.total + ' total votes</div>' +
     '</div>';
-
   return el;
 }
 
-// ============================================================
+// ─────────────────────────────────────────────────────────────
 // MAIN LOAD
-// ============================================================
+// ─────────────────────────────────────────────────────────────
 function loadAllMatches() {
+  var cfg       = loadConfig();
+  var matches   = cfg.matches || [];
   var container = document.getElementById("matches-container");
+
+  if (matches.length === 0) {
+    container.innerHTML = '<div class="empty-state">No matches configured yet.<br>Click <b style="color:var(--t1)">⚙ Manage Matches</b> to add your first match.</div>';
+    document.getElementById("subtitle").textContent = "No matches — add via ⚙ Manage Matches";
+    return;
+  }
+
   container.innerHTML = '<div class="loading"><div class="spinner"></div><br>Fetching live votes...</div>';
 
-  var promises = CONFIG.matches.map(function(match) {
-    return fetchSheetData(match.sheetId)
+  var promises = matches.map(function(match) {
+    return fetchSheet(match.sheetId)
       .then(function(data) {
         var votes = countVotes(data, match.responseCol, match.team1Name, match.team2Name);
-        var odds  = calcOdds(match, votes);
-        return { match: match, votes: votes, odds: odds, error: false };
+        var odds  = calcOdds(cfg.pointsPerVote, votes);
+        return { match:match, votes:votes, odds:odds, error:false };
       })
       .catch(function(err) {
-        console.error("Error loading match " + match.matchLabel + ":", err);
-        return { match: match, votes: { t1:0, t2:0 }, odds: calcOdds(match,{t1:0,t2:0}), error: true };
+        console.error("Error for match", match.matchLabel, err);
+        return { match:match, votes:{t1:0,t2:0}, odds:calcOdds(cfg.pointsPerVote,{t1:0,t2:0}), error:true };
       });
   });
 
   Promise.all(promises).then(function(results) {
     container.innerHTML = "";
-    if (results.length === 0) {
-      container.innerHTML = '<div class="loading">No matches configured.<br>Edit CONFIG.matches in the HTML file.</div>';
-      return;
-    }
     results.forEach(function(r) {
       container.appendChild(renderMatch(r.match, r.votes, r.odds, r.error));
     });
     var now = new Date();
-    document.getElementById("last-updated").textContent =
-      "Last updated: " + now.toLocaleTimeString();
-    document.getElementById("subtitle").textContent =
-      results.length + " match" + (results.length > 1 ? "es" : "") + " · auto-refreshes every 30s";
+    document.getElementById("last-updated").textContent = "Last updated: " + now.toLocaleTimeString();
+    document.getElementById("subtitle").textContent = matches.length + " match" + (matches.length!==1?"es":"") + " · auto-refreshes every 30s";
   });
 }
 
-// Auto-refresh
+// Close settings when clicking overlay background
+document.getElementById("settings-overlay").addEventListener("click", function(e) {
+  if (e.target === this) closeSettings();
+});
+
+// Initial load + auto-refresh
 loadAllMatches();
-setInterval(loadAllMatches, CONFIG.refreshInterval);
+setInterval(loadAllMatches, REFRESH_MS);
 </script>
 </body>
 </html>
