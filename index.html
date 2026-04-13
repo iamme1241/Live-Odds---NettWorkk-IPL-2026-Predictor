@@ -207,8 +207,8 @@ var CONFIG = {
       team1Name: "Sunrisers Hyderabad (SRH)",
       team2Name: "Rajasthan Royals (RR)",
       sheetId: "15g-_2C-3Ds1Hc-AsH6YBVWOMgnyhtZagKBEpklgOpEM",
-      responseCol: 4
-      status: live
+      responseCol: 4,
+      status: "live"
     }
   ]
 };
@@ -312,7 +312,7 @@ function loadAllMatches() {
 
   matches.sort(function(a, b) {
     var order = { live: 1, upcoming: 2, completed: 3 };
-    return order[a.status] - order[b.status];
+    return (order[a.status || "live"] || 1) - (order[b.status || "live"] || 1);
   });
   
   var container = document.getElementById("matches-container");
@@ -340,16 +340,7 @@ function loadAllMatches() {
         return { match:match, votes:{t1:0,t2:0}, odds:calcOdds(CONFIG.pointsPerVote,{t1:0,t2:0}), error:true };
       });
   });
-      .then(function(data) {
-        var votes = countVotes(data, match.responseCol, match.team1Name, match.team2Name);
-        var odds  = calcOdds(CONFIG.pointsPerVote, votes);
-        return { match:match, votes:votes, odds:odds, error:false };
-      })
-      .catch(function() {
-        return { match:match, votes:{t1:0,t2:0}, odds:calcOdds(CONFIG.pointsPerVote,{t1:0,t2:0}), error:true };
-      });
-  });
-
+      
   
   Promise.all(promises).then(function(results) {
     container.innerHTML = "";
