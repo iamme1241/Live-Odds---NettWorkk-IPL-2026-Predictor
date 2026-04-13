@@ -7,27 +7,38 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:      #080D1A;
-  --card:    #0F172A;
-  --card2:   #1E293B;
-  --border:  #334155;
-  --text:    #F1F5F9;
-  --muted:   #64748B;
-  --t1:      #00E5B8;
-  --t2:      #FF5370;
-  --gold:    #FFD60A;
-  --green:   #10B981;
-  --danger:  #EF4444;
+  /* Backgrounds */
+  --bg:      #0B1020;      /* deep but softer than black */
+  --card:    #121A33;      /* richer navy */
+  --card2:   #1A2447;
+
+  /* Borders & text */
+  --border:  #2E3A6B;
+  --text:    #F8FAFC;
+  --muted:   #94A3B8;
+
+  /* Teams (high energy contrast) */
+  --t1:      #00D4FF;      /* electric blue */
+  --t2:      #FF6B35;      /* vibrant orange */
+
+  /* Accents */
+  --gold:    #FACC15;      /* warm gold (celebration) */
+  --green:   #22C55E;      /* success */
+  --danger:  #EF4444;      /* errors */
+
+  /* Bonus accents (new) */
+  --accent-pink: #FF3CAC;
+  --accent-purple: #7C3AED;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Barlow Condensed',sans-serif;min-height:100vh;padding-bottom:80px}
 
 /* TOP BAR */
-.topbar{background:var(--card);border-bottom:2px solid var(--t1);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar{background:linear-gradient(90deg, #121A33, #1A2447);border-bottom:2px solid var(--t1);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
 .topbar-title{font-size:20px;font-weight:800;letter-spacing:1px;color:var(--t1)}
 .topbar-sub{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:2px}
 .topbar-right{display:flex;align-items:center;gap:10px}
-.live-badge{display:flex;align-items:center;gap:5px;background:#0A1F14;border:1px solid var(--green);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--green);font-family:'DM Mono',monospace}
+.live-badge{display:flex;align-items:center;gap:5px;background:linear-gradient(135deg, #22C55E22, #00D4FF22);border:1px solid var(--green);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--green);font-family:'DM Mono',monospace}
 .live-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:blink 1.2s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
 .settings-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:20px;font-family:'Barlow Condensed',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
@@ -56,7 +67,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow Condensed',sans-
 .add-match-btn{background:transparent;border:1px dashed var(--border);border-radius:10px;width:100%;padding:12px;color:var(--muted);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:14px;transition:all .2s;margin-top:4px}
 .add-match-btn:hover{border-color:var(--t1);color:var(--t1)}
 .btn-row{display:flex;gap:10px;margin-top:20px}
-.btn-save{background:var(--t1);border:none;color:#080D1A;padding:10px 24px;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;cursor:pointer;flex:1;transition:opacity .2s}
+.btn-save{background:linear-gradient(135deg, var(--t1), var(--accent-purple));border:none;color:white;padding:10px 24px;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;cursor:pointer;flex:1;transition:opacity .2s}
 .btn-save:hover{opacity:.9}
 .btn-cancel{background:transparent;border:1px solid var(--border);color:var(--muted);padding:10px 20px;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:15px;cursor:pointer}
 .help-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);line-height:1.8}
@@ -83,14 +94,14 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow Condensed',sans-
 .odds-section{padding:16px 18px 0}
 .odds-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;font-family:'DM Mono',monospace}
 .odds-bar-wrap{background:#1E293B;border-radius:8px;height:12px;overflow:hidden;display:flex}
-.bar-t1{background:var(--t1);height:100%;transition:width .8s cubic-bezier(.4,0,.2,1);min-width:4px;border-radius:6px 0 0 6px}
-.bar-t2{background:var(--t2);height:100%;flex:1;transition:flex .8s;min-width:4px;border-radius:0 6px 6px 0}
+.bar-t1{background:linear-gradient(90deg, #00D4FF, #0077FF);height:100%;transition:width .8s cubic-bezier(.4,0,.2,1);min-width:4px;border-radius:6px 0 0 6px}
+.bar-t2{background:linear-gradient(90deg, #FF6B35, #FF3CAC);height:100%;flex:1;transition:flex .8s;min-width:4px;border-radius:0 6px 6px 0}
 
 /* TEAM TILES */
 .teams-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 18px 18px}
 .team-tile{border-radius:12px;padding:14px;text-align:center}
-.team-tile.t1{background:#001813;border:1px solid var(--t1)}
-.team-tile.t2{background:#1A0A0A;border:1px solid var(--t2)}
+.team-tile.t1{background:linear-gradient(135deg, #00D4FF22, #0077FF22);border:1px solid var(--t1)}
+.team-tile.t2{background: linear-gradient(135deg, #FF6B3522, #FF3CAC22);border:1px solid var(--t2)}
 .team-name{font-size:18px;font-weight:800;margin-bottom:8px;letter-spacing:.5px;line-height:1.2}
 .team-tile.t1 .team-name{color:var(--t1)}
 .team-tile.t2 .team-name{color:var(--t2)}
@@ -104,7 +115,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow Condensed',sans-
 .vote-label{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
 
 /* POOL BAR */
-.pool-bar{background:#0A1020;border-top:1px solid var(--border);padding:10px 18px;display:flex;justify-content:space-between;align-items:center}
+.pool-bar{background:linear-gradient(90deg, #1A2447, #121A33);border-top:1px solid var(--border);padding:10px 18px;display:flex;justify-content:space-between;align-items:center}
 .pool-label{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace}
 .pool-value{font-size:18px;font-weight:700;color:var(--gold)}
 .total-votes{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace}
