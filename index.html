@@ -115,8 +115,29 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow Condensed',sans-
 @keyframes spin{to{transform:rotate(360deg)}}
 .error-box{background:#1A0808;border:1px solid var(--danger);border-radius:10px;padding:14px 18px;margin:16px 0;font-family:'DM Mono',monospace;font-size:12px;color:#FCA5A5;line-height:1.8}
 .empty-state{text-align:center;padding:60px 20px;color:var(--muted);font-family:'DM Mono',monospace;font-size:13px}
-.refresh-btn{background:transparent;border:1px solid var(--t1);color:var(--t1);padding:6px 14px;border-radius:20px;font-family:'Barlow Condensed',sans-serif;font-size:13px;cursor:pointer;transition:background .2s;display:inline-block;margin-top:8px}
-.refresh-btn:hover{background:#001813}
+.refresh-btn {
+  background: linear-gradient(135deg, var(--t1), var(--gold));
+  color: #080D1A;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .2s ease;
+  box-shadow: 0 0 12px #00E5B855;
+  animation: pulseGlow 2s infinite;
+}
+.refresh-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 18px #00E5B8AA;
+}
+@keyframes pulseGlow {
+  0%   { box-shadow: 0 0 8px #00E5B855; }
+  50%  { box-shadow: 0 0 18px #00E5B8AA; }
+  100% { box-shadow: 0 0 8px #00E5B855; }
+}
 .last-updated{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-align:center;margin-top:14px}
 </style>
 </head>
@@ -132,12 +153,6 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow Condensed',sans-
     <button class="settings-btn" onclick="openSettings()">⚙ Manage Matches</button>
   </div>
 </div>
-
-<!-- Settings panel -->
-<div class="settings-overlay" id="settings-overlay">
-  <div class="settings-panel">
-    <div class="settings-title">Manage Matches</div>
-    <div class="settings-sub">Changes save in browser — no redeployment needed.</div>
 
     <div class="help-box">
       <b style="color:var(--text)">Sheet ID:</b> the long code in your Google Sheet URL.<br>
@@ -189,7 +204,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow Condensed',sans-
 
   <div class="last-updated" id="last-updated"></div>
   <div style="text-align:center;margin-top:10px">
-    <button class="refresh-btn" onclick="loadAllMatches()">↻ Refresh now</button>
+    <button class="refresh-btn" onclick="manualRefresh(this)">↻ Refresh now</button>
   </div>
 </div>
 
@@ -308,6 +323,19 @@ function renderMatch(match, votes, odds, hasError) {
 // ============================================================
 // MAIN LOAD (UPDATED)
 // ============================================================
+
+function manualRefresh(btn) {
+  btn.innerText = "Refreshing...";
+  btn.style.opacity = "0.7";
+
+  loadAllMatches();
+
+  setTimeout(function() {
+    btn.innerText = "↻ Refresh now";
+    btn.style.opacity = "1";
+  }, 1500);
+}
+  
 function loadAllMatches() {
   var matches = CONFIG.matches;
 
