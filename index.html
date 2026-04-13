@@ -150,36 +150,6 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow Condensed',sans-
   </div>
   <div class="topbar-right">
     <div class="live-badge"><div class="live-dot"></div>LIVE</div>
-    <button class="settings-btn" onclick="openSettings()">⚙ Manage Matches</button>
-  </div>
-</div>
-
-    <div class="help-box">
-      <b style="color:var(--text)">Sheet ID:</b> the long code in your Google Sheet URL.<br>
-      <code style="color:var(--t1)">docs.google.com/spreadsheets/d/<span style="color:#FFD60A">THIS_PART</span>/edit</code><br><br>
-      <b style="color:var(--text)">Response column:</b> which column has the team choice answer.<br>
-      Usually col 1=Timestamp, col 2=Name/Email, col 3=Answer → enter <span>3</span>.<br><br>
-      <b style="color:var(--text)">Team names must exactly match your Form options</b> (e.g. "CSK" or "Chennai Super Kings (CSK)").
-    </div>
-
-    <div class="settings-section">
-      <div class="settings-label">Points per vote</div>
-      <div class="form-grid full">
-        <div class="form-field">
-          <label>Points added to pool per vote</label>
-          <input type="number" id="cfg-points-per-vote" value="100" min="1">
-        </div>
-      </div>
-    </div>
-
-    <div class="settings-label">Matches</div>
-    <div id="match-entries"></div>
-    <button class="add-match-btn" onclick="addMatchEntry()">+ Add match</button>
-
-    <div class="btn-row">
-      <button class="btn-save" onclick="saveSettings()">Save & Refresh</button>
-      <button class="btn-cancel" onclick="closeSettings()">Cancel</button>
-    </div>
   </div>
 </div>
 
@@ -198,7 +168,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow Condensed',sans-
   <div id="matches-container">
     <div class="empty-state">
       No matches configured yet.<br>
-      Click <b style="color:var(--t1)">⚙ Manage Matches</b> to add your first match.
+      No matches available right now.
     </div>
   </div>
 
@@ -331,9 +301,13 @@ function manualRefresh(btn) {
   loadAllMatches();
 
   setTimeout(function() {
+    btn.innerText = "Updated ✓";
+  }, 800);
+
+  setTimeout(function() {
     btn.innerText = "↻ Refresh now";
     btn.style.opacity = "1";
-  }, 1500);
+  }, 2000);
 }
   
 function loadAllMatches() {
@@ -376,6 +350,8 @@ function loadAllMatches() {
     results.forEach(function(r) {
       container.appendChild(renderMatch(r.match, r.votes, r.odds, r.error));
     });
+    document.getElementById("last-updated").innerText =
+      "Last updated: " + new Date().toLocaleTimeString();
   });
 }
 
