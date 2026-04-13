@@ -208,6 +208,7 @@ var CONFIG = {
       team2Name: "Delhi Capitals (DC)",
       sheetId: "14FnLn62N00UrthjsuNwDomehTQOxzSqpJ6MKBhOAz14",
       responseCol: 4
+      status: completed
     }
   ]
 };
@@ -267,6 +268,12 @@ function renderMatch(match, votes, odds, hasError) {
   var el = document.createElement("div");
   el.className = "match-card";
 
+  // 🔥 Highlight live match
+  if (match.status === "live") {
+    el.style.border = "2px solid #10B981";
+    el.style.boxShadow = "0 0 12px #10B98155";
+  }
+
   if (hasError) {
     el.innerHTML =
       '<div class="match-header"><span class="match-number">' + match.matchLabel + '</span></div>' +
@@ -302,11 +309,27 @@ function renderMatch(match, votes, odds, hasError) {
 // ============================================================
 function loadAllMatches() {
   var matches = CONFIG.matches;
+
+  matches.sort(function(a, b) {
+    var order = { live: 1, upcoming: 2, completed: 3 };
+    return order[a.status] - order[b.status];
+  });
+  
   var container = document.getElementById("matches-container");
 
   container.innerHTML = '<div class="loading"><div class="spinner"></div><br>Fetching...</div>';
 
   var promises = matches.map(function(match) {
+    // 🛑 If match completed → skip fetch
+    if (match.status === "completed") {
+      return Promise.resolve({
+        match: match,
+        votes: { t1: 0, t2: 0 },
+        odds: calcOdds(CONFIG.pointsPerVote, { t1: 0, t2: 0 }),
+        error: false
+      });
+    }
+
     return fetchSheet(match.sheetId)
       .then(function(data) {
         var votes = countVotes(data, match.responseCol, match.team1Name, match.team2Name);
@@ -317,7 +340,17 @@ function loadAllMatches() {
         return { match:match, votes:{t1:0,t2:0}, odds:calcOdds(CONFIG.pointsPerVote,{t1:0,t2:0}), error:true };
       });
   });
+      .then(function(data) {
+        var votes = countVotes(data, match.responseCol, match.team1Name, match.team2Name);
+        var odds  = calcOdds(CONFIG.pointsPerVote, votes);
+        return { match:match, votes:votes, odds:odds, error:false };
+      })
+      .catch(function() {
+        return { match:match, votes:{t1:0,t2:0}, odds:calcOdds(CONFIG.pointsPerVote,{t1:0,t2:0}), error:true };
+      });
+  });
 
+  
   Promise.all(promises).then(function(results) {
     container.innerHTML = "";
     results.forEach(function(r) {
