@@ -211,17 +211,17 @@ input  { font-family: 'Outfit', sans-serif; }
 
 /* PODIUM */
 .podium {
-  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: stretch;
   gap: 10px; margin-bottom: 20px; align-items: end;
 }
 .pod {
   background: var(--surface); border: 1px solid var(--line);
   border-radius: 16px; padding: 18px 12px 14px;
   text-align: center; position: relative;
-  transition: transform .2s; cursor: default;
+  transition: transform .2s; cursor: default; min-height: 140px;
 }
 .pod:hover { transform: translateY(-3px); }
-.pod.p1 { border-color: var(--amber-b); background: var(--amber-s); order: 2; padding-top: 26px; box-shadow: 0 4px 20px rgba(184,101,10,.13); }
+.pod.p1 { border-color: var(--amber-b); background: var(--amber-s); order: 2; padding-top: 22px; box-shadow: 0 4px 20px rgba(184,101,10,.13); }
 .pod.p2 { order: 1; }
 .pod.p3 { order: 3; }
 .pod-crown { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 20px; }
@@ -554,6 +554,9 @@ input  { font-family: 'Outfit', sans-serif; }
   .topbar-name { font-size: 14px; }
   .tab-btn { padding: 13px 14px; font-size: 13px; }
   .lb-headline { font-size: 23px; }
+  .pod.p1{ transform: scale(1.05); }
+  .pod.p2{ transform: scale(0.98); }
+  .pod.p3{ transform: scale(0.95); }
 }
 </style>
 </head>
