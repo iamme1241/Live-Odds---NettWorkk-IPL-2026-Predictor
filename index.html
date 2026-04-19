@@ -186,17 +186,20 @@ input{font-family:'Sora',sans-serif}
 
 /* TILES */
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:10px 20px 20px}
-.tile{border-radius:16px;padding:18px 15px;text-align:center;position:relative;overflow:hidden}
+.tile{border-radius:16px;padding:22px 15px;text-align:center;position:relative;overflow:hidden;box-shadow: 0 6px 22px rgba(0,0,0,0.35);transition: transform 0.2s ease, box-shadow 0.2s ease;}
+.tile:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.45);
+}
 .tile::before{content:"";position:absolute;inset:0;opacity:.04;background:radial-gradient(ellipse at 50% 0%,#fff 0%,transparent 70%)}
-.tile.blue-tile{background:var(--teal-dim);border:1px solid rgba(0,212,180,.25)}
-.tile.orange-tile{background:var(--cherry-dim);border:1px solid rgba(255,46,76,.25)}
+.tile.blue-tile{background:var(--teal-dim);border:1px var(--teal)(0,212,180,.25)}
+.tile.orange-tile{background:var(--cherry-dim);border:1px var(--cherry)(255,46,76,.25)}
 .tile-name{font-size:13px;font-weight:700;margin-bottom:12px;line-height:1.25}
-.tile.blue-tile .tile-name{color:var(--teal)}
-.tile.orange-tile .tile-name{color:var(--cherry)}
-.tile-payout{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:600;line-height:1;color:var(--ink)}
+.tile.blue-tile .tile-name{color:#fff}
+.tile.orange-tile .tile-name{color:#fff}
 .tile-lbl{display:none}
-.tile-votes{margin-top:12px;padding-top:10px;border-top:1px solid var(--line2);font-size:12px;color:var(--ink3);font-family:'JetBrains Mono',monospace}
-.tile-votes b{color:var(--ink2);font-weight:600}
+.tile-votes{margin-top:14px;padding-top:10px;border-top:1px solid var(--line2);font-size:14px;color:var(--ink3);font-family:'JetBrains Mono',monospace}
+.tile-votes b{font-size:18px;color:#fff;font-weight:800}
 
 /* FOOTER */
 .m-footer{background:var(--surface2);border-top:1px solid var(--line);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
@@ -473,8 +476,8 @@ function renderMatch(match,votes,odds,err){
     '<div class="m-title"><span class="t-name blue-team">'+esc(match.t1)+'</span><span class="vs">VS</span><span class="t-name orange-team">'+esc(match.t2)+'</span></div>'+
     '<div class="bar-wrap"><div class="bar-labels"><span class="bar-pct blue-pct">'+odds.pct1+'% backing</span><span class="bar-pct orange-pct">'+pct2+'% backing</span></div><div class="bar-track"><div class="bar-blue" style="width:'+odds.pct1+'%"></div><div class="bar-orange"></div></div></div>'+
     '<div class="tiles">'+
-      '<div class="tile blue-tile"><div class="tile-name">'+esc(match.t1)+'</div><div class="tile-payout">'+p1+'</div><div class="tile-votes"><b>'+votes.t1+'</b> vote'+(votes.t1!==1?'s':'')+'</div></div>'+
-      '<div class="tile orange-tile"><div class="tile-name">'+esc(match.t2)+'</div><div class="tile-payout">'+p2+'</div><div class="tile-votes"><b>'+votes.t2+'</b> vote'+(votes.t2!==1?'s':'')+'</div></div>'+
+      '<div class="tile blue-tile"><div class="tile-name">'+esc(match.t1)+'</div><div class="tile-votes"><b>'+votes.t1+'</b> vote'+(votes.t1!==1?'s':'')+'</div></div>'+
+      '<div class="tile orange-tile"><div class="tile-name">'+esc(match.t2)+'</div><div class="tile-votes"><b>'+votes.t2+'</b> vote'+(votes.t2!==1?'s':'')+'</div></div>'+
     '</div>'+
     resultBanner+
     '<div class="m-footer"><span class="pool-val">'+odds.pool.toLocaleString()+'&thinsp;pts pool</span><span class="pool-meta">'+odds.total+' vote'+(odds.total!==1?'s':'')+' cast</span></div>'+
