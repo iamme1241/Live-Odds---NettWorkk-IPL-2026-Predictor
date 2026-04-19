@@ -211,19 +211,41 @@ input  { font-family: 'Outfit', sans-serif; }
 
 /* PODIUM */
 .podium {
-  display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: stretch;
-  gap: 10px; margin-bottom: 20px; align-items: end;
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+  gap:10px;
+  margin-bottom:20px;
 }
-.pod {
-  background: var(--surface); border: 1px solid var(--line);
-  border-radius: 16px; padding: 18px 12px 14px;
-  text-align: center; position: relative;
-  transition: transform .2s; cursor: default; min-height: 140px;
+.pod{
+  background:var(--surface2);
+  border:1px solid var(--line2);
+  border-radius:18px;
+  padding:20px 12px 16px;
+  text-align:center;
+  position:relative;
+  transition:transform .25s;
+  cursor:default;
+
+  flex: 1;        /* ✅ ADD */
+  min-width: 0;   /* ✅ ADD */
 }
 .pod:hover { transform: translateY(-3px); }
-.pod.p1 { border-color: var(--amber-b); background: var(--amber-s); order: 2; padding-top: 22px; box-shadow: 0 4px 20px rgba(184,101,10,.13); }
-.pod.p2 { order: 1; }
-.pod.p3 { order: 3; }
+.pod.p1{
+  border-color:rgba(255,209,102,.4);
+  background:linear-gradient(160deg,rgba(255,209,102,.08) 0%,var(--surface2) 100%);
+  padding-top:30px;
+  box-shadow:0 0 40px rgba(255,209,102,.12),var(--shadow);
+
+  transform: scale(1.08);   /* ✅ ADD */
+  z-index: 2;               /* ✅ ADD */
+}
+.pod.p2{
+  transform: scale(0.95);   /* ✅ ADD */
+}
+.pod.p3{
+  transform: scale(0.9);    /* ✅ ADD */
+}
 .pod-crown { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 20px; }
 .pod-medal { font-size: 24px; margin-bottom: 6px; line-height: 1; }
 .pod-name  { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px; line-height: 1.25; }
