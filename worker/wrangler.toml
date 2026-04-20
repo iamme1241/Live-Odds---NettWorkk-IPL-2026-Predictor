@@ -5,7 +5,7 @@ compatibility_date = "2024-01-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "predictor-db"
-database_id = "PASTE_YOUR_DATABASE_ID_HERE"
+database_id = "5aab066d-e744-4580-80bb-dfc010d262b0"
 
 [vars]
 ADMIN_SECRET_PATH = "batball6464"
