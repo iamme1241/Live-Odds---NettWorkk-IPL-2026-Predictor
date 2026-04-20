@@ -5,14 +5,10 @@
 
 // ─── CORS ────────────────────────────────────────────────────────────────────
 function cors(env, req) {
-  const origin = req.headers.get('Origin') || '';
-  const allowed = [env.PUBLIC_ORIGIN, env.ADMIN_ORIGIN, 'http://localhost:3000'];
-  const allow = allowed.includes(origin) ? origin : env.PUBLIC_ORIGIN;
   return {
-    'Access-Control-Allow-Origin': allow,
+    'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Max-Age': '86400',
   };
 }
 
