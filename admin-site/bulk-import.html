@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk Player Import · Predictor Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f6f2;--surface:#fff;--card:#fafaf8;--border:#e2e0d8;
+  --accent:#1a1a2e;--green:#16703c;--red:#b91c1c;--blue:#1d4ed8;
+  --text:#1a1a2e;--muted:#6b7280;--font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;--r:6px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.5;padding:32px 20px 64px;}
+.wrap{max-width:860px;margin:0 auto;}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:20px;transition:color .15s;}
+.back:hover{color:var(--text);}
+h1{font-size:22px;font-weight:600;letter-spacing:-.02em;margin-bottom:6px;}
+.sub{font-size:13px;color:var(--muted);margin-bottom:28px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px;margin-bottom:20px;}
+.card-title{font-size:15px;font-weight:600;margin-bottom:14px;}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;font-family:var(--mono);}
+.pill.info{background:#eff6ff;color:#1d4ed8;}
+.pill.warn{background:#fffbeb;color:#92400e;}
+.pill.ok{background:#f0fdf4;color:#166534;}
+.pill.err{background:#fef2f2;color:#991b1b;}
+
+/* FORMAT BOX */
+.format-box{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:18px;}
+.format-title{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.format-code{font-family:var(--mono);font-size:12px;color:#1e3a5f;line-height:1.8;}
+
+/* TEXTAREA */
+.paste-area{
+  width:100%;height:200px;padding:12px 14px;
+  background:var(--bg);border:1px solid var(--border);border-radius:8px;
+  font-family:var(--mono);font-size:13px;color:var(--text);outline:none;
+  resize:vertical;transition:border-color .15s;
+}
+.paste-area:focus{border-color:var(--accent);}
+.paste-area::placeholder{color:var(--muted);}
+
+/* BUTTONS */
+.btn{padding:9px 18px;border-radius:var(--r);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:opacity .15s;display:inline-flex;align-items:center;gap:6px;}
+.btn-accent{background:var(--accent);color:#fff;}
+.btn-accent:hover{opacity:.88;}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover{opacity:.88;}
+.btn-outline{background:none;border:1px solid var(--border);color:var(--text);}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+
+/* PREVIEW TABLE */
+.preview-wrap{overflow-x:auto;margin-top:16px;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;padding:8px 12px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);background:var(--card);}
+td{padding:9px 12px;border-bottom:1px solid rgba(226,224,216,.5);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(0,0,0,.012);}
+.mono{font-family:var(--mono);font-size:12px;}
+.badge{display:inline-flex;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:600;}
+.badge-ok{background:#f0fdf4;color:#166534;}
+.badge-warn{background:#fffbeb;color:#92400e;}
+.badge-err{background:#fef2f2;color:#991b1b;}
+.row-err td{background:#fef2f2!important;}
+
+/* PROGRESS */
+.progress-wrap{margin-top:16px;display:none;}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:8px;}
+.progress-fill{height:100%;background:var(--green);border-radius:3px;transition:width .3s;}
+.progress-text{font-size:12px;color:var(--muted);font-family:var(--mono);}
+
+/* LOG */
+.log{margin-top:14px;max-height:200px;overflow-y:auto;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:var(--mono);font-size:12px;line-height:1.8;display:none;}
+.log-ok{color:var(--green);}
+.log-err{color:var(--red);}
+.log-skip{color:var(--muted);}
+
+/* STATS */
+.stats-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 16px;min-width:100px;}
+.stat-val{font-family:var(--mono);font-size:22px;font-weight:600;margin-bottom:2px;}
+.stat-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← Back to admin</a>
+  <h1>Bulk Player Import</h1>
+  <p class="sub">Import all your players at once. Paste a list, preview it, then import.</p>
+
+  <!-- FORMAT GUIDE -->
+  <div class="card">
+    <div class="card-title">Accepted formats</div>
+    <div class="format-box">
+      <div class="format-title">Format A — Name + Email (most common)</div>
+      <div class="format-code">
+        Rahul Sharma, rahul@gmail.com<br>
+        Priya Singh, priya@gmail.com, priya.old@gmail.com, priya.work@gmail.com<br>
+        <span style="color:#6b7280">↑ Extra emails after the second are treated as aliases (multiple accounts same player)</span>
+      </div>
+    </div>
+    <div class="format-box" style="margin-bottom:0">
+      <div class="format-title">Format B — Paste directly from Google Sheets / Excel</div>
+      <div class="format-code">
+        Copy cells from your spreadsheet and paste below. Works with Tab-separated columns too.<br>
+        Column order: <b>Name</b> | <b>Primary Email</b> | <b>Alias 1</b> | <b>Alias 2</b> | …
+      </div>
+    </div>
+  </div>
+
+  <!-- PASTE AREA -->
+  <div class="card">
+    <div class="card-title">Paste your player list</div>
+    <textarea class="paste-area" id="paste-input"
+      placeholder="Rahul Sharma, rahul@gmail.com&#10;Priya Singh, priya@gmail.com, priya.old@gmail.com&#10;Karthik Nair, karthik@gmail.com&#10;…paste all 200 players here"></textarea>
+    <div class="btn-row">
+      <button class="btn btn-accent" onclick="parseAndPreview()">Preview →</button>
+      <button class="btn btn-outline" onclick="clearAll()">Clear</button>
+      <button class="btn btn-outline" onclick="loadSample()">Load sample</button>
+    </div>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="card" id="preview-card" style="display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+      <div class="card-title" style="margin:0">Preview</div>
+      <div id="preview-stats" class="stats-row" style="margin:0"></div>
+    </div>
+    <div class="preview-wrap">
+      <table id="preview-table">
+        <thead><tr><th>#</th><th>Name</th><th>Primary email</th><th>Alias emails</th><th>Status</th></tr></thead>
+        <tbody id="preview-body"></tbody>
+      </table>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-green" id="import-btn" onclick="startImport()">Import all players</button>
+      <button class="btn btn-outline" onclick="hidePreview()">Edit list</button>
+    </div>
+    <div class="progress-wrap" id="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+      <div class="progress-text" id="progress-text">Starting…</div>
+    </div>
+    <div class="log" id="import-log"></div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="card" id="result-card" style="display:none">
+    <div class="card-title">Import complete</div>
+    <div class="stats-row" id="result-stats"></div>
+    <div class="btn-row" style="margin-top:18px">
+      <a class="btn btn-accent" href="index.html">Go to admin panel</a>
+      <button class="btn btn-outline" onclick="startFresh()">Import more</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'https://predictor-league-api.iamme1241.workers.dev';
+let authToken = localStorage.getItem('pl_admin_token') || '';
+let parsed = [];
+
+if (!authToken) {
+  alert('Not logged in. Please log in from the admin panel first.');
+  window.location.href = 'index.html';
+}
+
+function loadSample() {
+  document.getElementById('paste-input').value =
+`Rahul Sharma, rahul.sharma@gmail.com
+Priya Singh, priya@gmail.com, priya.work@company.com
+Karthik Nair, karthik@gmail.com, karthik.old@yahoo.com
+Ananya Reddy, ananya@gmail.com
+Vikram Patel, vikram@gmail.com, v.patel@work.com, vikramp@hotmail.com
+Sneha Iyer, sneha@gmail.com`;
+}
+
+function clearAll() {
+  document.getElementById('paste-input').value = '';
+  document.getElementById('preview-card').style.display = 'none';
+  document.getElementById('result-card').style.display = 'none';
+  parsed = [];
+}
+
+function hidePreview() {
+  document.getElementById('preview-card').style.display = 'none';
+}
+
+function startFresh() {
+  clearAll();
+  document.getElementById('paste-input').focus();
+}
+
+function parseAndPreview() {
+  const raw = document.getElementById('paste-input').value.trim();
+  if (!raw) { alert('Please paste your player list first.'); return; }
+
+  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+  parsed = [];
+
+  lines.forEach((line, i) => {
+    // Support both comma and tab as delimiters
+    const parts = line.includes('\t')
+      ? line.split('\t').map(s => s.trim()).filter(Boolean)
+      : line.split(',').map(s => s.trim()).filter(Boolean);
+
+    if (parts.length < 2) {
+      parsed.push({ lineNum: i+1, raw: line, status: 'error', reason: 'Need at least name and email', name: parts[0]||'', email: '', aliases: [] });
+      return;
+    }
+
+    const name = parts[0];
+    const email = parts[1].toLowerCase();
+    const aliases = parts.slice(2).map(e => e.toLowerCase()).filter(e => e.includes('@'));
+
+    // Basic validation
+    if (!email.includes('@') || !email.includes('.')) {
+      parsed.push({ lineNum: i+1, raw: line, status: 'error', reason: 'Invalid email format', name, email, aliases });
+      return;
+    }
+    if (name.length < 2) {
+      parsed.push({ lineNum: i+1, raw: line, status: 'error', reason: 'Name too short', name, email, aliases });
+      return;
+    }
+
+    // Check duplicates within this batch
+    const dupEmail = parsed.find(p => p.email === email || p.aliases?.includes(email));
+    if (dupEmail) {
+      parsed.push({ lineNum: i+1, raw: line, status: 'warn', reason: `Duplicate of row ${dupEmail.lineNum}`, name, email, aliases });
+      return;
+    }
+
+    parsed.push({ lineNum: i+1, raw: line, status: 'ok', reason: '', name, email, aliases });
+  });
+
+  renderPreview();
+}
+
+function renderPreview() {
+  const ok = parsed.filter(p => p.status === 'ok').length;
+  const warn = parsed.filter(p => p.status === 'warn').length;
+  const err = parsed.filter(p => p.status === 'error').length;
+
+  document.getElementById('preview-stats').innerHTML = `
+    <div class="stat"><div class="stat-val" style="color:var(--green)">${ok}</div><div class="stat-lbl">Ready</div></div>
+    ${warn ? `<div class="stat"><div class="stat-val" style="color:#92400e">${warn}</div><div class="stat-lbl">Warnings</div></div>` : ''}
+    ${err  ? `<div class="stat"><div class="stat-val" style="color:var(--red)">${err}</div><div class="stat-lbl">Errors</div></div>` : ''}
+    <div class="stat"><div class="stat-val">${parsed.length}</div><div class="stat-lbl">Total</div></div>`;
+
+  const tbody = document.getElementById('preview-body');
+  tbody.innerHTML = parsed.map(p => `
+    <tr class="${p.status === 'error' ? 'row-err' : ''}">
+      <td class="mono">${p.lineNum}</td>
+      <td style="font-weight:500">${esc(p.name)}</td>
+      <td class="mono">${esc(p.email)}</td>
+      <td class="mono" style="color:var(--muted);font-size:11px">${p.aliases.join(', ') || '—'}</td>
+      <td>
+        <span class="badge ${p.status === 'ok' ? 'badge-ok' : p.status === 'warn' ? 'badge-warn' : 'badge-err'}">
+          ${p.status === 'ok' ? '✓ Ready' : p.status === 'warn' ? '⚠ ' + p.reason : '✗ ' + p.reason}
+        </span>
+      </td>
+    </tr>`).join('');
+
+  document.getElementById('import-btn').textContent = `Import ${ok} player${ok !== 1 ? 's' : ''}`;
+  document.getElementById('preview-card').style.display = 'block';
+  document.getElementById('preview-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+async function startImport() {
+  const toImport = parsed.filter(p => p.status === 'ok');
+  if (!toImport.length) { alert('No valid players to import.'); return; }
+
+  const btn = document.getElementById('import-btn');
+  btn.disabled = true;
+  btn.textContent = 'Importing…';
+
+  const pw = document.getElementById('progress-wrap');
+  const pf = document.getElementById('progress-fill');
+  const pt = document.getElementById('progress-text');
+  const log = document.getElementById('import-log');
+  pw.style.display = 'block';
+  log.style.display = 'block';
+  log.innerHTML = '';
+
+  let done = 0, succeeded = 0, failed = 0;
+
+  for (const player of toImport) {
+    try {
+      const res = await fetch(`${API}/api/admin/players`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify({
+          display_name: player.name,
+          primary_email: player.email,
+          alias_emails: player.aliases,
+        }),
+      });
+      if (res.ok) {
+        succeeded++;
+        log.innerHTML += `<div class="log-ok">✓ ${esc(player.name)} (${esc(player.email)})</div>`;
+      } else {
+        const d = await res.json().catch(() => ({}));
+        failed++;
+        log.innerHTML += `<div class="log-err">✗ ${esc(player.name)} — ${d.error || 'Failed'}</div>`;
+      }
+    } catch (e) {
+      failed++;
+      log.innerHTML += `<div class="log-err">✗ ${esc(player.name)} — Network error</div>`;
+    }
+
+    done++;
+    const pct = Math.round(done / toImport.length * 100);
+    pf.style.width = pct + '%';
+    pt.textContent = `${done} / ${toImport.length} — ${succeeded} imported, ${failed} failed`;
+    log.scrollTop = log.scrollHeight;
+
+    // Small delay to avoid rate limits
+    if (done % 10 === 0) await new Promise(r => setTimeout(r, 200));
+  }
+
+  // Show result
+  document.getElementById('result-card').style.display = 'block';
+  document.getElementById('result-stats').innerHTML = `
+    <div class="stat"><div class="stat-val" style="color:var(--green)">${succeeded}</div><div class="stat-lbl">Imported</div></div>
+    ${failed ? `<div class="stat"><div class="stat-val" style="color:var(--red)">${failed}</div><div class="stat-lbl">Failed</div></div>` : ''}
+    <div class="stat"><div class="stat-val">${parsed.filter(p=>p.status==='warn'||p.status==='error').length}</div><div class="stat-lbl">Skipped</div></div>`;
+
+  document.getElementById('result-card').scrollIntoView({ behavior: 'smooth' });
+}
+
+function esc(s) { return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+</script>
+</body>
+</html>
