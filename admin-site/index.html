@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Predictor League</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #f7f6f2;
+  --surface: #ffffff;
+  --card:    #fafaf8;
+  --border:  #e2e0d8;
+  --accent:  #1a1a2e;
+  --green:   #16703c;
+  --red:     #b91c1c;
+  --amber:   #92400e;
+  --blue:    #1d4ed8;
+  --text:    #1a1a2e;
+  --muted:   #6b7280;
+  --font-h:  'IBM Plex Sans', sans-serif;
+  --font-m:  'IBM Plex Mono', monospace;
+  --r:       6px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-h);
+  font-size: 14px;
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* ── LOGIN ── */
+#login-screen {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--accent);
+}
+.login-box {
+  background: var(--surface);
+  border-radius: 12px; padding: 40px;
+  width: 360px;
+}
+.login-logo {
+  font-family: var(--font-m); font-size: 20px; font-weight: 600;
+  margin-bottom: 6px; letter-spacing: -.02em;
+}
+.login-sub {
+  color: var(--muted); font-size: 13px; margin-bottom: 28px;
+}
+.form-label {
+  display: block; font-size: 11px; font-weight: 600;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 5px;
+}
+.form-input {
+  width: 100%; padding: 10px 12px;
+  border: 1px solid var(--border); border-radius: var(--r);
+  background: var(--bg); color: var(--text);
+  font-family: var(--font-m); font-size: 14px; outline: none;
+  transition: border-color .15s;
+  margin-bottom: 14px;
+}
+.form-input:focus { border-color: var(--accent); }
+.btn-primary {
+  width: 100%; padding: 11px;
+  background: var(--accent); color: #fff;
+  border: none; border-radius: var(--r);
+  font-family: var(--font-h); font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: opacity .15s;
+}
+.btn-primary:hover { opacity: .88; }
+.login-err {
+  color: var(--red); font-size: 12px; margin-top: 8px;
+  text-align: center; display: none;
+}
+
+/* ── SHELL ── */
+#app { display: none; min-height: 100vh; display: none; flex-direction: row; }
+#app.visible { display: flex; }
+aside {
+  width: 220px; flex-shrink: 0;
+  background: var(--accent);
+  display: flex; flex-direction: column;
+  padding: 0;
+  position: sticky; top: 0; height: 100vh;
+}
+.aside-logo {
+  padding: 20px 20px 16px;
+  font-family: var(--font-m); font-size: 16px; font-weight: 600;
+  color: rgba(255,255,255,.9); letter-spacing: -.01em;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.aside-logo span { color: rgba(255,255,255,.4); font-weight: 400; }
+.aside-nav { flex: 1; padding: 10px 8px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: var(--r);
+  color: rgba(255,255,255,.5); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all .12s;
+  border: none; background: none; width: 100%; text-align: left;
+}
+.nav-item:hover { color: #fff; background: rgba(255,255,255,.08); }
+.nav-item.active { color: #fff; background: rgba(255,255,255,.14); }
+.nav-icon { font-size: 15px; flex-shrink: 0; }
+.aside-footer {
+  padding: 12px 8px;
+  border-top: 1px solid rgba(255,255,255,.1);
+}
+.aside-footer button {
+  width: 100%; padding: 8px 12px;
+  background: none; border: 1px solid rgba(255,255,255,.15);
+  border-radius: var(--r); color: rgba(255,255,255,.5);
+  font-family: var(--font-h); font-size: 12px; cursor: pointer;
+  transition: all .12s;
+}
+.aside-footer button:hover { color: #fff; border-color: rgba(255,255,255,.3); }
+
+/* ── CONTENT ── */
+.content { flex: 1; overflow-y: auto; }
+.content-inner { max-width: 960px; margin: 0 auto; padding: 28px 28px; }
+.page-panel { display: none; }
+.page-panel.active { display: block; }
+
+/* ── PAGE HEADER ── */
+.page-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px;
+}
+.page-title {
+  font-size: 20px; font-weight: 600; letter-spacing: -.01em;
+}
+.page-title span { color: var(--muted); font-weight: 400; }
+
+/* ── BUTTONS ── */
+.btn {
+  padding: 8px 16px; border-radius: var(--r);
+  font-family: var(--font-h); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all .13s; border: none; outline: none;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn-accent { background: var(--accent); color: #fff; }
+.btn-accent:hover { opacity: .88; }
+.btn-green { background: var(--green); color: #fff; }
+.btn-green:hover { opacity: .88; }
+.btn-red { background: var(--red); color: #fff; }
+.btn-red:hover { opacity: .88; }
+.btn-amber { background: var(--amber); color: #fff; }
+.btn-outline {
+  background: none; border: 1px solid var(--border); color: var(--text);
+}
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── CARD ── */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; margin-bottom: 14px;
+}
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; border-bottom: 1px solid var(--border);
+}
+.card-title { font-weight: 600; font-size: 14px; }
+.card-body { padding: 18px; }
+
+/* ── MATCH LIST ── */
+.match-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.match-row:last-child { border-bottom: none; }
+.m-num {
+  font-family: var(--font-m); font-size: 11px; color: var(--muted);
+  width: 50px; flex-shrink: 0;
+}
+.m-title { flex: 1; font-weight: 500; font-size: 13px; }
+.m-time { font-family: var(--font-m); font-size: 11px; color: var(--muted); width: 150px; text-align: right; }
+.status-badge {
+  font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 20px; flex-shrink: 0;
+}
+.s-upcoming { background: #f3f4f6; color: #6b7280; }
+.s-open     { background: #fef3c7; color: #92400e; }
+.s-closed   { background: #e0e7ff; color: #3730a3; }
+.s-resulted { background: #dcfce7; color: #166534; }
+.m-actions  { display: flex; gap: 6px; flex-shrink: 0; }
+
+/* ── TABLE ── */
+.admin-table {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+}
+.admin-table th {
+  text-align: left; padding: 8px 10px;
+  font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--muted); border-bottom: 1px solid var(--border);
+}
+.admin-table td {
+  padding: 10px 10px;
+  border-bottom: 1px solid rgba(226,224,216,.6);
+  vertical-align: middle;
+}
+.admin-table tr:last-child td { border-bottom: none; }
+.admin-table tr:hover td { background: rgba(0,0,0,.012); }
+.mono { font-family: var(--font-m); font-size: 12px; }
+
+/* ── FORM GRID ── */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-grid.wide { grid-template-columns: 1fr; }
+.form-group { display: flex; flex-direction: column; }
+.form-group label { font-size: 11px; font-weight: 600; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.form-group input, .form-group select, .form-group textarea {
+  padding: 9px 10px; border: 1px solid var(--border); border-radius: var(--r);
+  background: var(--bg); color: var(--text);
+  font-family: var(--font-m); font-size: 13px; outline: none;
+  transition: border-color .15s;
+}
+.form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(26,26,46,.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200; display: none;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--surface); border-radius: 12px;
+  padding: 28px; width: 480px; max-width: 95vw;
+  box-shadow: 0 20px 60px rgba(0,0,0,.15);
+}
+.modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 20px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+
+/* ── STATS ROW ── */
+.stats-row {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px;
+}
+.stat-val { font-family: var(--font-m); font-size: 26px; font-weight: 600; margin-bottom: 2px; }
+.stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+
+/* ── TOAST ── */
+#admin-toast {
+  position: fixed; bottom: 20px; right: 20px;
+  background: var(--accent); color: #fff;
+  padding: 11px 18px; border-radius: 8px;
+  font-size: 13px; font-weight: 500; z-index: 999;
+  transform: translateY(60px); opacity: 0;
+  transition: all .3s cubic-bezier(.34,1.56,.64,1);
+}
+#admin-toast.show { transform: translateY(0); opacity: 1; }
+#admin-toast.err  { background: var(--red); }
+#admin-toast.ok   { background: var(--green); }
+
+/* ── ODDS DISPLAY ── */
+.odds-display {
+  display: flex; gap: 12px; margin: 12px 0;
+}
+.odds-team {
+  flex: 1; padding: 12px;
+  border: 1px solid var(--border); border-radius: var(--r);
+  text-align: center;
+}
+.odds-team .name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.odds-team .votes { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+.odds-team .odds-val {
+  font-family: var(--font-m); font-size: 22px; font-weight: 600; color: var(--blue);
+}
+
+/* ── SCROLLABLE ── */
+.scroll-x { overflow-x: auto; }
+
+/* ── EXPORT ── */
+.export-section { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.export-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 20px;
+}
+.export-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+.export-card p  { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">PREDICTOR <span>// ADMIN</span></div>
+    <div class="login-sub">Restricted access. Enter credentials.</div>
+    <label class="form-label">Secret path</label>
+    <input class="form-input" id="login-path" type="text" placeholder="secret-slug" autocomplete="off">
+    <label class="form-label">Password</label>
+    <input class="form-input" id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password">
+    <button class="btn-primary" onclick="doLogin()">Sign in</button>
+    <div class="login-err" id="login-err">Invalid credentials.</div>
+  </div>
+</div>
+
+<!-- APP SHELL -->
+<div id="app">
+  <aside>
+    <div class="aside-logo">PRED <span>ADMIN</span></div>
+    <div class="aside-nav">
+      <button class="nav-item active" onclick="showPanel('dashboard')"><span class="nav-icon">◈</span> Dashboard</button>
+      <button class="nav-item" onclick="showPanel('matches')"><span class="nav-icon">◉</span> Matches</button>
+      <button class="nav-item" onclick="showPanel('results')"><span class="nav-icon">✦</span> Enter Results</button>
+      <button class="nav-item" onclick="showPanel('players')"><span class="nav-icon">◎</span> Players</button>
+      <button class="nav-item" onclick="showPanel('emailmap')"><span class="nav-icon">⊞</span> Email Mapping</button>
+      <button class="nav-item" onclick="showPanel('predictions')"><span class="nav-icon">◇</span> Predictions</button>
+      <button class="nav-item" onclick="showPanel('leaderboard')"><span class="nav-icon">▲</span> Leaderboard</button>
+      <button class="nav-item" onclick="showPanel('export')"><span class="nav-icon">↗</span> Export</button>
+      <button class="nav-item" onclick="showPanel('audit')"><span class="nav-icon">⊡</span> Audit Log</button>
+    </div>
+    <div class="aside-footer">
+      <button onclick="logout()">Sign out</button>
+    </div>
+  </aside>
+
+  <div class="content">
+    <div class="content-inner">
+
+      <!-- DASHBOARD -->
+      <div class="page-panel active" id="panel-dashboard">
+        <div class="page-header">
+          <div class="page-title">Dashboard</div>
+          <button class="btn btn-outline btn-sm" onclick="loadDashboard()">↺ Refresh</button>
+        </div>
+        <div class="stats-row" id="stats-row">
+          <div class="stat-card"><div class="stat-val" id="stat-matches">–</div><div class="stat-label">Total matches</div></div>
+          <div class="stat-card"><div class="stat-val" id="stat-players">–</div><div class="stat-label">Players</div></div>
+          <div class="stat-card"><div class="stat-val" id="stat-open">–</div><div class="stat-label">Open now</div></div>
+          <div class="stat-card"><div class="stat-val" id="stat-resulted">–</div><div class="stat-label">Resulted</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Current leaderboard (top 10)</div></div>
+          <div class="card-body scroll-x" id="dash-lb">Loading…</div>
+        </div>
+      </div>
+
+      <!-- MATCHES -->
+      <div class="page-panel" id="panel-matches">
+        <div class="page-header">
+          <div class="page-title">Matches</div>
+          <button class="btn btn-accent" onclick="openAddMatch()">+ Add match</button>
+        </div>
+        <div class="card">
+          <div class="card-body" id="matches-list">Loading…</div>
+        </div>
+      </div>
+
+      <!-- RESULTS -->
+      <div class="page-panel" id="panel-results">
+        <div class="page-header">
+          <div class="page-title">Enter <span>Results</span></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Closed matches awaiting result</div></div>
+          <div class="card-body" id="results-list">Loading…</div>
+        </div>
+      </div>
+
+      <!-- PLAYERS -->
+      <div class="page-panel" id="panel-players">
+        <div class="page-header">
+          <div class="page-title">Players</div>
+          <button class="btn btn-accent" onclick="openAddPlayer()">+ Add player</button>
+        </div>
+        <div class="card">
+          <div class="card-body scroll-x" id="players-list">Loading…</div>
+        </div>
+      </div>
+
+      <!-- EMAIL MAP -->
+      <div class="page-panel" id="panel-emailmap">
+        <div class="page-header">
+          <div class="page-title">Email <span>Mapping</span></div>
+          <button class="btn btn-accent" onclick="openAddAlias()">+ Add alias</button>
+        </div>
+        <p style="color:var(--muted);font-size:13px;margin-bottom:16px">
+          Map alias emails → primary email. Prevents players from using multiple addresses to cast multiple votes.
+        </p>
+        <div class="card">
+          <div class="card-body scroll-x" id="emailmap-list">Loading…</div>
+        </div>
+      </div>
+
+      <!-- PREDICTIONS -->
+      <div class="page-panel" id="panel-predictions">
+        <div class="page-header">
+          <div class="page-title">Predictions</div>
+        </div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-body" style="display:flex;gap:10px;align-items:center">
+            <select id="pred-match-select" style="padding:8px 10px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);font-family:var(--font-m);font-size:13px;flex:1;outline:none"></select>
+            <button class="btn btn-accent" onclick="loadMatchPredictions()">Load</button>
+          </div>
+        </div>
+        <div id="pred-odds-display"></div>
+        <div class="card">
+          <div class="card-body scroll-x" id="predictions-list">Select a match above.</div>
+        </div>
+      </div>
+
+      <!-- LEADERBOARD -->
+      <div class="page-panel" id="panel-leaderboard">
+        <div class="page-header">
+          <div class="page-title">Leaderboard</div>
+          <button class="btn btn-outline btn-sm" onclick="loadAdminLeaderboard()">↺ Refresh</button>
+        </div>
+        <div class="card">
+          <div class="card-body scroll-x" id="admin-lb-list">Loading…</div>
+        </div>
+      </div>
+
+      <!-- EXPORT -->
+      <div class="page-panel" id="panel-export">
+        <div class="page-header"><div class="page-title">Export <span>/ Backup</span></div></div>
+        <div class="export-section">
+          <div class="export-card">
+            <h4>Full data export (JSON)</h4>
+            <p>All matches, predictions, scores, penalties, players. Structured JSON.</p>
+            <button class="btn btn-accent" onclick="downloadExport()">↓ Download JSON</button>
+          </div>
+          <div class="export-card">
+            <h4>Leaderboard CSV</h4>
+            <p>Net points leaderboard, ready to paste into Google Sheets.</p>
+            <button class="btn btn-outline" onclick="downloadLeaderboardCSV()">↓ Download CSV</button>
+          </div>
+          <div class="export-card">
+            <h4>Google Sheets push</h4>
+            <p>Auto-sync all data to your Google Sheet via Apps Script webhook. Configure the URL below once.</p>
+            <input class="form-input" id="sheets-webhook-url" type="url" placeholder="https://script.google.com/..." style="margin-bottom:10px;font-size:12px">
+            <button class="btn btn-green" onclick="pushToSheets()">↑ Push to Sheets</button>
+          </div>
+          <div class="export-card">
+            <h4>Google Forms webhook</h4>
+            <p>Paste this URL in your Google Forms → Apps Script to forward submissions here.</p>
+            <div id="forms-webhook-url" style="font-family:var(--font-m);font-size:11px;background:var(--bg);padding:8px;border-radius:var(--r);word-break:break-all;color:var(--blue)"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AUDIT -->
+      <div class="page-panel" id="panel-audit">
+        <div class="page-header">
+          <div class="page-title">Audit Log</div>
+          <button class="btn btn-outline btn-sm" onclick="loadAudit()">↺ Refresh</button>
+        </div>
+        <div class="card">
+          <div class="card-body scroll-x" id="audit-list">Loading…</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ADD MATCH MODAL -->
+<div class="modal-overlay" id="modal-match">
+  <div class="modal">
+    <h3 id="modal-match-title">Add match</h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Match number</label>
+        <input type="number" id="m-num" placeholder="e.g. 1">
+      </div>
+      <div class="form-group">
+        <label>Match title</label>
+        <input type="text" id="m-title" placeholder="India vs Pakistan">
+      </div>
+      <div class="form-group">
+        <label>Team A</label>
+        <input type="text" id="m-team-a" placeholder="India">
+      </div>
+      <div class="form-group">
+        <label>Team B</label>
+        <input type="text" id="m-team-b" placeholder="Pakistan">
+      </div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label>Match time (local — will be stored as UTC)</label>
+        <input type="datetime-local" id="m-time">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modal-match')">Cancel</button>
+      <button class="btn btn-accent" onclick="saveMatch()">Save match</button>
+    </div>
+  </div>
+</div>
+
+<!-- ENTER RESULT MODAL -->
+<div class="modal-overlay" id="modal-result">
+  <div class="modal">
+    <h3 id="result-modal-title">Enter result</h3>
+    <div id="result-odds-preview"></div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Select the winning team:</p>
+    <div style="display:flex;gap:12px">
+      <button class="btn btn-outline" style="flex:1;justify-content:center;font-size:15px" id="result-btn-a" onclick="submitResult('a')">–</button>
+      <button class="btn btn-outline" style="flex:1;justify-content:center;font-size:15px" id="result-btn-b" onclick="submitResult('b')">–</button>
+    </div>
+    <div class="modal-actions" style="margin-top:14px">
+      <button class="btn btn-outline" onclick="closeModal('modal-result')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD PLAYER MODAL -->
+<div class="modal-overlay" id="modal-player">
+  <div class="modal">
+    <h3>Add / update player</h3>
+    <div class="form-grid wide">
+      <div class="form-group">
+        <label>Display name</label>
+        <input type="text" id="p-name" placeholder="Rahul Sharma">
+      </div>
+      <div class="form-group">
+        <label>Primary email</label>
+        <input type="email" id="p-email" placeholder="rahul@email.com">
+      </div>
+      <div class="form-group">
+        <label>Alias emails (comma-separated)</label>
+        <input type="text" id="p-aliases" placeholder="other@email.com, another@email.com">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modal-player')">Cancel</button>
+      <button class="btn btn-accent" onclick="savePlayer()">Save player</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD ALIAS MODAL -->
+<div class="modal-overlay" id="modal-alias">
+  <div class="modal">
+    <h3>Map alias email</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">
+      Any vote from the alias email will be counted against the primary player's account.
+    </p>
+    <div class="form-grid wide">
+      <div class="form-group">
+        <label>Alias email (the duplicate)</label>
+        <input type="email" id="alias-email" placeholder="other@email.com">
+      </div>
+      <div class="form-group">
+        <label>Primary email (the real player)</label>
+        <input type="email" id="alias-primary" placeholder="real@email.com">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modal-alias')">Cancel</button>
+      <button class="btn btn-accent" onclick="saveAlias()">Save mapping</button>
+    </div>
+  </div>
+</div>
+
+<div id="admin-toast"></div>
+
+<script>
+const API = 'https://predictor-league-api.YOUR_SUBDOMAIN.workers.dev';
+let authToken = '', allMatches = [], resultTarget = null;
+
+// ── AUTH ──────────────────────────────────────────────────────────────────────
+function doLogin() {
+  const path = document.getElementById('login-path').value.trim();
+  const pass  = document.getElementById('login-pass').value.trim();
+  if (!path || !pass) { showLoginErr('Fill both fields.'); return; }
+  authToken = btoa(`${path}:${pass}`);
+  // Verify by calling a protected endpoint
+  fetch(`${API}/api/admin/players`, { headers: { Authorization: 'Bearer ' + authToken } })
+    .then(r => {
+      if (r.ok) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app').classList.add('visible');
+        localStorage.setItem('pl_admin_token', authToken);
+        initApp();
+      } else {
+        showLoginErr('Invalid credentials.');
+        authToken = '';
+      }
+    }).catch(() => showLoginErr('Network error.'));
+}
+function showLoginErr(msg) {
+  const e = document.getElementById('login-err');
+  e.textContent = msg; e.style.display = 'block';
+}
+function logout() {
+  authToken = ''; localStorage.removeItem('pl_admin_token');
+  location.reload();
+}
+
+document.getElementById('login-pass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+// Auto-login if token stored
+window.addEventListener('DOMContentLoaded', () => {
+  const stored = localStorage.getItem('pl_admin_token');
+  if (stored) {
+    authToken = stored;
+    fetch(`${API}/api/admin/players`, { headers: { Authorization: 'Bearer ' + authToken } })
+      .then(r => {
+        if (r.ok) {
+          document.getElementById('login-screen').style.display = 'none';
+          document.getElementById('app').classList.add('visible');
+          initApp();
+        } else {
+          localStorage.removeItem('pl_admin_token');
+          authToken = '';
+        }
+      }).catch(() => {});
+  }
+});
+
+function initApp() {
+  loadDashboard();
+  loadMatches();
+  document.getElementById('forms-webhook-url').textContent =
+    `${API}/api/admin/google-forms-webhook`;
+}
+
+// ── FETCH HELPER ──────────────────────────────────────────────────────────────
+async function api(path, opts = {}) {
+  const res = await fetch(`${API}${path}`, {
+    ...opts,
+    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + authToken, ...(opts.headers || {}) },
+  });
+  if (!res.ok) {
+    const d = await res.json().catch(() => ({}));
+    throw new Error(d.error || `HTTP ${res.status}`);
+  }
+  return res.json();
+}
+
+// ── TOAST ──────────────────────────────────────────────────────────────────────
+function toast(msg, type = 'ok') {
+  const t = document.getElementById('admin-toast');
+  t.textContent = msg; t.className = 'show ' + type;
+  setTimeout(() => t.className = '', 3200);
+}
+
+// ── PANEL NAV ──────────────────────────────────────────────────────────────────
+function showPanel(id) {
+  document.querySelectorAll('.page-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+  const loaders = { results: loadResultMatches, players: loadPlayers, emailmap: loadEmailMap,
+                    leaderboard: loadAdminLeaderboard, audit: loadAudit, predictions: loadPredMatchSelect };
+  if (loaders[id]) loaders[id]();
+}
+
+// ── MODAL ──────────────────────────────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────────────
+async function loadDashboard() {
+  try {
+    const [ms, players, lb] = await Promise.all([
+      api('/api/matches'),
+      api('/api/admin/players'),
+      api('/api/leaderboard'),
+    ]);
+    document.getElementById('stat-matches').textContent   = ms.length;
+    document.getElementById('stat-players').textContent   = players.length;
+    document.getElementById('stat-open').textContent      = ms.filter(m => m.status === 'open').length;
+    document.getElementById('stat-resulted').textContent  = ms.filter(m => m.status === 'resulted').length;
+
+    const top10 = lb.slice(0, 10);
+    document.getElementById('dash-lb').innerHTML = top10.length
+      ? `<table class="admin-table">
+          <thead><tr><th>#</th><th>Player</th><th style="text-align:right">Net pts</th><th style="text-align:right">Played</th></tr></thead>
+          <tbody>${top10.map(p => `<tr>
+            <td class="mono">${p.rank}</td>
+            <td>${p.display_name}<br><span style="color:var(--muted);font-size:11px">${p.primary_email}</span></td>
+            <td style="text-align:right;font-family:var(--font-m);font-weight:600;color:${p.net_points >= 0 ? 'var(--green)' : 'var(--red)'}">${p.net_points}</td>
+            <td style="text-align:right;color:var(--muted)">${p.matches_played}</td>
+          </tr>`).join('')}</tbody>
+        </table>`
+      : '<p style="color:var(--muted)">No results yet.</p>';
+  } catch(e) { toast(e.message, 'err'); }
+}
+
+// ── MATCHES ───────────────────────────────────────────────────────────────────
+async function loadMatches() {
+  try {
+    allMatches = await api('/api/matches');
+    renderMatchesList();
+  } catch(e) { toast(e.message, 'err'); }
+}
+
+function renderMatchesList() {
+  const el = document.getElementById('matches-list');
+  if (!allMatches.length) { el.innerHTML = '<p style="color:var(--muted)">No matches. Add one.</p>'; return; }
+  el.innerHTML = allMatches.map(m => `
+    <div class="match-row">
+      <span class="m-num mono">M${m.match_number}</span>
+      <div class="m-title">${m.title}</div>
+      <span class="m-time mono">${fmtT(m.match_time)}</span>
+      <span class="status-badge s-${m.status}">${m.status}</span>
+      <div class="m-actions">
+        ${m.status === 'upcoming' ? `<button class="btn btn-sm btn-green" onclick="openMatch(${m.id})">Open</button>` : ''}
+        ${m.status === 'open'     ? `<button class="btn btn-sm btn-amber" onclick="closeMatch(${m.id})">Close</button>` : ''}
+        ${m.status === 'closed'   ? `<button class="btn btn-sm btn-accent" onclick="openResultModal(${m.id})">Result</button>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+function fmtT(iso) {
+  return new Date(iso).toLocaleString('en-IN', {
+    day:'numeric', month:'short', hour:'2-digit', minute:'2-digit', timeZone:'Asia/Kolkata'
+  }) + ' IST';
+}
+
+function openAddMatch() {
+  document.getElementById('modal-match-title').textContent = 'Add match';
+  ['m-num','m-title','m-team-a','m-team-b','m-time'].forEach(id => document.getElementById(id).value = '');
+  openModal('modal-match');
+}
+
+async function saveMatch() {
+  const num   = document.getElementById('m-num').value;
+  const title = document.getElementById('m-title').value.trim();
+  const ta    = document.getElementById('m-team-a').value.trim();
+  const tb    = document.getElementById('m-team-b').value.trim();
+  const time  = document.getElementById('m-time').value;
+  if (!num || !title || !ta || !tb || !time) { toast('Fill all fields', 'err'); return; }
+  try {
+    const iso = new Date(time).toISOString();
+    await api('/api/admin/matches', { method: 'POST', body: JSON.stringify({ match_number:+num, title, team_a:ta, team_b:tb, match_time:iso }) });
+    closeModal('modal-match');
+    toast('Match created');
+    await loadMatches();
+  } catch(e) { toast(e.message, 'err'); }
+}
+
+async function openMatch(id) {
+  try {
+    await api(`/api/admin/matches/${id}/open`, { method: 'POST' });
+    toast('Match opened for predictions'); await loadMatches();
+  } catch(e) { toast(e.message, 'err'); }
+}
+
+async function closeMatch(id) {
+  try {
+    const d = await api(`/api/admin/matches/${id}/close`, { method: 'POST' });
+    toast(`Match closed. Odds frozen: ${d.odds?.team_a} ${d.odds?.team_a_odds}x / ${d.odds?.team_b} ${d.odds?.team_b_odds}x`);
+    await loadMatches();
+  } catch(e) { toast(e.message, 'err'); }
+}
+
+// ── RESULTS ───────────────────────────────────────────────────────────────────
+async function loadResultMatches() {
+  try {
+    const ms = await api('/api/matches');
+    const closed = ms.filter(m => m.status === 'closed');
+    const el = document.getElementById('results-list');
+    if (!closed.length) { el.innerHTML = '<p style="color:var(--muted)">No matches awaiting result.</p>'; return; }
+    el.innerHTML = closed.map(m => `
+      <div class="match-row">
+        <span class="m-num mono">M${m.match_number}</span>
+        <div class="m-title">${m.title}</div>
+        <span class="status-badge s-closed">closed</span>
+        <div class="m-actions">
+          <button class="btn btn-sm btn-accent" onclick="openResultModal(${m.id})">Enter result</button>
+        </div>
+      </div>`).join('');
+  } catch(e) { toast(e.message, 'err'); }
+}
+
+async function openResultModal(matchId) {
+  const match = allMatches.find(m => m.id === matchId) || (await api('/api/matches').then(ms => ms.find(m => m.id === matchId)));
+  resultTarget = match;
+  document.getElementById('result-modal-title').textContent = `Result — ${match.title}`;
+  document.getElementById('result-btn-a').textContent = match.team_a;
+  document.getElementById('result-btn-b').textContent = match.team_b;
+
+  // Show odds
+  try {
+    const odds = await api(`/api/matches/${matchId}/odds`);
+    document.getElementById('result-odds-preview').innerHTML = `
+      <div class="odds-display">
+        <div class="odds-team">
+          <div class="name">${match.team_a}</div>
+          <div class="votes">${odds.team_a_votes ?? 0} votes</div>
+          <div class="odds-val">${odds.team_a_odds ?? '–'}x</div>
+        </div>
+        <div class="odds-team">
+          <div class="name">${match.team_b}</div>
+          <div class="votes">${odds.team_b_votes ?? 0} votes</div>
+          <div class="odds-val">${odds.team_b_odds ?? '–'}x</div>
+        </div>
+      </div>`;
+  } catch {}
+  openModal('modal-result');
+}
+
+async function submitResult(side) {
+  if (!resultTarget) return;
+  const winner = side === 'a' ? resultTarget.team_a : resultTarget.team_b;
+  try {
+    await api(`/api/admin/matches/${resultTarget.id}/result`, {
+      method: 'POST', body: JSON.stringify({ winner })
+    });
+    closeModal('modal-result');
+    toast(`Result entered: ${winner} wins. Leaderboard updated.`);
+    await loadMatches(); await loadDashboard();
+  } catch(e) { toast(e.message, 'err'); }
+}
+
+// ── PLAYERS ───────────────────────────────────────────────────────────────────
+async function loadPlayers() {
+  const el = document.getElementById('players-list');
+  try {
+    const rows = await api('/api/admin/players');
+    el.innerHTML = rows.length
+      ? `<table class="admin-table">
+          <thead><tr><th>Name</th><th>Primary email</th><th>First match</th><th>All emails</th><th></th></tr></thead>
+          <tbody>${rows.map(p => `<tr>
+            <td style="font-weight:500">${p.display_name}</td>
+            <td class="mono">${p.primary_email}</td>
+            <td class="mono">${p.first_match_num ?? '–'}</td>
+            <td class="mono" style="font-size:11px;color:var(--muted)">${p.all_emails || p.primary_email}</td>
+            <td><button class="btn btn-sm btn-outline" onclick="editPlayerName('${p.primary_email}', '${p.display_name}')">Rename</button></td>
+          </tr>`).join('')}</tbody>
+        </table>`
+      : '<p style="color:var(--muted)">No players yet.</p>';
+  } catch(e) { toast(e.message, 'err'); }
+}
+
+function openAddPlayer() {
+  ['p-name','p-email','p-aliases'].forEach(id => document.getElementById(id).value = '');
+  openModal('modal-player');
+}
+
+async function savePlayer() {
+  const name    = document.getElementById('p-name').value.trim();
+  const email   = document.getElementById('p-email').value.trim().toLowerCase();
+  const aliases = document.getElementById('p-aliases').value.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+  if (!name || !email) { toast('Fill name and email', 'err'); return; }
+  try {
+    await api('/api/admin/players', { method: 'POST', body: JSON.stringify({ display_name:name, primary_email:email, alias_emails:aliases }) });
+    closeModal('modal-player');
+    toast('Player saved');
+    loadPlayers();
+  } catch(e) { toast(e.message, 'err'); }
+}
+
+async function editPlayerName(email, current) {
+  const name = prompt(`New display name for ${email}:`, current);
+  if (!name) return;
+  try {
+    await api(`/api/admin/players/${encodeURIComponent(email)}/name`, {
+      method: 'PUT', body: JSON.stringify({ display_name: name })
+    });
+    toast('Name updated'); loadPlayers();
+  } catch(e) { toast(e.message, 'err'); }
+}
+
+// ── EMAIL MAP ──────────────────────────────────────────────────────────────────
+async function loadEmailMap() {
+  const el = document.getElementById('emailmap-list');
+  try {
+    const rows = await api('/api/admin/email-map');
+    el.innerHTML = rows.length
+      ? `<table class="admin-table">
+          <thead><tr><th>Alias email</th><th>→ Primary email</th></tr></thead>
+          <tbody>${rows.map(r => `<tr>
+            <td class="mono">${r.alias_email}</td>
+            <td class="mono">${r.primary_email}</td>
+          </tr>`).join('')}</tbody>
+        </table>`
+      : '<p style="color:var(--muted)">No mappings yet.</p>';
+  } catch(e) { toast(e.message, 'err'); }
+}
+
+function openAddAlias() {
+  ['alias-email','alias-primary'].forEach(id => document.getElementById(id).value = '');
+  openModal('modal-alias');
+}
+
+async function saveAlias() {
+  const alias   = document.getElementById('alias-email').value.trim().toLowerCase();
+  const primary = document.getElementById('alias-primary').value.trim().toLowerCase();
+  if (!alias || !primary) { toast('Fill both emails', 'err'); return; }
+  try {
+    await api('/api/admin/email-map', { method: 'POST', body: JSON.stringify({ alias_email:alias, primary_email:primary }) });
+    closeModal('modal-alias');
+    toast('Alias mapped'); loadEmailMap();
+  } catch(e) { toast(e.message, 'err'); }
+}
+
+// ── PREDICTIONS ───────────────────────────────────────────────────────────────
+function loadPredMatchSelect() {
+  const sel = document.getElementById('pred-match-select');
+  sel.innerHTML = allMatches.map(m => `<option value="${m.id}">M${m.match_number} — ${m.title} (${m.status})</option>`).join('');
+}
+
+async function loadMatchPredictions() {
+  const matchId = document.getElementById('pred-match-select').value;
+  const el = document.getElementById('predictions-list');
+  el.innerHTML = '<p style="color:var(--muted)">Loading…</p>';
+  try {
+    const [preds, odds] = await Promise.all([
+      api(`/api/admin/matches/${matchId}/predictions`),
+      api(`/api/matches/${matchId}/odds`),
+    ]);
+    const match = allMatches.find(m => m.id == matchId);
+
+    document.getElementById('pred-odds-display').innerHTML = match ? `
+      <div class="odds-display" style="margin-bottom:14px">
+        <div class="odds-team">
+          <div class="name">${match.team_a}</div>
+          <div class="votes">${odds.team_a_votes ?? 0} votes</div>
+          <div class="odds-val">${odds.team_a_odds ?? '–'}x</div>
+        </div>
+        <div class="odds-team">
+          <div class="name">${match.team_b}</div>
+          <div class="votes">${odds.team_b_votes ?? 0} votes</div>
+          <div class="odds-val">${odds.team_b_odds ?? '–'}x</div>
+        </div>
+      </div>` : '';
+
+    const valid = preds.filter(p => p.is_valid == 1);
+    const dupes = preds.filter(p => p.is_valid == 0);
+    el.innerHTML = `
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">${valid.length} valid vote(s) · ${dupes.length} duplicate attempt(s) blocked</p>
+      <table class="admin-table">
+        <thead><tr><th>Player</th><th>Email</th><th>Prediction</th><th>Submitted</th><th>Valid</th></tr></thead>
+        <tbody>${preds.map(p => `<tr>
+          <td>${p.display_name || '–'}</td>
+          <td class="mono">${p.raw_email}</td>
+          <td style="font-weight:${p.is_valid ? 600 : 400};color:${p.is_valid ? 'var(--text)' : 'var(--muted)'}">${p.predicted_team}</td>
+          <td class="mono" style="font-size:11px">${new Date(p.submitted_at).toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})}</td>
+          <td style="color:${p.is_valid ? 'var(--green)' : 'var(--red)'}">${p.is_valid ? '✓' : '✗ ' + (p.invalid_reason||'')}</td>
+        </tr>`).join('')}</tbody>
+      </table>`;
+  } catch(e) { toast(e.message, 'err'); }
+}
+
+// ── ADMIN LEADERBOARD ─────────────────────────────────────────────────────────
+async function loadAdminLeaderboard() {
+  const el = document.getElementById('admin-lb-list');
+  try {
+    const lb = await api('/api/leaderboard');
+    el.innerHTML = lb.length
+      ? `<table class="admin-table">
+          <thead><tr><th>#</th><th>Player</th><th style="text-align:right">Gross</th><th style="text-align:right">Penalties</th><th style="text-align:right">Net</th><th style="text-align:right">Played</th><th style="text-align:right">Correct</th></tr></thead>
+          <tbody>${lb.map(p => `<tr>
+            <td class="mono">${p.rank}</td>
+            <td>${p.display_name}<br><span style="color:var(--muted);font-size:11px">${p.primary_email}</span></td>
+            <td style="text-align:right;font-family:var(--font-m)">${p.gross_points}</td>
+            <td style="text-align:right;font-family:var(--font-m);color:${p.penalties < 0 ? 'var(--red)' : 'var(--muted)'}">${p.penalties}</td>
+            <td style="text-align:right;font-family:var(--font-m);font-weight:600;color:${p.net_points >= 0 ? 'var(--green)' : 'var(--red)'}">${p.net_points}</td>
+            <td style="text-align:right;color:var(--muted)">${p.matches_played}</td>
+            <td style="text-align:right;color:var(--muted)">${p.correct_predictions}</td>
+          </tr>`).join('')}</tbody>
+        </table>`
+      : '<p style="color:var(--muted)">No data yet.</p>';
+  } catch(e) { toast(e.message, 'err'); }
+}
+
+// ── AUDIT ──────────────────────────────────────────────────────────────────────
+async function loadAudit() {
+  const el = document.getElementById('audit-list');
+  try {
+    const rows = await api('/api/admin/audit');
+    el.innerHTML = rows.length
+      ? `<table class="admin-table">
+          <thead><tr><th>Time</th><th>Action</th><th>Actor</th><th>Entity</th><th>Details</th></tr></thead>
+          <tbody>${rows.map(r => `<tr>
+            <td class="mono" style="font-size:11px">${new Date(r.created_at).toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})}</td>
+            <td class="mono">${r.action}</td>
+            <td class="mono">${r.actor}</td>
+            <td class="mono">${r.entity || ''} ${r.entity_id || ''}</td>
+            <td style="font-size:12px;color:var(--muted)">${r.details || ''}</td>
+          </tr>`).join('')}</tbody>
+        </table>`
+      : '<p style="color:var(--muted)">No log entries.</p>';
+  } catch(e) { toast(e.message, 'err'); }
+}
+
+// ── EXPORT ─────────────────────────────────────────────────────────────────────
+async function downloadExport() {
+  try {
+    const data = await api('/api/admin/export');
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url;
+    a.download = `predictor-export-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    toast('Export downloaded');
+  } catch(e) { toast(e.message, 'err'); }
+}
+
+async function downloadLeaderboardCSV() {
+  try {
+    const lb = await api('/api/leaderboard');
+    const headers = ['Rank','Name','Email','Gross','Penalties','Net','Played','Correct'];
+    const rows = lb.map(p => [p.rank, p.display_name, p.primary_email, p.gross_points, p.penalties, p.net_points, p.matches_played, p.correct_predictions]);
+    const csv = [headers, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url;
+    a.download = `leaderboard-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    toast('CSV downloaded');
+  } catch(e) { toast(e.message, 'err'); }
+}
+
+async function pushToSheets() {
+  const webhookUrl = document.getElementById('sheets-webhook-url').value.trim();
+  if (!webhookUrl) { toast('Enter your Apps Script webhook URL', 'err'); return; }
+  try {
+    const data = await api('/api/admin/export');
+    await fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    toast('Data pushed to Google Sheets');
+  } catch(e) { toast('Failed to push: ' + e.message, 'err'); }
+}
+</script>
+</body>
+</html>
