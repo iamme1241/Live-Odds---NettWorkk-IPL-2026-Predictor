@@ -3,166 +3,299 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin — Predictor League</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>NettWorkk Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#f7f6f2;--surface:#fff;--card:#fafaf8;--border:#e2e0d8;
-  --accent:#1a1a2e;--green:#16703c;--red:#b91c1c;--amber:#92400e;
-  --blue:#1d4ed8;--purple:#6d28d9;
-  --text:#1a1a2e;--muted:#6b7280;
-  --font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;--r:6px;
+:root{
+  --bg:#0f1117;--surface:#181c27;--surface2:#1e2334;--surface3:#252a3d;
+  --border:#2a3050;--border2:#3a4168;
+  --accent:#6366f1;--accent2:#818cf8;
+  --green:#22c55e;--green-s:#0d2218;
+  --red:#ef4444;--red-s:#2d0d0d;
+  --amber:#f59e0b;--amber-s:#2a1d00;
+  --blue:#3b82f6;--blue-s:#0d1a2d;
+  --purple:#a855f7;--purple-s:#1e0d2d;
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#4b5563;
+  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+  --r:8px;--r2:12px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;min-height:100vh;line-height:1.5;}
+html,body{height:100%;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px;line-height:1.5;overflow:hidden;}
+button,input,select,textarea{font-family:var(--font);}
+button{cursor:pointer;}
+a{color:var(--accent2);text-decoration:none;}
 
-/* LOGIN */
-#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--accent);}
-.login-box{background:var(--surface);border-radius:12px;padding:40px;width:360px;}
-.login-logo{font-family:var(--mono);font-size:20px;font-weight:600;margin-bottom:6px;}
-.login-sub{color:var(--muted);font-size:13px;margin-bottom:28px;}
-.form-label{display:block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
-.form-input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);color:var(--text);font-family:var(--mono);font-size:14px;outline:none;transition:border-color .15s;margin-bottom:14px;}
-.form-input:focus{border-color:var(--accent);}
-.btn-primary{width:100%;padding:11px;background:var(--accent);color:#fff;border:none;border-radius:var(--r);font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;transition:opacity .15s;}
-.btn-primary:hover{opacity:.88;}
-.login-err{color:var(--red);font-size:12px;margin-top:8px;text-align:center;display:none;}
+/* ── LOGIN ── */
+#login-screen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 50% 0%,#1a1f35 0%,var(--bg) 70%);
+}
+.login-box{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:40px;width:380px;
+  box-shadow:0 25px 80px rgba(0,0,0,.5);
+}
+.login-logo{
+  font-family:var(--mono);font-size:18px;font-weight:500;
+  color:var(--accent2);letter-spacing:.1em;margin-bottom:4px;
+}
+.login-sub{color:var(--text3);font-size:12px;margin-bottom:28px;}
+.field-label{display:block;font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+.field-input{
+  width:100%;padding:10px 13px;
+  background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);
+  color:var(--text);font-family:var(--mono);font-size:13px;outline:none;
+  transition:border-color .15s;margin-bottom:14px;
+}
+.field-input:focus{border-color:var(--accent);}
+.field-input::placeholder{color:var(--text3);}
+.login-btn{
+  width:100%;padding:11px;background:var(--accent);color:#fff;border:none;
+  border-radius:var(--r);font-size:14px;font-weight:500;cursor:pointer;
+  transition:opacity .15s;letter-spacing:.02em;
+}
+.login-btn:hover{opacity:.88;}
+.login-err{color:var(--red);font-size:12px;margin-top:10px;text-align:center;display:none;}
 
-/* SHELL */
-#app{display:none;min-height:100vh;flex-direction:row;}
-#app.visible{display:flex;}
-aside{width:220px;flex-shrink:0;background:var(--accent);display:flex;flex-direction:column;padding:0;position:sticky;top:0;height:100vh;overflow-y:auto;}
-.aside-logo{padding:20px 20px 16px;font-family:var(--mono);font-size:16px;font-weight:600;color:rgba(255,255,255,.9);border-bottom:1px solid rgba(255,255,255,.1);}
-.aside-logo span{color:rgba(255,255,255,.4);font-weight:400;}
-.aside-section{padding:8px 8px 2px;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);padding-left:20px;margin-top:8px;}
-.aside-nav{flex:1;padding:4px 8px;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--r);color:rgba(255,255,255,.5);font-size:13px;font-weight:500;cursor:pointer;transition:all .12s;border:none;background:none;width:100%;text-align:left;}
-.nav-item:hover{color:#fff;background:rgba(255,255,255,.08);}
-.nav-item.active{color:#fff;background:rgba(255,255,255,.14);}
-.nav-icon{font-size:14px;flex-shrink:0;}
-.aside-footer{padding:12px 8px;border-top:1px solid rgba(255,255,255,.1);}
-.aside-footer button{width:100%;padding:8px 12px;background:none;border:1px solid rgba(255,255,255,.15);border-radius:var(--r);color:rgba(255,255,255,.5);font-family:var(--font);font-size:12px;cursor:pointer;transition:all .12s;}
-.aside-footer button:hover{color:#fff;border-color:rgba(255,255,255,.3);}
+/* ── LAYOUT ── */
+#app{display:none;height:100vh;flex-direction:row;}
+#app.on{display:flex;}
+aside{
+  width:228px;flex-shrink:0;background:var(--surface);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;height:100vh;overflow-y:auto;
+}
+aside::-webkit-scrollbar{width:3px;}
+aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.aside-header{
+  padding:18px 16px 14px;
+  border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.aside-brand{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--accent2);letter-spacing:.08em;}
+.aside-sub{font-size:10px;color:var(--text3);margin-top:2px;}
+.aside-nav{flex:1;padding:8px;}
+.nav-section{
+  font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text3);padding:12px 10px 4px;
+}
+.nav-btn{
+  display:flex;align-items:center;gap:9px;width:100%;
+  padding:8px 10px;border:none;background:none;
+  color:var(--text2);font-size:12px;font-weight:400;
+  border-radius:var(--r);transition:all .12s;text-align:left;
+  cursor:pointer;
+}
+.nav-btn:hover{background:var(--surface2);color:var(--text);}
+.nav-btn.active{background:rgba(99,102,241,.12);color:var(--accent2);}
+.nav-icon{font-size:13px;width:16px;flex-shrink:0;text-align:center;}
+.aside-footer{padding:12px;border-top:1px solid var(--border);}
+.signout-btn{
+  width:100%;padding:7px;background:none;border:1px solid var(--border);
+  border-radius:var(--r);color:var(--text3);font-size:11px;cursor:pointer;
+  transition:all .12s;
+}
+.signout-btn:hover{border-color:var(--red);color:var(--red);}
 
-/* CONTENT */
-.content{flex:1;overflow-y:auto;}
-.content-inner{max-width:980px;margin:0 auto;padding:28px;}
-.page-panel{display:none;}
-.page-panel.active{display:block;}
-.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:10px;}
-.page-title{font-size:20px;font-weight:600;letter-spacing:-.01em;}
-.page-title span{color:var(--muted);font-weight:400;}
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;height:100vh;}
+.content::-webkit-scrollbar{width:4px;}
+.content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.inner{max-width:1080px;margin:0 auto;padding:28px 24px;}
+.panel{display:none;}
+.panel.on{display:block;}
+.page-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;margin-bottom:24px;
+}
+.page-title{font-size:18px;font-weight:600;letter-spacing:-.02em;color:var(--text);}
+.page-title small{color:var(--text3);font-weight:400;font-size:13px;margin-left:8px;}
 
-/* BUTTONS */
-.btn{padding:8px 16px;border-radius:var(--r);font-family:var(--font);font-size:13px;font-weight:500;cursor:pointer;transition:all .13s;border:none;outline:none;display:inline-flex;align-items:center;gap:6px;}
-.btn-sm{padding:5px 10px;font-size:12px;}
+/* ── BUTTONS ── */
+.btn{
+  padding:7px 14px;border-radius:var(--r);font-size:12px;font-weight:500;
+  border:none;cursor:pointer;transition:opacity .13s;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.btn:hover{opacity:.85;}
+.btn:disabled{opacity:.35;cursor:not-allowed;}
 .btn-accent{background:var(--accent);color:#fff;}
-.btn-accent:hover{opacity:.88;}
 .btn-green{background:var(--green);color:#fff;}
-.btn-green:hover{opacity:.88;}
 .btn-red{background:var(--red);color:#fff;}
-.btn-red:hover{opacity:.88;}
-.btn-amber{background:var(--amber);color:#fff;}
-.btn-purple{background:var(--purple);color:#fff;}
-.btn-purple:hover{opacity:.88;}
-.btn-outline{background:none;border:1px solid var(--border);color:var(--text);}
-.btn-outline:hover{border-color:var(--accent);color:var(--accent);}
-.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn-amber{background:var(--amber);color:#000;}
+.btn-outline{background:transparent;border:1px solid var(--border2);color:var(--text2);}
+.btn-outline:hover{border-color:var(--text);color:var(--text);}
+.btn-ghost{background:transparent;border:none;color:var(--text3);padding:5px 8px;font-size:11px;}
+.btn-ghost:hover{color:var(--text);}
+.btn-sm{padding:4px 10px;font-size:11px;}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;}
 
-/* CARD */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:14px;}
-.card-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);}
-.card-title{font-weight:600;font-size:14px;}
-.card-body{padding:18px;}
+/* ── CARDS ── */
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r2);margin-bottom:16px;overflow:hidden;
+}
+.card-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;border-bottom:1px solid var(--border);
+}
+.card-title{font-size:13px;font-weight:500;color:var(--text);}
+.card-body{padding:16px 18px;}
 
-/* MATCH LIST */
-.match-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;}
-.match-row:last-child{border-bottom:none;}
-.m-num{font-family:var(--mono);font-size:11px;color:var(--muted);width:44px;flex-shrink:0;}
-.m-title{flex:1;font-weight:500;font-size:13px;min-width:120px;}
-.m-time{font-family:var(--mono);font-size:11px;color:var(--muted);}
-.status-badge{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:20px;flex-shrink:0;}
-.s-upcoming{background:#f3f4f6;color:#6b7280;}
-.s-open{background:#fef3c7;color:#92400e;}
-.s-closed{background:#e0e7ff;color:#3730a3;}
-.s-resulted{background:#dcfce7;color:#166534;}
-.m-actions{display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap;}
+/* ── STATS ── */
+.stats-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+  gap:12px;margin-bottom:20px;
+}
+.stat{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r2);padding:16px;
+}
+.stat-val{font-family:var(--mono);font-size:26px;font-weight:500;margin-bottom:2px;}
+.stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);}
 
-/* TABLE */
-.admin-table{width:100%;border-collapse:collapse;font-size:13px;}
-.admin-table th{text-align:left;padding:8px 10px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);}
-.admin-table td{padding:10px 10px;border-bottom:1px solid rgba(226,224,216,.6);vertical-align:middle;}
-.admin-table tr:last-child td{border-bottom:none;}
-.admin-table tr:hover td{background:rgba(0,0,0,.012);}
-.mono{font-family:var(--mono);font-size:12px;}
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.tbl th{
+  text-align:left;padding:8px 12px;
+  font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text3);border-bottom:1px solid var(--border);
+  background:var(--surface2);
+}
+.tbl td{padding:10px 12px;border-bottom:1px solid rgba(42,48,80,.5);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:rgba(255,255,255,.02);}
+.tbl .mono{font-family:var(--mono);font-size:11px;}
+.num{text-align:right;}
+
+/* STATUS BADGES */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 8px;border-radius:20px;
+  font-size:10px;font-weight:500;letter-spacing:.04em;
+}
+.b-upcoming{background:rgba(75,85,99,.2);color:#9ca3af;border:1px solid #374151;}
+.b-open{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.3);}
+.b-open::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1s infinite;}
+.b-closed{background:rgba(245,158,11,.1);color:var(--amber);border:1px solid rgba(245,158,11,.3);}
+.b-resulted{background:rgba(99,102,241,.1);color:var(--accent2);border:1px solid rgba(99,102,241,.3);}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
 /* FORM */
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.form-grid.wide{grid-template-columns:1fr;}
-.form-group{display:flex;flex-direction:column;}
-.form-group label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
-.form-group input,.form-group select,.form-group textarea{padding:9px 10px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);color:var(--text);font-family:var(--mono);font-size:13px;outline:none;transition:border-color .15s;}
-.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent);}
-.form-group textarea{resize:vertical;}
+.form-grid.w1{grid-template-columns:1fr;}
+.fg{display:flex;flex-direction:column;}
+.fg label{font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-bottom:5px;}
+.fg input,.fg select,.fg textarea{
+  padding:9px 11px;background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--r);color:var(--text);font-family:var(--mono);font-size:12px;outline:none;
+  transition:border-color .15s;
+}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent);}
+.fg textarea{resize:vertical;}
 
 /* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(26,26,46,.5);display:none;align-items:center;justify-content:center;z-index:200;}
-.modal-overlay.open{display:flex;}
-.modal{background:var(--surface);border-radius:12px;padding:28px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.15);}
-.modal h3{font-size:16px;font-weight:600;margin-bottom:20px;}
-.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;}
+.overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);
+  display:none;align-items:center;justify-content:center;z-index:500;
+}
+.overlay.on{display:flex;}
+.modal{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:26px;width:520px;max-width:95vw;max-height:90vh;
+  overflow-y:auto;box-shadow:0 40px 100px rgba(0,0,0,.6);
+}
+.modal::-webkit-scrollbar{width:3px;}
+.modal::-webkit-scrollbar-thumb{background:var(--border2);}
+.modal h3{font-size:15px;font-weight:600;margin-bottom:4px;}
+.modal .modal-sub{font-size:12px;color:var(--text3);margin-bottom:20px;}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;}
 
-/* STATS */
-.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-bottom:24px;}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;}
-.stat-val{font-family:var(--mono);font-size:26px;font-weight:600;margin-bottom:2px;}
-.stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+/* INFO BOXES */
+.info{background:var(--blue-s);border:1px solid rgba(59,130,246,.3);border-radius:var(--r);padding:10px 14px;font-size:12px;color:#93c5fd;line-height:1.6;margin-bottom:14px;}
+.warn{background:var(--amber-s);border:1px solid rgba(245,158,11,.3);border-radius:var(--r);padding:10px 14px;font-size:12px;color:#fcd34d;line-height:1.6;margin-bottom:14px;}
+.success-box{background:var(--green-s);border:1px solid rgba(34,197,94,.3);border-radius:var(--r);padding:10px 14px;font-size:12px;color:#86efac;line-height:1.6;margin-bottom:14px;}
 
 /* TOAST */
-#admin-toast{position:fixed;bottom:20px;right:20px;background:var(--accent);color:#fff;padding:11px 18px;border-radius:8px;font-size:13px;font-weight:500;z-index:999;transform:translateY(60px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);}
-#admin-toast.show{transform:translateY(0);opacity:1;}
-#admin-toast.err{background:var(--red);}
-#admin-toast.ok{background:var(--green);}
+#toast{
+  position:fixed;bottom:20px;right:20px;
+  padding:11px 18px;border-radius:var(--r);
+  font-size:12px;font-weight:500;z-index:999;
+  transform:translateY(60px);opacity:0;
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  max-width:360px;
+}
+#toast.on{transform:translateY(0);opacity:1;}
+#toast.ok{background:var(--green);color:#fff;}
+#toast.err{background:var(--red);color:#fff;}
+#toast.info{background:var(--accent);color:#fff;}
 
-/* ODDS */
-.odds-display{display:flex;gap:12px;margin:12px 0;}
-.odds-team{flex:1;padding:12px;border:1px solid var(--border);border-radius:var(--r);text-align:center;}
-.odds-team .name{font-size:13px;font-weight:600;margin-bottom:4px;}
-.odds-team .votes{font-size:11px;color:var(--muted);margin-bottom:6px;}
-.odds-team .odds-val{font-family:var(--mono);font-size:22px;font-weight:600;color:var(--blue);}
+/* ODDS PREVIEW */
+.odds-row{display:flex;gap:10px;margin:12px 0;}
+.odds-team{
+  flex:1;padding:12px;background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--r);text-align:center;
+}
+.odds-name{font-size:12px;font-weight:500;margin-bottom:3px;}
+.odds-votes{font-size:10px;color:var(--text3);margin-bottom:6px;}
+.odds-val{font-family:var(--mono);font-size:22px;font-weight:500;color:var(--accent2);}
 
-/* EXPORT */
-.export-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.export-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;}
-.export-card h4{font-size:14px;font-weight:600;margin-bottom:6px;}
-.export-card p{font-size:12px;color:var(--muted);margin-bottom:14px;}
+/* VARIATION CARD */
+.var-card{
+  background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);
+  padding:14px;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px;
+}
+.var-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.var-dot.on{background:var(--green);}
+.var-dot.off{background:var(--text3);}
+.var-info{flex:1;}
+.var-name{font-size:13px;font-weight:500;margin-bottom:3px;}
+.var-desc{font-size:11px;color:var(--text3);}
+.var-type-pill{
+  font-family:var(--mono);font-size:9px;background:var(--surface3);
+  border:1px solid var(--border);border-radius:4px;padding:1px 5px;margin-left:6px;color:var(--text3);
+}
 
-/* VARIATION CARDS */
-.variation-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px;}
-.v-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px;}
-.v-dot.active{background:var(--green);}
-.v-dot.inactive{background:var(--muted);}
-.v-info{flex:1;}
-.v-name{font-weight:600;font-size:14px;margin-bottom:3px;}
-.v-desc{font-size:12px;color:var(--muted);}
-.v-type{font-family:var(--mono);font-size:10px;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:1px 6px;margin-left:8px;}
-
-/* HISTORY LEADERBOARD */
-.lb-filter-row{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;}
-.lb-filter-row input{padding:8px 12px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);font-family:var(--mono);font-size:13px;outline:none;}
-.lb-filter-row input:focus{border-color:var(--accent);}
+/* INSIGHTS */
+.insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+@media(max-width:700px){.insight-grid{grid-template-columns:1fr;}}
+.insight-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:16px;}
+.insight-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px;}
+.streak-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);}
+.streak-row:last-child{border-bottom:none;}
+.streak-name{font-size:12px;font-weight:500;}
+.streak-val{font-family:var(--mono);font-size:14px;color:var(--amber);font-weight:500;}
+.upset-row{padding:6px 0;border-bottom:1px solid var(--border);}
+.upset-row:last-child{border-bottom:none;}
+.upset-match{font-size:12px;font-weight:500;}
+.upset-pct{font-family:var(--mono);font-size:11px;color:var(--red);}
+.compare-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);}
+.compare-row:last-child{border-bottom:none;}
+.compare-match{font-size:11px;color:var(--text3);width:80px;flex-shrink:0;}
+.compare-bar-wrap{flex:1;display:flex;gap:4px;align-items:center;}
+.compare-bar{height:14px;border-radius:3px;min-width:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#fff;}
+.cbar-top{background:var(--accent);}
+.cbar-bot{background:var(--text3);}
+.compare-winner{font-size:10px;color:var(--green);font-weight:500;white-space:nowrap;}
 
 /* PROGRESS */
-.progress-wrap{margin-top:12px;}
-.progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:6px;}
-.progress-fill{height:100%;background:var(--green);border-radius:3px;transition:width .3s;}
-.progress-text{font-size:12px;color:var(--muted);font-family:var(--mono);}
+.prog-wrap{margin-top:12px;}
+.prog-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:6px;}
+.prog-fill{height:100%;background:var(--green);border-radius:2px;transition:width .3s;}
+.prog-txt{font-size:11px;color:var(--text3);font-family:var(--mono);}
 
+/* LOG */
+.log{
+  margin-top:10px;max-height:180px;overflow-y:auto;
+  background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);
+  padding:10px 14px;font-family:var(--mono);font-size:11px;line-height:1.8;display:none;
+}
+.log::-webkit-scrollbar{width:3px;}
+.log::-webkit-scrollbar-thumb{background:var(--border2);}
+.log-ok{color:var(--green);}
+.log-skip{color:var(--text3);}
+.log-err{color:var(--red);}
 .scroll-x{overflow-x:auto;}
-.info-box{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;font-size:13px;color:#1e40af;margin-bottom:16px;line-height:1.6;}
-.warn-box{background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:12px 16px;font-size:13px;color:#92400e;margin-bottom:16px;line-height:1.6;}
 </style>
 </head>
 <body>
@@ -170,77 +303,78 @@ aside{width:220px;flex-shrink:0;background:var(--accent);display:flex;flex-direc
 <!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
-    <div class="login-logo">PREDICTOR <span>// ADMIN</span></div>
-    <div class="login-sub">Restricted access. Enter credentials.</div>
-    <label class="form-label">Secret path</label>
-    <input class="form-input" id="login-path" type="text" placeholder="secret-slug" autocomplete="off">
-    <label class="form-label">Password</label>
-    <input class="form-input" id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password">
-    <button class="btn-primary" onclick="doLogin()">Sign in</button>
-    <div class="login-err" id="login-err">Invalid credentials.</div>
+    <div class="login-logo">NETTWORKK // ADMIN</div>
+    <div class="login-sub">Restricted access. Credentials required.</div>
+    <label class="field-label">Secret path</label>
+    <input class="field-input" id="lp" type="text" placeholder="secret-slug" autocomplete="off">
+    <label class="field-label">Password</label>
+    <input class="field-input" id="lw" type="password" placeholder="••••••••">
+    <button class="login-btn" onclick="doLogin()">Sign in →</button>
+    <div class="login-err" id="lerr"></div>
   </div>
 </div>
 
-<!-- APP SHELL -->
+<!-- APP -->
 <div id="app">
   <aside>
-    <div class="aside-logo">PRED <span>ADMIN</span></div>
+    <div class="aside-header">
+      <div class="aside-brand">PREDICTOR</div>
+      <div class="aside-sub">Admin Panel · IPL 2026</div>
+    </div>
     <div class="aside-nav">
-      <div class="aside-section">Overview</div>
-      <button class="nav-item active" onclick="showPanel('dashboard')"><span class="nav-icon">◈</span> Dashboard</button>
-      <button class="nav-item" onclick="showPanel('leaderboard')"><span class="nav-icon">▲</span> Leaderboard</button>
+      <div class="nav-section">Overview</div>
+      <button class="nav-btn active" onclick="nav('dashboard')"><span class="nav-icon">▣</span>Dashboard</button>
+      <button class="nav-btn" onclick="nav('leaderboard')"><span class="nav-icon">◈</span>Leaderboard</button>
+      <button class="nav-btn" onclick="nav('insights')"><span class="nav-icon">◉</span>Insights</button>
 
-      <div class="aside-section">Matches</div>
-      <button class="nav-item" onclick="showPanel('matches')"><span class="nav-icon">◉</span> Manage Matches</button>
-      <button class="nav-item" onclick="showPanel('bulk-matches')"><span class="nav-icon">⊞</span> Bulk Add Matches</button>
-      <button class="nav-item" onclick="showPanel('results')"><span class="nav-icon">✦</span> Enter Results</button>
+      <div class="nav-section">Matches</div>
+      <button class="nav-btn" onclick="nav('matches')"><span class="nav-icon">◇</span>Manage Matches</button>
+      <button class="nav-btn" onclick="nav('bulk-matches')"><span class="nav-icon">⊞</span>Bulk Add Matches</button>
+      <button class="nav-btn" onclick="nav('results')"><span class="nav-icon">✦</span>Enter Results</button>
 
-      <div class="aside-section">Players & Votes</div>
-      <button class="nav-item" onclick="showPanel('players')"><span class="nav-icon">◎</span> Players</button>
-      <button class="nav-item" onclick="window.location.href='bulk-import.html'"><span class="nav-icon">↑</span> Bulk Import Players</button>
-      <button class="nav-item" onclick="showPanel('bulk-responses')"><span class="nav-icon">📋</span> Bulk Import Responses</button>
-      <button class="nav-item" onclick="showPanel('emailmap')"><span class="nav-icon">⊡</span> Email Mapping</button>
-      <button class="nav-item" onclick="showPanel('predictions')"><span class="nav-icon">◇</span> View Predictions</button>
+      <div class="nav-section">Players & Votes</div>
+      <button class="nav-btn" onclick="nav('players')"><span class="nav-icon">○</span>Players</button>
+      <button class="nav-btn" onclick="window.open('bulk-import.html','_self')"><span class="nav-icon">↑</span>Bulk Import Players</button>
+      <button class="nav-btn" onclick="nav('bulk-responses')"><span class="nav-icon">📋</span>Bulk Import Responses</button>
+      <button class="nav-btn" onclick="nav('emailmap')"><span class="nav-icon">⊡</span>Email Mapping</button>
+      <button class="nav-btn" onclick="nav('predictions')"><span class="nav-icon">⊹</span>View Predictions</button>
+      <button class="nav-btn" onclick="nav('penalties')"><span class="nav-icon">⚠</span>Penalties</button>
 
-      <div class="aside-section">Scoring</div>
-      <button class="nav-item" onclick="showPanel('variations')"><span class="nav-icon">⚡</span> Variations & Bonuses</button>
-      <button class="nav-item" onclick="showPanel('bonus-points')"><span class="nav-icon">🎯</span> Bonus Points</button>
+      <div class="nav-section">Scoring</div>
+      <button class="nav-btn" onclick="nav('variations')"><span class="nav-icon">⚡</span>Variations &amp; Rules</button>
+      <button class="nav-btn" onclick="nav('bonus-points')"><span class="nav-icon">★</span>Bonus Points</button>
 
-      <div class="aside-section">Data</div>
-      <button class="nav-item" onclick="showPanel('export')"><span class="nav-icon">↗</span> Export</button>
-      <button class="nav-item" onclick="showPanel('audit')"><span class="nav-icon">📜</span> Audit Log</button>
+      <div class="nav-section">Settings & Data</div>
+      <button class="nav-btn" onclick="nav('credentials')"><span class="nav-icon">🔑</span>Change Credentials</button>
+      <button class="nav-btn" onclick="nav('export')"><span class="nav-icon">↗</span>Export / Backup</button>
+      <button class="nav-btn" onclick="nav('audit')"><span class="nav-icon">▤</span>Audit Log</button>
     </div>
     <div class="aside-footer">
-      <button onclick="logout()">Sign out</button>
+      <button class="signout-btn" onclick="signout()">Sign out</button>
     </div>
   </aside>
 
   <div class="content">
-    <div class="content-inner">
+    <div class="inner">
 
       <!-- DASHBOARD -->
-      <div class="page-panel active" id="panel-dashboard">
-        <div class="page-header">
+      <div class="panel on" id="p-dashboard">
+        <div class="page-hdr">
           <div class="page-title">Dashboard</div>
-          <button class="btn btn-outline btn-sm" onclick="loadDashboard()">↺ Refresh</button>
+          <button class="btn btn-outline btn-sm" onclick="loadDash()">↺ Refresh</button>
         </div>
-        <div class="stats-row" id="stats-row">
-          <div class="stat-card"><div class="stat-val" id="stat-matches">–</div><div class="stat-label">Total matches</div></div>
-          <div class="stat-card"><div class="stat-val" id="stat-players">–</div><div class="stat-label">Players</div></div>
-          <div class="stat-card"><div class="stat-val" id="stat-open">–</div><div class="stat-label">Open now</div></div>
-          <div class="stat-card"><div class="stat-val" id="stat-resulted">–</div><div class="stat-label">Resulted</div></div>
-        </div>
+        <div class="stats-grid" id="dash-stats"></div>
         <div class="card">
-          <div class="card-header"><div class="card-title">Current leaderboard (top 10)</div></div>
+          <div class="card-hdr"><div class="card-title">Current standings — top 10</div></div>
           <div class="card-body scroll-x" id="dash-lb">Loading…</div>
         </div>
       </div>
 
       <!-- MATCHES -->
-      <div class="page-panel" id="panel-matches">
-        <div class="page-header">
+      <div class="panel" id="p-matches">
+        <div class="page-hdr">
           <div class="page-title">Manage Matches</div>
-          <button class="btn btn-accent" onclick="openAddMatch()">+ Add match</button>
+          <button class="btn btn-accent" onclick="openMatchModal()">+ Add match</button>
         </div>
         <div class="card">
           <div class="card-body" id="matches-list">Loading…</div>
@@ -248,65 +382,55 @@ aside{width:220px;flex-shrink:0;background:var(--accent);display:flex;flex-direc
       </div>
 
       <!-- BULK MATCHES -->
-      <div class="page-panel" id="panel-bulk-matches">
-        <div class="page-header">
-          <div class="page-title">Bulk Add <span>Matches</span></div>
-        </div>
-        <div class="info-box">
-          Paste match data — one match per line. Format: <code>Match#, Title, Team A, Team B, Date & Time (IST)</code><br>
-          Example: <code>1, LSG vs KKR, Lucknow Super Giants, Kolkata Knight Riders, 22 Apr 2026 7:30 PM</code><br>
-          Also supports copy-paste from Google Sheets (tab-separated columns in same order).
+      <div class="panel" id="p-bulk-matches">
+        <div class="page-hdr"><div class="page-title">Bulk Add Matches</div></div>
+        <div class="info">
+          Format: <code>Match#, Title, Team A, Team B, Date Time IST</code><br>
+          Example: <code>33, GT vs MI, Gujarat Titans, Mumbai Indians, 23 Apr 2026 7:30 PM</code><br>
+          Also paste directly from Google Sheets (tab-separated works too).
         </div>
         <div class="card">
-          <div class="card-title" style="padding:14px 18px 0">Paste your matches</div>
           <div class="card-body">
-            <textarea id="bulk-matches-input" class="form-input" style="width:100%;height:220px;resize:vertical;font-size:12px"
-              placeholder="1, LSG vs KKR, Lucknow Super Giants, Kolkata Knight Riders, 22 Apr 2026 7:30 PM&#10;2, MI vs CSK, Mumbai Indians, Chennai Super Kings, 23 Apr 2026 7:30 PM&#10;..."></textarea>
-            <div class="btn-row" style="margin-top:12px">
+            <textarea id="bm-input" style="width:100%;height:200px;resize:vertical;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--mono);font-size:12px;padding:10px;outline:none;"
+              placeholder="33, GT vs MI, Gujarat Titans, Mumbai Indians, 23 Apr 2026 7:30 PM&#10;34, CSK vs RCB, Chennai Super Kings, Royal Challengers Bengaluru, 24 Apr 2026 3:30 PM"></textarea>
+            <div class="btn-row" style="margin-top:10px">
               <button class="btn btn-accent" onclick="previewBulkMatches()">Preview →</button>
-              <button class="btn btn-outline" onclick="document.getElementById('bulk-matches-input').value=''">Clear</button>
+              <button class="btn btn-outline" onclick="document.getElementById('bm-input').value=''">Clear</button>
             </div>
           </div>
         </div>
-        <div id="bulk-matches-preview" style="display:none">
+        <div id="bm-preview" style="display:none">
           <div class="card">
-            <div class="card-header">
-              <div class="card-title" id="bm-preview-title">Preview</div>
-              <button class="btn btn-green" id="bm-import-btn" onclick="importBulkMatches()">Import matches</button>
+            <div class="card-hdr">
+              <div class="card-title" id="bm-title">Preview</div>
+              <button class="btn btn-green" id="bm-import-btn" onclick="importBulkMatches()">Import</button>
             </div>
             <div class="card-body scroll-x">
-              <table class="admin-table" id="bm-preview-table">
-                <thead><tr><th>#</th><th>Title</th><th>Team A</th><th>Team B</th><th>Match Time (IST)</th><th>Status</th></tr></thead>
-                <tbody id="bm-preview-body"></tbody>
-              </table>
+              <table class="tbl"><thead><tr><th>#</th><th>Title</th><th>Team A</th><th>Team B</th><th>Time (IST)</th><th>Status</th></tr></thead>
+              <tbody id="bm-tbody"></tbody></table>
             </div>
-            <div class="card-body" style="padding-top:0" id="bm-progress-wrap" style="display:none">
-              <div class="progress-bar"><div class="progress-fill" id="bm-progress-fill" style="width:0%"></div></div>
-              <div class="progress-text" id="bm-progress-text"></div>
+            <div class="card-body" id="bm-prog-wrap" style="display:none">
+              <div class="prog-bar"><div class="prog-fill" id="bm-prog" style="width:0%"></div></div>
+              <div class="prog-txt" id="bm-prog-txt"></div>
             </div>
           </div>
         </div>
       </div>
 
       <!-- RESULTS -->
-      <div class="page-panel" id="panel-results">
-        <div class="page-header">
-          <div class="page-title">Enter <span>Results</span></div>
-        </div>
-        <div class="warn-box">
-          For <b>historical matches</b> that weren't auto-closed: use the <b>⚡ Force</b> button below — it will close + score + update leaderboard in one click, regardless of match status.
-        </div>
+      <div class="panel" id="p-results">
+        <div class="page-hdr"><div class="page-title">Enter Results</div></div>
+        <div class="warn">For historical matches not auto-closed, click <b>⚡ Force result</b> — it overrides the status and scores everything correctly.</div>
         <div class="card">
-          <div class="card-header"><div class="card-title">All unresulted matches</div></div>
           <div class="card-body" id="results-list">Loading…</div>
         </div>
       </div>
 
       <!-- PLAYERS -->
-      <div class="page-panel" id="panel-players">
-        <div class="page-header">
+      <div class="panel" id="p-players">
+        <div class="page-hdr">
           <div class="page-title">Players</div>
-          <button class="btn btn-accent" onclick="openAddPlayer()">+ Add player</button>
+          <button class="btn btn-accent" onclick="openPlayerModal()">+ Add player</button>
         </div>
         <div class="card">
           <div class="card-body scroll-x" id="players-list">Loading…</div>
@@ -314,153 +438,187 @@ aside{width:220px;flex-shrink:0;background:var(--accent);display:flex;flex-direc
       </div>
 
       <!-- BULK RESPONSES -->
-      <div class="page-panel" id="panel-bulk-responses">
-        <div class="page-header">
-          <div class="page-title">Bulk Import <span>Responses</span></div>
+      <div class="panel" id="p-bulk-responses">
+        <div class="page-hdr"><div class="page-title">Bulk Import Responses<small>Historical data</small></div></div>
+        <div class="info">
+          <b>Column format:</b> Email, Match ID (DB), Team name, Timestamp (optional)<br>
+          Match DB IDs are shown in the table below. Use those — not match numbers.
         </div>
-        <div class="info-box">
-          Import historical predictions in bulk. You can paste directly from your Google Forms responses sheet, or use the manual format below.
-          <br><b>CSV/Sheet format:</b> <code>Email, Match ID, Team Prediction, Timestamp (optional)</code>
-          <br><b>Match IDs:</b> Use the numeric database ID (shown in Matches panel) not match number.
-        </div>
-
         <div class="card" style="margin-bottom:14px">
-          <div class="card-header"><div class="card-title">Quick Match ID Lookup</div></div>
-          <div class="card-body scroll-x" id="br-match-ids">Loading…</div>
+          <div class="card-hdr"><div class="card-title">Match ID reference</div></div>
+          <div class="card-body scroll-x" id="br-match-ref">Loading…</div>
         </div>
-
         <div class="card">
-          <div class="card-title" style="padding:14px 18px 0">Paste responses</div>
           <div class="card-body">
-            <textarea id="bulk-resp-input" class="form-input" style="width:100%;height:220px;resize:vertical;font-size:12px"
-              placeholder="Email, Match ID, Team, Timestamp&#10;rahul@gmail.com, 1, Mumbai Indians, 2026-04-01 19:30:00&#10;priya@gmail.com, 1, Chennai Super Kings"></textarea>
-            <div class="btn-row" style="margin-top:12px">
+            <textarea id="br-input" style="width:100%;height:200px;resize:vertical;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--mono);font-size:12px;padding:10px;outline:none;"
+              placeholder="rahul@gmail.com, 1, Gujarat Titans, 2026-04-20 19:30:00&#10;priya@gmail.com, 1, Mumbai Indians"></textarea>
+            <div class="btn-row" style="margin-top:10px">
               <button class="btn btn-accent" onclick="previewBulkResponses()">Preview →</button>
-              <button class="btn btn-outline" onclick="document.getElementById('bulk-resp-input').value=''">Clear</button>
+              <button class="btn btn-outline" onclick="document.getElementById('br-input').value=''">Clear</button>
             </div>
           </div>
         </div>
-
-        <div id="bulk-resp-preview" style="display:none">
+        <div id="br-preview" style="display:none">
           <div class="card">
-            <div class="card-header">
-              <div class="card-title" id="br-preview-title">Preview</div>
-              <button class="btn btn-green" id="br-import-btn" onclick="importBulkResponses()">Import responses</button>
+            <div class="card-hdr">
+              <div class="card-title" id="br-title">Preview</div>
+              <button class="btn btn-green" id="br-import-btn" onclick="importBulkResponses()">Import</button>
             </div>
             <div class="card-body scroll-x">
-              <table class="admin-table">
-                <thead><tr><th>Email</th><th>Match ID</th><th>Team</th><th>Timestamp</th><th>Status</th></tr></thead>
-                <tbody id="br-preview-body"></tbody>
-              </table>
+              <table class="tbl"><thead><tr><th>Email</th><th>Match ID</th><th>Team</th><th>Timestamp</th><th>Status</th></tr></thead>
+              <tbody id="br-tbody"></tbody></table>
             </div>
-            <div id="br-log" style="display:none;margin-top:10px;max-height:160px;overflow-y:auto;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:var(--mono);font-size:12px;line-height:1.8;"></div>
+            <div class="log" id="br-log"></div>
           </div>
         </div>
       </div>
 
       <!-- EMAIL MAP -->
-      <div class="page-panel" id="panel-emailmap">
-        <div class="page-header">
-          <div class="page-title">Email <span>Mapping</span></div>
-          <button class="btn btn-accent" onclick="openAddAlias()">+ Add alias</button>
+      <div class="panel" id="p-emailmap">
+        <div class="page-hdr">
+          <div class="page-title">Email Mapping</div>
+          <button class="btn btn-accent" onclick="openAliasModal()">+ Add alias</button>
         </div>
-        <p style="color:var(--muted);font-size:13px;margin-bottom:16px">Map alias emails → primary email. Prevents players using multiple addresses.</p>
+        <p style="font-size:12px;color:var(--text3);margin-bottom:14px">Map alias emails → primary email. Prevents players using multiple addresses to get extra votes.</p>
         <div class="card">
           <div class="card-body scroll-x" id="emailmap-list">Loading…</div>
         </div>
       </div>
 
       <!-- PREDICTIONS -->
-      <div class="page-panel" id="panel-predictions">
-        <div class="page-header"><div class="page-title">Predictions</div></div>
+      <div class="panel" id="p-predictions">
+        <div class="page-hdr"><div class="page-title">View Predictions</div></div>
         <div class="card" style="margin-bottom:14px">
-          <div class="card-body" style="display:flex;gap:10px;align-items:center">
-            <select id="pred-match-select" style="padding:8px 10px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);font-family:var(--mono);font-size:13px;flex:1;outline:none"></select>
-            <button class="btn btn-accent" onclick="loadMatchPredictions()">Load</button>
+          <div class="card-body" style="display:flex;gap:8px;align-items:center;">
+            <select id="pred-sel" style="flex:1;padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--mono);font-size:12px;outline:none;"></select>
+            <button class="btn btn-accent" onclick="loadPreds()">Load</button>
           </div>
         </div>
-        <div id="pred-odds-display"></div>
+        <div id="pred-odds"></div>
         <div class="card">
-          <div class="card-body scroll-x" id="predictions-list">Select a match above.</div>
+          <div class="card-body scroll-x" id="pred-list">Select a match above.</div>
+        </div>
+      </div>
+
+      <!-- PENALTIES -->
+      <div class="panel" id="p-penalties">
+        <div class="page-hdr">
+          <div class="page-title">Penalties</div>
+          <button class="btn btn-outline btn-sm" onclick="api('/api/admin/penalties/recalc','POST').then(()=>{toast('Recalculated');loadPenalties();})">↺ Recalculate all</button>
+        </div>
+        <div class="info">Penalties are auto-calculated when results are entered. Delete a row to manually remove a penalty. Recalculate to refresh after any player first_match changes.</div>
+        <div class="card">
+          <div class="card-body scroll-x" id="penalties-list">Loading…</div>
         </div>
       </div>
 
       <!-- LEADERBOARD -->
-      <div class="page-panel" id="panel-leaderboard">
-        <div class="page-header">
+      <div class="panel" id="p-leaderboard">
+        <div class="page-hdr">
           <div class="page-title">Leaderboard</div>
-          <button class="btn btn-outline btn-sm" onclick="loadAdminLeaderboard()">↺ Refresh</button>
-        </div>
-        <div class="lb-filter-row">
-          <span style="font-size:13px;color:var(--muted)">Historical — show standings as of:</span>
-          <input type="date" id="lb-as-of" style="padding:8px 12px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);font-family:var(--mono);font-size:13px;outline:none">
-          <button class="btn btn-accent btn-sm" onclick="loadAdminLeaderboard()">Apply</button>
-          <button class="btn btn-outline btn-sm" onclick="document.getElementById('lb-as-of').value='';loadAdminLeaderboard()">Current</button>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <span style="font-size:12px;color:var(--text3)">As of date:</span>
+            <input type="date" id="lb-asof" style="padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--mono);font-size:12px;outline:none;">
+            <button class="btn btn-accent btn-sm" onclick="loadAdminLB()">Apply</button>
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('lb-asof').value='';loadAdminLB()">Current</button>
+          </div>
         </div>
         <div class="card">
-          <div class="card-body scroll-x" id="admin-lb-list">Loading…</div>
+          <div class="card-body scroll-x" id="admin-lb">Loading…</div>
         </div>
       </div>
 
-      <!-- VARIATIONS & BONUSES -->
-      <div class="page-panel" id="panel-variations">
-        <div class="page-header">
-          <div class="page-title">Variations <span>&amp; Bonuses</span></div>
+      <!-- INSIGHTS -->
+      <div class="panel" id="p-insights">
+        <div class="page-hdr">
+          <div class="page-title">Insights</div>
+          <button class="btn btn-outline btn-sm" onclick="loadInsights()">↺ Refresh</button>
+        </div>
+        <div id="insights-container"><div style="color:var(--text3);padding:40px;text-align:center">Loading insights…</div></div>
+      </div>
+
+      <!-- VARIATIONS -->
+      <div class="panel" id="p-variations">
+        <div class="page-hdr">
+          <div class="page-title">Variations &amp; Rules</div>
           <div class="btn-row">
-            <button class="btn btn-accent" onclick="openAddVariation()">+ Add variation</button>
-            <button class="btn btn-outline btn-sm" onclick="recalcAll()">↺ Recalculate all</button>
+            <button class="btn btn-accent" onclick="openVarModal()">+ Add variation</button>
+            <button class="btn btn-outline btn-sm" onclick="api('/api/admin/variations/recalc','POST').then(()=>toast('Recalculated all bonuses'))">↺ Recalc all</button>
           </div>
         </div>
-        <div class="info-box">
-          Variations are special rules applied on top of standard scoring. The <b>Double Header Bonus</b> (+50 pts for predicting both matches correct on a 2-match day) is always active — it recalculates automatically when results are entered.
-          Use this panel to add custom bonuses, streaks, or any other variations for your league.
-        </div>
+        <div class="info">The <b>Double Header Bonus</b> (+50 pts when a player predicts both matches correct on a 2-match day) is built-in and always active. Create custom variations below for any other league rules.</div>
         <div id="variations-list">Loading…</div>
       </div>
 
       <!-- BONUS POINTS -->
-      <div class="page-panel" id="panel-bonus-points">
-        <div class="page-header">
+      <div class="panel" id="p-bonus-points">
+        <div class="page-hdr">
           <div class="page-title">Bonus Points</div>
-          <button class="btn btn-accent" onclick="openAddBonus()">+ Manual bonus</button>
+          <button class="btn btn-accent" onclick="openBonusModal()">+ Manual bonus</button>
         </div>
-        <p style="color:var(--muted);font-size:13px;margin-bottom:16px">All bonus points awarded (double-headers, variations, manual). Delete any row to remove that bonus.</p>
         <div class="card">
           <div class="card-body scroll-x" id="bonus-list">Loading…</div>
         </div>
       </div>
 
+      <!-- CREDENTIALS -->
+      <div class="panel" id="p-credentials">
+        <div class="page-hdr"><div class="page-title">Change Credentials</div></div>
+        <div class="card">
+          <div class="card-body">
+            <div class="success-box" style="margin-bottom:20px">Your credentials (secret path + password) are stored as Cloudflare Worker Variables — not in the database. This is more secure because they never touch your code.</div>
+            <p style="font-size:13px;font-weight:500;margin-bottom:16px;color:var(--text)">To change your secret path or password:</p>
+            <div style="counter-reset:steps;">
+              ${['Go to <b>dash.cloudflare.com</b>','Click <b>Workers &amp; Pages</b> in the left sidebar','Click on <b>predictor-league-api</b>','Click the <b>Settings</b> tab','Click <b>Variables and Secrets</b>','Click the <b>pencil icon ✎</b> next to <b>ADMIN_SECRET_PATH</b> or <b>ADMIN_PASSWORD</b>','Type your new value and click <b>Save and deploy</b>','Wait 30 seconds — your new credentials are active','Log out of this admin panel and log in with the new credentials'].map((s,i)=>`
+              <div style="display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;">
+                <div style="background:var(--accent);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;">${i+1}</div>
+                <div style="font-size:13px;padding-top:2px;">${s}</div>
+              </div>`).join('')}
+            </div>
+            <div class="warn" style="margin-top:16px">Important: write down your new credentials before saving. Once saved, the old ones stop working immediately.</div>
+          </div>
+        </div>
+      </div>
+
       <!-- EXPORT -->
-      <div class="page-panel" id="panel-export">
-        <div class="page-header"><div class="page-title">Export <span>/ Backup</span></div></div>
-        <div class="export-grid">
-          <div class="export-card">
-            <h4>Full data export (JSON)</h4>
-            <p>All matches, predictions, scores, penalties, bonuses, players.</p>
-            <button class="btn btn-accent" onclick="downloadExport()">↓ Download JSON</button>
+      <div class="panel" id="p-export">
+        <div class="page-hdr"><div class="page-title">Export / Backup</div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Full JSON export</div></div>
+            <div class="card-body">
+              <p style="font-size:12px;color:var(--text3);margin-bottom:14px">All matches, votes, scores, penalties, bonuses, players.</p>
+              <button class="btn btn-accent" onclick="dlExport()">↓ Download JSON</button>
+            </div>
           </div>
-          <div class="export-card">
-            <h4>Leaderboard CSV</h4>
-            <p>Net points leaderboard, ready to paste into Google Sheets.</p>
-            <button class="btn btn-outline" onclick="downloadLeaderboardCSV()">↓ Download CSV</button>
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Leaderboard CSV</div></div>
+            <div class="card-body">
+              <p style="font-size:12px;color:var(--text3);margin-bottom:14px">Net points leaderboard for Google Sheets.</p>
+              <button class="btn btn-outline" onclick="dlCSV()">↓ Download CSV</button>
+            </div>
           </div>
-          <div class="export-card">
-            <h4>Google Sheets push</h4>
-            <p>Auto-sync all data to your Google Sheet via Apps Script webhook.</p>
-            <input class="form-input" id="sheets-webhook-url" type="url" placeholder="https://script.google.com/..." style="margin-bottom:10px;font-size:12px">
-            <button class="btn btn-green" onclick="pushToSheets()">↑ Push to Sheets</button>
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Push to Google Sheets</div></div>
+            <div class="card-body">
+              <p style="font-size:12px;color:var(--text3);margin-bottom:10px">Paste your Apps Script web app URL:</p>
+              <input class="field-input" id="sheets-url" type="url" placeholder="https://script.google.com/..." style="margin-bottom:10px;font-size:11px;">
+              <button class="btn btn-green" onclick="pushSheets()">↑ Push to Sheets</button>
+            </div>
           </div>
-          <div class="export-card">
-            <h4>Google Forms webhook URL</h4>
-            <p>Paste this URL in your Google Forms → Apps Script to forward submissions here.</p>
-            <div id="forms-webhook-url" style="font-family:var(--mono);font-size:11px;background:var(--bg);padding:8px;border-radius:var(--r);word-break:break-all;color:var(--blue)"></div>
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Google Forms webhook URL</div></div>
+            <div class="card-body">
+              <p style="font-size:12px;color:var(--text3);margin-bottom:8px">Use this URL in your Google Forms Apps Script:</p>
+              <div id="forms-url" style="font-family:var(--mono);font-size:11px;background:var(--surface2);padding:8px;border-radius:var(--r);word-break:break-all;color:var(--accent2);"></div>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- AUDIT -->
-      <div class="page-panel" id="panel-audit">
-        <div class="page-header">
+      <div class="panel" id="p-audit">
+        <div class="page-hdr">
           <div class="page-title">Audit Log</div>
           <button class="btn btn-outline btn-sm" onclick="loadAudit()">↺ Refresh</button>
         </div>
@@ -469,54 +627,39 @@ aside{width:220px;flex-shrink:0;background:var(--accent);display:flex;flex-direc
         </div>
       </div>
 
-    </div><!-- /content-inner -->
-  </div><!-- /content -->
-</div><!-- /app -->
-
-<!-- ADD MATCH MODAL -->
-<div class="modal-overlay" id="modal-match">
-  <div class="modal">
-    <h3 id="modal-match-title">Add match</h3>
-    <div class="form-grid">
-      <div class="form-group">
-        <label>Match number</label>
-        <input type="number" id="m-num" placeholder="e.g. 1">
-      </div>
-      <div class="form-group">
-        <label>Match title</label>
-        <input type="text" id="m-title" placeholder="LSG vs KKR">
-      </div>
-      <div class="form-group">
-        <label>Team A</label>
-        <input type="text" id="m-team-a" placeholder="Lucknow Super Giants">
-      </div>
-      <div class="form-group">
-        <label>Team B</label>
-        <input type="text" id="m-team-b" placeholder="Kolkata Knight Riders">
-      </div>
-      <div class="form-group" style="grid-column:1/-1">
-        <label>Match time (local — stored as UTC)</label>
-        <input type="datetime-local" id="m-time">
-      </div>
     </div>
-    <div id="edit-match-id" style="display:none"></div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal('modal-match')">Cancel</button>
-      <button class="btn btn-accent" onclick="saveMatch()">Save match</button>
+  </div>
+</div>
+
+<!-- ADD/EDIT MATCH MODAL -->
+<div class="overlay" id="modal-match">
+  <div class="modal">
+    <h3 id="modal-match-h">Add match</h3>
+    <div class="modal-sub" id="modal-match-sub">Fill in match details</div>
+    <input type="hidden" id="mm-id">
+    <div class="form-grid">
+      <div class="fg"><label>Match number</label><input type="number" id="mm-num" placeholder="33"></div>
+      <div class="fg"><label>Title</label><input type="text" id="mm-title" placeholder="GT vs MI"></div>
+      <div class="fg"><label>Team A</label><input type="text" id="mm-ta" placeholder="Gujarat Titans"></div>
+      <div class="fg"><label>Team B</label><input type="text" id="mm-tb" placeholder="Mumbai Indians"></div>
+      <div class="fg" style="grid-column:1/-1"><label>Match time (your local time)</label><input type="datetime-local" id="mm-time"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="close('modal-match')">Cancel</button>
+      <button class="btn btn-accent" onclick="saveMatch()">Save</button>
     </div>
   </div>
 </div>
 
 <!-- EDIT MATCH STATUS MODAL -->
-<div class="modal-overlay" id="modal-match-edit">
+<div class="overlay" id="modal-match-edit">
   <div class="modal">
-    <h3>Edit Match Status / Details</h3>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Override any field. Useful for historical matches that missed auto-close.</p>
-    <input type="hidden" id="edit-match-id-hidden">
-    <div class="form-grid wide">
-      <div class="form-group">
-        <label>Force status</label>
-        <select id="edit-status">
+    <h3>Edit Match</h3>
+    <div class="modal-sub">Override status, time, teams, or winner</div>
+    <input type="hidden" id="me-id">
+    <div class="form-grid">
+      <div class="fg"><label>Force status</label>
+        <select id="me-status">
           <option value="">— keep current —</option>
           <option value="upcoming">upcoming</option>
           <option value="open">open</option>
@@ -524,942 +667,847 @@ aside{width:220px;flex-shrink:0;background:var(--accent);display:flex;flex-direc
           <option value="resulted">resulted</option>
         </select>
       </div>
-      <div class="form-group">
-        <label>Override match time</label>
-        <input type="datetime-local" id="edit-time">
-      </div>
+      <div class="fg"><label>Override match time</label><input type="datetime-local" id="me-time"></div>
+      <div class="fg"><label>Team A name</label><input type="text" id="me-ta" placeholder="leave blank to keep"></div>
+      <div class="fg"><label>Team B name</label><input type="text" id="me-tb" placeholder="leave blank to keep"></div>
+      <div class="fg" style="grid-column:1/-1"><label>Override winner (use exact team name)</label><input type="text" id="me-winner" placeholder="leave blank to keep"></div>
     </div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal('modal-match-edit')">Cancel</button>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="close('modal-match-edit')">Cancel</button>
       <button class="btn btn-accent" onclick="saveMatchEdit()">Save changes</button>
     </div>
   </div>
 </div>
 
-<!-- ENTER RESULT MODAL -->
-<div class="modal-overlay" id="modal-result">
+<!-- RESULT MODAL -->
+<div class="overlay" id="modal-result">
   <div class="modal">
-    <h3 id="result-modal-title">Enter result</h3>
-    <div id="result-odds-preview"></div>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Select the winning team:</p>
-    <div style="display:flex;gap:12px">
-      <button class="btn btn-outline" style="flex:1;justify-content:center;font-size:15px" id="result-btn-a" onclick="submitResult('a')">–</button>
-      <button class="btn btn-outline" style="flex:1;justify-content:center;font-size:15px" id="result-btn-b" onclick="submitResult('b')">–</button>
+    <h3 id="res-h">Enter result</h3>
+    <div class="modal-sub" id="res-sub"></div>
+    <div id="res-odds"></div>
+    <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Select winning team:</p>
+    <div style="display:flex;gap:10px;">
+      <button class="btn" style="flex:1;justify-content:center;font-size:14px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);" id="res-a" onclick="submitResult('a')"></button>
+      <button class="btn" style="flex:1;justify-content:center;font-size:14px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);" id="res-b" onclick="submitResult('b')"></button>
     </div>
-    <p style="font-size:11px;color:var(--muted);margin-top:10px" id="result-force-note"></p>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal('modal-result')">Cancel</button>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="close('modal-result')">Cancel</button></div>
+  </div>
+</div>
+
+<!-- PLAYER MODAL -->
+<div class="overlay" id="modal-player">
+  <div class="modal">
+    <h3 id="mp-h">Add player</h3>
+    <input type="hidden" id="mp-orig-email">
+    <div class="form-grid w1">
+      <div class="fg"><label>Display name</label><input type="text" id="mp-name" placeholder="Rahul Sharma"></div>
+      <div class="fg"><label>Primary email</label><input type="email" id="mp-email" placeholder="rahul@gmail.com"></div>
+      <div class="fg"><label>Alias emails (comma-separated)</label><input type="text" id="mp-aliases" placeholder="rahul.old@gmail.com, r.sharma@work.com"></div>
+      <div class="fg"><label>First match number (optional — auto-detected from votes)</label><input type="number" id="mp-first" placeholder="e.g. 3"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="close('modal-player')">Cancel</button>
+      <button class="btn btn-accent" onclick="savePlayer()">Save</button>
     </div>
   </div>
 </div>
 
-<!-- ADD PLAYER MODAL -->
-<div class="modal-overlay" id="modal-player">
-  <div class="modal">
-    <h3>Add / update player</h3>
-    <div class="form-grid wide">
-      <div class="form-group"><label>Display name</label><input type="text" id="p-name" placeholder="Rahul Sharma"></div>
-      <div class="form-group"><label>Primary email</label><input type="email" id="p-email" placeholder="rahul@email.com"></div>
-      <div class="form-group"><label>Alias emails (comma-separated)</label><input type="text" id="p-aliases" placeholder="other@email.com, another@email.com"></div>
-      <div class="form-group"><label>First match number (optional override)</label><input type="number" id="p-first-match" placeholder="e.g. 3 — leave blank to auto-detect"></div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal('modal-player')">Cancel</button>
-      <button class="btn btn-accent" onclick="savePlayer()">Save player</button>
-    </div>
-  </div>
-</div>
-
-<!-- ADD ALIAS MODAL -->
-<div class="modal-overlay" id="modal-alias">
+<!-- ALIAS MODAL -->
+<div class="overlay" id="modal-alias">
   <div class="modal">
     <h3>Map alias email</h3>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Any vote from the alias email will count against the primary player's account.</p>
-    <div class="form-grid wide">
-      <div class="form-group"><label>Alias email (the duplicate)</label><input type="email" id="alias-email" placeholder="other@email.com"></div>
-      <div class="form-group"><label>Primary email (the real player)</label><input type="email" id="alias-primary" placeholder="real@email.com"></div>
+    <div class="modal-sub">Any vote from the alias will count under the primary player's account.</div>
+    <div class="form-grid w1">
+      <div class="fg"><label>Alias email (the duplicate)</label><input type="email" id="al-alias" placeholder="other@gmail.com"></div>
+      <div class="fg"><label>Primary email (the real player)</label><input type="email" id="al-primary" placeholder="real@gmail.com"></div>
     </div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal('modal-alias')">Cancel</button>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="close('modal-alias')">Cancel</button>
       <button class="btn btn-accent" onclick="saveAlias()">Save mapping</button>
     </div>
   </div>
 </div>
 
-<!-- ADD VARIATION MODAL -->
-<div class="modal-overlay" id="modal-variation">
+<!-- VARIATION MODAL -->
+<div class="overlay" id="modal-variation">
   <div class="modal">
     <h3>Add Variation / Rule</h3>
-    <div class="form-grid wide">
-      <div class="form-group">
-        <label>Variation name</label>
-        <input type="text" id="v-name" placeholder="e.g. Streak Bonus, First Match Bonus">
-      </div>
-      <div class="form-group">
-        <label>Type</label>
-        <select id="v-type">
-          <option value="manual_bonus">manual_bonus — award bonus to specific player</option>
-          <option value="custom">custom — for documentation / future automation</option>
+    <div class="form-grid w1">
+      <div class="fg"><label>Name</label><input type="text" id="vr-name" placeholder="e.g. Streak Bonus"></div>
+      <div class="fg"><label>Type</label>
+        <select id="vr-type">
+          <option value="manual_bonus">manual_bonus — one-time award to specific player</option>
+          <option value="streak">streak — future automation hook</option>
+          <option value="custom">custom — documentation only</option>
         </select>
       </div>
-      <div class="form-group">
-        <label>Description (shown in admin)</label>
-        <textarea id="v-desc" rows="2" placeholder="Describe what this variation does…"></textarea>
-      </div>
-      <div class="form-group">
-        <label>Applies to match ID (leave blank = global)</label>
-        <input type="number" id="v-match-id" placeholder="leave blank for global">
-      </div>
-      <div class="form-group">
-        <label>Details (JSON config for manual_bonus: {"email":"x@y.com","pts":100})</label>
-        <textarea id="v-details" rows="3" placeholder='{"email":"player@gmail.com","pts":100}'></textarea>
-      </div>
+      <div class="fg"><label>Description</label><textarea id="vr-desc" rows="2" placeholder="What this rule does…"></textarea></div>
+      <div class="fg"><label>Applies to match ID (blank = global)</label><input type="number" id="vr-match" placeholder="leave blank"></div>
+      <div class="fg"><label>Details (JSON for manual_bonus: {"email":"x@y.com","pts":50})</label><textarea id="vr-details" rows="2" placeholder='{"email":"player@gmail.com","pts":50}'></textarea></div>
     </div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal('modal-variation')">Cancel</button>
-      <button class="btn btn-accent" onclick="saveVariation()">Save variation</button>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="close('modal-variation')">Cancel</button>
+      <button class="btn btn-accent" onclick="saveVariation()">Save</button>
     </div>
   </div>
 </div>
 
-<!-- ADD BONUS MODAL -->
-<div class="modal-overlay" id="modal-bonus">
+<!-- BONUS MODAL -->
+<div class="overlay" id="modal-bonus">
   <div class="modal">
     <h3>Award Manual Bonus</h3>
-    <div class="form-grid wide">
-      <div class="form-group"><label>Player primary email</label><input type="email" id="bp-email" placeholder="player@gmail.com"></div>
-      <div class="form-group"><label>Points (use negative for deduction)</label><input type="number" id="bp-pts" placeholder="e.g. 50 or -25"></div>
-      <div class="form-group"><label>Reason</label><input type="text" id="bp-reason" placeholder="e.g. streak_bonus, manual_correction"></div>
-      <div class="form-group"><label>Match ID (optional)</label><input type="number" id="bp-match-id" placeholder="leave blank for general bonus"></div>
-      <div class="form-group"><label>Notes</label><input type="text" id="bp-details" placeholder="Any extra notes"></div>
+    <div class="form-grid w1">
+      <div class="fg"><label>Player email</label><input type="email" id="bp-email" placeholder="player@gmail.com"></div>
+      <div class="fg"><label>Points (negative = deduction)</label><input type="number" id="bp-pts" placeholder="50 or -25"></div>
+      <div class="fg"><label>Reason</label><input type="text" id="bp-reason" placeholder="e.g. tiebreaker_winner"></div>
+      <div class="fg"><label>Match ID (optional)</label><input type="number" id="bp-match" placeholder="leave blank for general"></div>
+      <div class="fg"><label>Notes</label><input type="text" id="bp-notes" placeholder="Any extra context"></div>
     </div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal('modal-bonus')">Cancel</button>
-      <button class="btn btn-accent" onclick="saveBonus()">Award bonus</button>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="close('modal-bonus')">Cancel</button>
+      <button class="btn btn-accent" onclick="saveBonus()">Award</button>
     </div>
   </div>
 </div>
 
-<div id="admin-toast"></div>
+<div id="toast"></div>
 
 <script>
 const API = 'https://predictor-league-api.iamme1241.workers.dev';
-let authToken = '', allMatches = [], resultTarget = null, resultForce = false;
+let token = '', matches = [], resultTarget = null, resultForce = false;
+let bmParsed = [], brParsed = [];
 
 // ── AUTH ──────────────────────────────────────────────────────────────────────
-function doLogin() {
-  const path = document.getElementById('login-path').value.trim();
-  const pass  = document.getElementById('login-pass').value.trim();
-  if (!path || !pass) { showLoginErr('Fill both fields.'); return; }
-  authToken = btoa(`${path}:${pass}`);
-  fetch(`${API}/api/admin/players`, { headers: { Authorization: 'Bearer ' + authToken } })
-    .then(r => {
-      if (r.ok) {
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('app').classList.add('visible');
-        localStorage.setItem('pl_admin_token', authToken);
-        initApp();
-      } else { showLoginErr('Invalid credentials.'); authToken = ''; }
-    }).catch(() => showLoginErr('Network error.'));
+function doLogin(){
+  const p=gv('lp'),w=gv('lw');
+  if(!p||!w){lerr('Fill both fields');return;}
+  token=btoa(`${p}:${w}`);
+  fetch(`${API}/api/admin/players`,{headers:{Authorization:'Bearer '+token}})
+    .then(r=>{
+      if(r.ok){
+        document.getElementById('login-screen').style.display='none';
+        document.getElementById('app').classList.add('on');
+        localStorage.setItem('nw_admin',token);
+        init();
+      } else {lerr('Invalid credentials.');token='';}
+    }).catch(()=>lerr('Network error.'));
 }
-function showLoginErr(msg) {
-  const e = document.getElementById('login-err');
-  e.textContent = msg; e.style.display = 'block';
-}
-function logout() {
-  authToken = ''; localStorage.removeItem('pl_admin_token'); location.reload();
-}
-document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+function lerr(m){const e=document.getElementById('lerr');e.textContent=m;e.style.display='block';}
+function signout(){token='';localStorage.removeItem('nw_admin');location.reload();}
+document.getElementById('lw').onkeydown=e=>{if(e.key==='Enter')doLogin();};
 
-window.addEventListener('DOMContentLoaded', () => {
-  const stored = localStorage.getItem('pl_admin_token');
-  if (stored) {
-    authToken = stored;
-    fetch(`${API}/api/admin/players`, { headers: { Authorization: 'Bearer ' + authToken } })
-      .then(r => {
-        if (r.ok) {
-          document.getElementById('login-screen').style.display = 'none';
-          document.getElementById('app').classList.add('visible');
-          initApp();
-        } else { localStorage.removeItem('pl_admin_token'); authToken = ''; }
-      }).catch(() => {});
-  }
+window.addEventListener('DOMContentLoaded',()=>{
+  const t=localStorage.getItem('nw_admin');
+  if(!t)return;
+  token=t;
+  fetch(`${API}/api/admin/players`,{headers:{Authorization:'Bearer '+token}})
+    .then(r=>{
+      if(r.ok){
+        document.getElementById('login-screen').style.display='none';
+        document.getElementById('app').classList.add('on');
+        init();
+      } else {localStorage.removeItem('nw_admin');token='';}
+    }).catch(()=>{});
 });
 
-function initApp() {
-  loadDashboard();
-  loadMatches();
-  document.getElementById('forms-webhook-url').textContent = `${API}/api/admin/google-forms-webhook`;
+function init(){
+  loadDash();
+  loadMatchesList();
+  document.getElementById('forms-url').textContent=`${API}/api/forms-submit`;
 }
 
-// ── FETCH ──────────────────────────────────────────────────────────────────────
-async function api(path, opts = {}) {
-  const res = await fetch(`${API}${path}`, {
-    ...opts,
-    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + authToken, ...(opts.headers || {}) },
-  });
-  if (!res.ok) {
-    const d = await res.json().catch(() => ({}));
-    throw new Error(d.error || `HTTP ${res.status}`);
-  }
-  return res.json();
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+const gv=id=>document.getElementById(id)?.value?.trim()||'';
+const sv=(id,v)=>{if(document.getElementById(id))document.getElementById(id).value=v||'';};
+function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function toast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='on '+type;
+  setTimeout(()=>t.className='',3200);
 }
 
-function toast(msg, type = 'ok') {
-  const t = document.getElementById('admin-toast');
-  t.textContent = msg; t.className = 'show ' + type;
-  setTimeout(() => t.className = '', 3200);
+async function api(path,method='GET',body=null){
+  const opts={headers:{'Content-Type':'application/json','Authorization':'Bearer '+token}};
+  if(method!=='GET'&&body){opts.method=method;opts.body=JSON.stringify(body);}
+  else opts.method=method;
+  const r=await fetch(API+path,opts);
+  if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.error||`HTTP ${r.status}`);}
+  return r.json();
 }
 
-// ── PANELS ─────────────────────────────────────────────────────────────────────
-function showPanel(id) {
-  document.querySelectorAll('.page-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-  document.getElementById('panel-' + id).classList.add('active');
+function open(id){document.getElementById(id).classList.add('on');}
+function close(id){document.getElementById(id).classList.remove('on');}
+
+// ── NAV ───────────────────────────────────────────────────────────────────────
+function nav(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const p=document.getElementById('p-'+id);
+  if(p)p.classList.add('on');
   event.currentTarget.classList.add('active');
-  const loaders = {
-    results: loadResultMatches,
-    players: loadPlayers,
-    emailmap: loadEmailMap,
-    leaderboard: loadAdminLeaderboard,
-    audit: loadAudit,
-    predictions: loadPredMatchSelect,
-    variations: loadVariations,
-    'bonus-points': loadBonusPoints,
-    'bulk-responses': loadBRMatchIds,
-  };
-  if (loaders[id]) loaders[id]();
+  const loaders={results:loadResults,players:loadPlayers,emailmap:loadEmailMap,
+    leaderboard:loadAdminLB,insights:loadInsights,audit:loadAudit,
+    predictions:loadPredSel,variations:loadVariations,'bonus-points':loadBonus,
+    penalties:loadPenalties,'bulk-responses':loadBRRef};
+  if(loaders[id])loaders[id]();
 }
-
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
 // ── DASHBOARD ─────────────────────────────────────────────────────────────────
-async function loadDashboard() {
-  try {
-    const [ms, players, lb] = await Promise.all([api('/api/matches'), api('/api/admin/players'), api('/api/leaderboard')]);
-    document.getElementById('stat-matches').textContent   = ms.length;
-    document.getElementById('stat-players').textContent   = players.length;
-    document.getElementById('stat-open').textContent      = ms.filter(m => m.status === 'open').length;
-    document.getElementById('stat-resulted').textContent  = ms.filter(m => m.status === 'resulted').length;
+async function loadDash(){
+  try{
+    const[ms,pl,lb]=await Promise.all([api('/api/matches'),api('/api/admin/players'),api('/api/leaderboard')]);
+    const open=ms.filter(m=>m.status==='open').length;
+    const resulted=ms.filter(m=>m.status==='resulted').length;
+    document.getElementById('dash-stats').innerHTML=[
+      {v:ms.length,l:'Matches',c:''},
+      {v:pl.length,l:'Players',c:''},
+      {v:open,l:'Open now',c:open?'var(--green)':''},
+      {v:resulted,l:'Resulted',c:'var(--accent2)'},
+    ].map(s=>`<div class="stat">
+      <div class="stat-val" style="color:${s.c||'var(--text)'}">${s.v}</div>
+      <div class="stat-lbl">${s.l}</div>
+    </div>`).join('');
 
-    const top10 = lb.slice(0, 10);
-    document.getElementById('dash-lb').innerHTML = top10.length
-      ? `<table class="admin-table">
-          <thead><tr><th>#</th><th>Player</th><th style="text-align:right">Net pts</th><th style="text-align:right">Bonus</th><th style="text-align:right">Played</th></tr></thead>
-          <tbody>${top10.map(p => `<tr>
-            <td class="mono">${p.rank}</td>
-            <td>${esc(p.display_name)}<br><span style="color:var(--muted);font-size:11px">${esc(p.primary_email)}</span></td>
-            <td style="text-align:right;font-family:var(--mono);font-weight:600;color:${p.net_points >= 0 ? 'var(--green)' : 'var(--red)'}">${p.net_points}</td>
-            <td style="text-align:right;font-family:var(--mono);color:var(--purple)">${p.bonuses || 0}</td>
-            <td style="text-align:right;color:var(--muted)">${p.matches_played}</td>
-          </tr>`).join('')}</tbody>
-        </table>`
-      : '<p style="color:var(--muted)">No results yet.</p>';
-  } catch(e) { toast(e.message, 'err'); }
+    document.getElementById('dash-lb').innerHTML=lb.length?
+      `<table class="tbl">
+        <thead><tr><th>#</th><th>Player</th><th class="num">Net pts</th><th class="num">Bonus</th><th class="num">Played</th></tr></thead>
+        <tbody>${lb.slice(0,10).map(p=>`<tr>
+          <td class="mono">${p.rank}</td>
+          <td>${esc(p.display_name)}<br><span style="font-size:10px;color:var(--text3)">${esc(p.primary_email)}</span></td>
+          <td class="num mono" style="color:${p.net_points>=0?'var(--green)':'var(--red)'};font-weight:500">${p.net_points>=0?'+':''}${p.net_points}</td>
+          <td class="num mono" style="color:var(--purple)">${p.bonuses>0?'+':''}${p.bonuses}</td>
+          <td class="num" style="color:var(--text3)">${p.matches_played}</td>
+        </tr>`).join('')}</tbody>
+      </table>`:'<p style="color:var(--text3)">No results yet.</p>';
+  }catch(e){toast(e.message,'err');}
 }
 
 // ── MATCHES ───────────────────────────────────────────────────────────────────
-async function loadMatches() {
-  try {
-    allMatches = await api('/api/matches');
-    renderMatchesList();
-  } catch(e) { toast(e.message, 'err'); }
+async function loadMatchesList(){
+  try{
+    matches=await api('/api/matches');
+    renderMatches();
+  }catch(e){toast(e.message,'err');}
 }
 
-function renderMatchesList() {
-  const el = document.getElementById('matches-list');
-  if (!allMatches.length) { el.innerHTML = '<p style="color:var(--muted)">No matches yet.</p>'; return; }
-  el.innerHTML = allMatches.map(m => `
-    <div class="match-row">
-      <span class="m-num mono">M${m.match_number}</span>
-      <div class="m-title">${esc(m.title)}</div>
-      <span class="m-time mono">${fmtT(m.match_time)}</span>
-      <span class="status-badge s-${m.status}">${m.status}</span>
-      <div class="m-actions">
-        ${m.status === 'upcoming' ? `<button class="btn btn-sm btn-green" onclick="openMatch(${m.id})">Open</button>` : ''}
-        ${m.status === 'open'     ? `<button class="btn btn-sm btn-amber" onclick="closeMatch(${m.id})">Close</button>` : ''}
-        ${m.status === 'closed'   ? `<button class="btn btn-sm btn-accent" onclick="openResultModal(${m.id},false)">Result</button>` : ''}
-        ${m.status === 'resulted' ? `<span style="font-size:11px;color:var(--green)">✓ ${esc(m.winner||'')}</span>` : ''}
-        <button class="btn btn-sm btn-outline" onclick="openMatchEdit(${m.id})" title="Edit / override status">✎</button>
-      </div>
-    </div>`).join('');
-}
-
-function fmtT(iso) {
-  return new Date(iso).toLocaleString('en-IN', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit', timeZone:'Asia/Kolkata' }) + ' IST';
-}
-
-function openAddMatch() {
-  document.getElementById('modal-match-title').textContent = 'Add match';
-  ['m-num','m-title','m-team-a','m-team-b'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('m-time').value = '';
-  document.getElementById('edit-match-id').dataset.id = '';
-  openModal('modal-match');
-}
-
-async function saveMatch() {
-  const num = document.getElementById('m-num').value;
-  const title = document.getElementById('m-title').value.trim();
-  const ta = document.getElementById('m-team-a').value.trim();
-  const tb = document.getElementById('m-team-b').value.trim();
-  const time = document.getElementById('m-time').value;
-  if (!num || !title || !ta || !tb || !time) { toast('Fill all fields', 'err'); return; }
-  try {
-    const iso = new Date(time).toISOString();
-    await api('/api/admin/matches', { method:'POST', body:JSON.stringify({ match_number:+num, title, team_a:ta, team_b:tb, match_time:iso }) });
-    closeModal('modal-match');
-    toast('Match created');
-    await loadMatches();
-  } catch(e) { toast(e.message, 'err'); }
-}
-
-async function openMatch(id) {
-  try {
-    await api(`/api/admin/matches/${id}/open`, { method:'POST' });
-    toast('Match opened'); await loadMatches();
-  } catch(e) { toast(e.message, 'err'); }
-}
-
-async function closeMatch(id) {
-  try {
-    const d = await api(`/api/admin/matches/${id}/close`, { method:'POST' });
-    toast(`Match closed. Odds: ${d.odds?.team_a} ${d.odds?.team_a_odds}x / ${d.odds?.team_b} ${d.odds?.team_b_odds}x`);
-    await loadMatches();
-  } catch(e) { toast(e.message, 'err'); }
-}
-
-function openMatchEdit(id) {
-  const m = allMatches.find(x => x.id === id);
-  if (!m) return;
-  document.getElementById('edit-match-id-hidden').value = id;
-  document.getElementById('edit-status').value = '';
-  document.getElementById('edit-time').value = '';
-  openModal('modal-match-edit');
-}
-
-async function saveMatchEdit() {
-  const id = document.getElementById('edit-match-id-hidden').value;
-  const status = document.getElementById('edit-status').value;
-  const time = document.getElementById('edit-time').value;
-  const body = {};
-  if (status) body.status = status;
-  if (time) body.match_time = new Date(time).toISOString();
-  if (!Object.keys(body).length) { toast('Nothing changed', 'err'); return; }
-  try {
-    await api(`/api/admin/matches/${id}`, { method:'PATCH', body:JSON.stringify(body) });
-    closeModal('modal-match-edit');
-    toast('Match updated');
-    await loadMatches();
-  } catch(e) { toast(e.message, 'err'); }
-}
-
-// ── RESULTS ───────────────────────────────────────────────────────────────────
-async function loadResultMatches() {
-  try {
-    const ms = await api('/api/matches');
-    const pending = ms.filter(m => m.status !== 'resulted' && m.status !== 'upcoming');
-    const el = document.getElementById('results-list');
-    if (!pending.length) { el.innerHTML = '<p style="color:var(--muted)">No matches pending result.</p>'; return; }
-    el.innerHTML = pending.map(m => `
-      <div class="match-row">
-        <span class="m-num mono">M${m.match_number}</span>
-        <div class="m-title">${esc(m.title)}</div>
-        <span class="m-time mono">${fmtT(m.match_time)}</span>
-        <span class="status-badge s-${m.status}">${m.status}</span>
-        <div class="m-actions">
-          ${m.status === 'closed'
-            ? `<button class="btn btn-sm btn-accent" onclick="openResultModal(${m.id},false)">Enter result</button>`
-            : `<button class="btn btn-sm btn-red" onclick="openResultModal(${m.id},true)">⚡ Force result</button>`
-          }
+function renderMatches(){
+  const el=document.getElementById('matches-list');
+  if(!matches.length){el.innerHTML='<p style="color:var(--text3)">No matches yet.</p>';return;}
+  el.innerHTML=`<table class="tbl">
+    <thead><tr><th>#</th><th>Title</th><th>Time (IST)</th><th>Status</th><th>Winner</th><th>Actions</th></tr></thead>
+    <tbody>${matches.map(m=>`<tr>
+      <td class="mono">M${m.match_number}</td>
+      <td style="font-weight:500">${esc(m.title)}</td>
+      <td class="mono" style="font-size:11px">${fmtT(m.match_time)}</td>
+      <td><span class="badge b-${m.status}">${m.status}</span></td>
+      <td style="font-size:11px;color:var(--green)">${m.winner?'🏆 '+esc(m.winner):'—'}</td>
+      <td>
+        <div class="btn-row">
+          ${m.status==='upcoming'?`<button class="btn btn-green btn-sm" onclick="matchAction(${m.id},'open')">Open</button>`:''}
+          ${m.status==='open'?`<button class="btn btn-amber btn-sm" onclick="matchAction(${m.id},'close')">Close</button>`:''}
+          ${m.status==='closed'?`<button class="btn btn-accent btn-sm" onclick="openResultModal(${m.id},false)">Result</button>`:''}
+          ${m.status!=='resulted'&&m.status!=='upcoming'?`<button class="btn btn-outline btn-sm" onclick="openResultModal(${m.id},true)" title="Force result — use for historical matches">⚡</button>`:''}
+          <button class="btn btn-ghost btn-sm" onclick="openMatchEditModal(${m.id})" title="Edit">✎</button>
+          <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delMatch(${m.id},'${esc(m.status)}')" title="Delete">✕</button>
         </div>
-      </div>`).join('');
-  } catch(e) { toast(e.message, 'err'); }
+      </td>
+    </tr>`).join('')}</tbody>
+  </table>`;
 }
 
-async function openResultModal(matchId, force) {
-  const match = allMatches.find(m => m.id === matchId) || await api('/api/matches').then(ms => ms.find(m => m.id === matchId));
-  resultTarget = match;
-  resultForce = force;
-  document.getElementById('result-modal-title').textContent = `Result — ${match.title}`;
-  document.getElementById('result-btn-a').textContent = match.team_a;
-  document.getElementById('result-btn-b').textContent = match.team_b;
-  document.getElementById('result-force-note').textContent = force
-    ? '⚡ Force mode: this will close the match and score it regardless of status. Good for historical matches.'
-    : '';
-
-  try {
-    const odds = await api(`/api/matches/${matchId}/odds`);
-    document.getElementById('result-odds-preview').innerHTML = `
-      <div class="odds-display">
-        <div class="odds-team">
-          <div class="name">${esc(match.team_a)}</div>
-          <div class="votes">${odds.team_a_votes ?? 0} votes</div>
-          <div class="odds-val">${odds.team_a_odds ?? '–'}x</div>
-        </div>
-        <div class="odds-team">
-          <div class="name">${esc(match.team_b)}</div>
-          <div class="votes">${odds.team_b_votes ?? 0} votes</div>
-          <div class="odds-val">${odds.team_b_odds ?? '–'}x</div>
-        </div>
-      </div>`;
-  } catch {}
-  openModal('modal-result');
+function fmtT(iso){
+  return new Date(iso).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Kolkata'})+' IST';
 }
 
-async function submitResult(side) {
-  if (!resultTarget) return;
-  const winner = side === 'a' ? resultTarget.team_a : resultTarget.team_b;
-  const endpoint = resultForce
-    ? `/api/admin/matches/${resultTarget.id}/force-result`
-    : `/api/admin/matches/${resultTarget.id}/result`;
-  try {
-    await api(endpoint, { method:'POST', body:JSON.stringify({ winner }) });
-    closeModal('modal-result');
-    toast(`Result: ${winner} wins. Leaderboard updated.`);
-    await loadMatches(); await loadDashboard();
-  } catch(e) { toast(e.message, 'err'); }
+function openMatchModal(m){
+  sv('mm-id','');sv('mm-num','');sv('mm-title','');sv('mm-ta','');sv('mm-tb','');sv('mm-time','');
+  document.getElementById('modal-match-h').textContent='Add match';
+  open('modal-match');
 }
 
-// ── PLAYERS ───────────────────────────────────────────────────────────────────
-async function loadPlayers() {
-  const el = document.getElementById('players-list');
-  try {
-    const rows = await api('/api/admin/players');
-    el.innerHTML = rows.length
-      ? `<table class="admin-table">
-          <thead><tr><th>Name</th><th>Primary email</th><th>First match</th><th>All emails</th><th></th></tr></thead>
-          <tbody>${rows.map(p => `<tr>
-            <td style="font-weight:500">${esc(p.display_name)}</td>
-            <td class="mono">${esc(p.primary_email)}</td>
-            <td class="mono">${p.first_match_num ?? '–'}</td>
-            <td class="mono" style="font-size:11px;color:var(--muted)">${esc(p.all_emails || p.primary_email)}</td>
-            <td><button class="btn btn-sm btn-outline" onclick="editPlayer('${esc(p.primary_email)}','${esc(p.display_name)}',${p.first_match_num||''})">Edit</button></td>
-          </tr>`).join('')}</tbody>
-        </table>`
-      : '<p style="color:var(--muted)">No players yet.</p>';
-  } catch(e) { toast(e.message, 'err'); }
-}
-
-function openAddPlayer() {
-  ['p-name','p-email','p-aliases','p-first-match'].forEach(id => document.getElementById(id).value = '');
-  openModal('modal-player');
-}
-
-function editPlayer(email, name, firstMatch) {
-  document.getElementById('p-name').value = name;
-  document.getElementById('p-email').value = email;
-  document.getElementById('p-aliases').value = '';
-  document.getElementById('p-first-match').value = firstMatch || '';
-  openModal('modal-player');
-}
-
-async function savePlayer() {
-  const name  = document.getElementById('p-name').value.trim();
-  const email = document.getElementById('p-email').value.trim().toLowerCase();
-  const aliases = document.getElementById('p-aliases').value.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
-  const firstMatch = document.getElementById('p-first-match').value;
-  if (!name || !email) { toast('Fill name and email', 'err'); return; }
-  try {
-    await api('/api/admin/players', { method:'POST', body:JSON.stringify({ display_name:name, primary_email:email, alias_emails:aliases }) });
-    if (firstMatch) {
-      await api(`/api/admin/players/${encodeURIComponent(email)}`, {
-        method:'PATCH', body:JSON.stringify({ first_match_num: parseInt(firstMatch) })
-      });
+async function saveMatch(){
+  const id=gv('mm-id'),num=gv('mm-num'),title=gv('mm-title'),ta=gv('mm-ta'),tb=gv('mm-tb'),time=gv('mm-time');
+  if(!num||!title||!ta||!tb||!time){toast('Fill all fields','err');return;}
+  const iso=new Date(time).toISOString();
+  try{
+    if(id){
+      await api(`/api/admin/matches/${id}`,'PATCH',{title,team_a:ta,team_b:tb,match_time:iso});
+    } else {
+      await api('/api/admin/matches','POST',{match_number:+num,title,team_a:ta,team_b:tb,match_time:iso});
     }
-    closeModal('modal-player'); toast('Player saved'); loadPlayers();
-  } catch(e) { toast(e.message, 'err'); }
+    close('modal-match');toast('Match saved');await loadMatchesList();
+  }catch(e){toast(e.message,'err');}
+}
+
+function openMatchEditModal(id){
+  const m=matches.find(x=>x.id===id);if(!m)return;
+  sv('me-id',id);sv('me-status','');sv('me-time','');sv('me-ta','');sv('me-tb','');sv('me-winner','');
+  open('modal-match-edit');
+}
+
+async function saveMatchEdit(){
+  const id=gv('me-id'),status=gv('me-status'),time=gv('me-time'),
+        ta=gv('me-ta'),tb=gv('me-tb'),winner=gv('me-winner');
+  const body={};
+  if(status)body.status=status;
+  if(time)body.match_time=new Date(time).toISOString();
+  if(ta)body.team_a=ta;
+  if(tb)body.team_b=tb;
+  if(winner)body.winner=winner;
+  if(!Object.keys(body).length){toast('Nothing changed','err');return;}
+  try{
+    await api(`/api/admin/matches/${id}`,'PATCH',body);
+    close('modal-match-edit');toast('Match updated');await loadMatchesList();
+  }catch(e){toast(e.message,'err');}
+}
+
+async function matchAction(id,action){
+  try{
+    const d=await api(`/api/admin/matches/${id}/${action}`,'POST');
+    toast(action==='open'?'Match opened':'Match closed');
+    await loadMatchesList();
+  }catch(e){toast(e.message,'err');}
+}
+
+async function delMatch(id,status){
+  const msg=status==='upcoming'?
+    'Delete this upcoming match?':
+    `This match has data (votes/scores). Use force-delete to remove everything. Continue?`;
+  if(!confirm(msg))return;
+  try{
+    if(status==='upcoming'){await api(`/api/admin/matches/${id}`,'DELETE');}
+    else{await api(`/api/admin/matches/${id}/force-delete`,'DELETE');}
+    toast('Match deleted');await loadMatchesList();
+  }catch(e){toast(e.message,'err');}
 }
 
 // ── BULK MATCHES ──────────────────────────────────────────────────────────────
-let bulkMatchesParsed = [];
-
-function previewBulkMatches() {
-  const raw = document.getElementById('bulk-matches-input').value.trim();
-  if (!raw) { toast('Paste some matches first', 'err'); return; }
-
-  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
-  bulkMatchesParsed = [];
-
-  lines.forEach((line, i) => {
-    const parts = line.includes('\t')
-      ? line.split('\t').map(s => s.trim())
-      : line.split(',').map(s => s.trim());
-
-    if (parts.length < 5) {
-      bulkMatchesParsed.push({ lineNum:i+1, status:'error', reason:'Need 5 columns: #, Title, Team A, Team B, Time', ...Object.fromEntries(['num','title','ta','tb','time'].map((k,j)=>[k,parts[j]||''])) });
-      return;
+function previewBulkMatches(){
+  const raw=document.getElementById('bm-input').value.trim();
+  if(!raw){toast('Paste some matches first','err');return;}
+  const lines=raw.split('\n').map(l=>l.trim()).filter(Boolean);
+  bmParsed=[];
+  lines.forEach((line,i)=>{
+    const parts=line.includes('\t')?line.split('\t').map(s=>s.trim()):line.split(',').map(s=>s.trim());
+    if(parts.length<5){
+      bmParsed.push({ok:false,reason:'Need 5 columns',num:parts[0]||'',title:parts[1]||'',ta:parts[2]||'',tb:parts[3]||'',time:parts.slice(4).join(',')});return;
     }
-
-    const [numStr, title, ta, tb, ...timeParts] = parts;
-    const timeStr = timeParts.join(',').trim();
-    const num = parseInt(numStr);
-
-    if (isNaN(num)) { bulkMatchesParsed.push({ lineNum:i+1, status:'error', reason:'Match # must be a number', num:numStr, title, ta, tb, time:timeStr }); return; }
-    if (!title || !ta || !tb) { bulkMatchesParsed.push({ lineNum:i+1, status:'error', reason:'Title, Team A, Team B required', num, title, ta, tb, time:timeStr }); return; }
-
-    // Parse time — support "22 Apr 2026 7:30 PM" or ISO or datetime-local
-    let parsedTime = null;
-    try {
-      parsedTime = new Date(timeStr);
-      if (isNaN(parsedTime.getTime())) {
-        // Try with "Asia/Kolkata" interpretation — treat as IST
-        const adjusted = new Date(timeStr + ' UTC+5:30');
-        parsedTime = isNaN(adjusted.getTime()) ? null : adjusted;
+    const[numS,title,ta,tb,...tp]=parts;
+    const timeS=tp.join(',').trim();
+    const num=parseInt(numS);
+    if(isNaN(num)){bmParsed.push({ok:false,reason:'# must be number',num:numS,title,ta,tb,time:timeS});return;}
+    // Parse IST time
+    let utc=null;
+    try{
+      // Try direct parse first
+      let d=new Date(timeS);
+      if(isNaN(d.getTime())){
+        // Append IST offset
+        d=new Date(timeS+' +05:30');
       }
-    } catch {}
-
-    if (!parsedTime) { bulkMatchesParsed.push({ lineNum:i+1, status:'error', reason:`Cannot parse time: "${timeStr}"`, num, title, ta, tb, time:timeStr }); return; }
-
-    // Convert to UTC from IST
-    const utcTime = new Date(parsedTime.getTime() - 5.5*3600000);
-    bulkMatchesParsed.push({ lineNum:i+1, status:'ok', num, title, ta, tb, time:timeStr, utc:utcTime.toISOString() });
+      if(!isNaN(d.getTime()))utc=new Date(d.getTime()).toISOString();
+    }catch{}
+    if(!utc){bmParsed.push({ok:false,reason:`Cannot parse: "${timeS}"`,num,title,ta,tb,time:timeS});return;}
+    bmParsed.push({ok:true,num,title,ta,tb,time:timeS,utc});
   });
 
-  const ok = bulkMatchesParsed.filter(r => r.status === 'ok').length;
-  const err = bulkMatchesParsed.filter(r => r.status === 'error').length;
-
-  document.getElementById('bm-preview-title').textContent = `Preview — ${ok} ready, ${err} errors`;
-  document.getElementById('bm-import-btn').textContent = `Import ${ok} match${ok !== 1 ? 'es' : ''}`;
-  document.getElementById('bm-preview-body').innerHTML = bulkMatchesParsed.map(r => `
-    <tr style="${r.status === 'error' ? 'background:#fef2f2' : ''}">
-      <td class="mono">${r.num}</td>
-      <td>${esc(r.title)}</td>
-      <td>${esc(r.ta)}</td>
-      <td>${esc(r.tb)}</td>
-      <td class="mono" style="font-size:11px">${esc(r.time)}</td>
-      <td>${r.status === 'ok' ? '<span style="color:var(--green)">✓</span>' : `<span style="color:var(--red)">✗ ${esc(r.reason)}</span>`}</td>
-    </tr>`).join('');
-
-  document.getElementById('bulk-matches-preview').style.display = 'block';
+  const ok=bmParsed.filter(r=>r.ok).length;
+  document.getElementById('bm-title').textContent=`Preview — ${ok} ready, ${bmParsed.length-ok} errors`;
+  document.getElementById('bm-import-btn').textContent=`Import ${ok} match${ok!==1?'es':''}`;
+  document.getElementById('bm-tbody').innerHTML=bmParsed.map(r=>`<tr style="${!r.ok?'background:var(--red-s)':''}">
+    <td class="mono">${r.num}</td><td>${esc(r.title)}</td><td>${esc(r.ta)}</td><td>${esc(r.tb)}</td>
+    <td class="mono" style="font-size:10px">${esc(r.time)}</td>
+    <td>${r.ok?'<span style="color:var(--green)">✓</span>':'<span style="color:var(--red)">✗ '+esc(r.reason)+'</span>'}</td>
+  </tr>`).join('');
+  document.getElementById('bm-preview').style.display='block';
 }
 
-async function importBulkMatches() {
-  const toImport = bulkMatchesParsed.filter(r => r.status === 'ok');
-  if (!toImport.length) { toast('No valid matches', 'err'); return; }
-
-  document.getElementById('bm-import-btn').disabled = true;
-  document.getElementById('bm-import-btn').textContent = 'Importing…';
-
-  const matches = toImport.map(r => ({
-    match_number: r.num, title: r.title, team_a: r.ta, team_b: r.tb, match_time: r.utc
-  }));
-
-  try {
-    const res = await api('/api/admin/matches/bulk', { method:'POST', body:JSON.stringify({ matches }) });
+async function importBulkMatches(){
+  const toImport=bmParsed.filter(r=>r.ok);
+  if(!toImport.length){toast('No valid matches','err');return;}
+  document.getElementById('bm-import-btn').disabled=true;
+  try{
+    const res=await api('/api/admin/matches/bulk','POST',{matches:toImport.map(r=>({match_number:r.num,title:r.title,team_a:r.ta,team_b:r.tb,match_time:r.utc}))});
     toast(`✓ ${res.created} created, ${res.skipped} skipped`);
-    if (res.errors && res.errors.length) {
-      console.warn('Bulk match errors:', res.errors);
+    document.getElementById('bm-import-btn').textContent='Done';
+    await loadMatchesList();
+  }catch(e){toast(e.message,'err');document.getElementById('bm-import-btn').disabled=false;}
+}
+
+// ── RESULTS ───────────────────────────────────────────────────────────────────
+async function loadResults(){
+  try{
+    const ms=await api('/api/matches');
+    const pending=ms.filter(m=>m.status!=='resulted'&&m.status!=='upcoming');
+    const el=document.getElementById('results-list');
+    if(!pending.length){el.innerHTML='<p style="color:var(--text3)">No matches pending result.</p>';return;}
+    el.innerHTML=`<table class="tbl">
+      <thead><tr><th>#</th><th>Title</th><th>Time</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>${pending.map(m=>`<tr>
+        <td class="mono">M${m.match_number}</td>
+        <td style="font-weight:500">${esc(m.title)}</td>
+        <td class="mono" style="font-size:11px">${fmtT(m.match_time)}</td>
+        <td><span class="badge b-${m.status}">${m.status}</span></td>
+        <td><div class="btn-row">
+          ${m.status==='closed'?`<button class="btn btn-accent btn-sm" onclick="openResultModal(${m.id},false)">Enter result</button>`:''}
+          <button class="btn btn-outline btn-sm" onclick="openResultModal(${m.id},true)">⚡ Force result</button>
+        </div></td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+  }catch(e){toast(e.message,'err');}
+}
+
+async function openResultModal(id,force){
+  const m=matches.find(x=>x.id===id)||(await api('/api/matches').then(ms=>ms.find(x=>x.id===id)));
+  resultTarget=m;resultForce=force;
+  document.getElementById('res-h').textContent=`Result — ${m.title}`;
+  document.getElementById('res-sub').textContent=force?'⚡ Force mode: closes and scores regardless of current status.':'';
+  document.getElementById('res-a').textContent=m.team_a;
+  document.getElementById('res-b').textContent=m.team_b;
+  try{
+    const o=await api(`/api/matches/${id}/odds`);
+    document.getElementById('res-odds').innerHTML=`<div class="odds-row">
+      <div class="odds-team"><div class="odds-name">${esc(m.team_a)}</div><div class="odds-votes">${o.team_a_votes??0} votes</div><div class="odds-val">${o.team_a_odds??'–'}x</div></div>
+      <div class="odds-team"><div class="odds-name">${esc(m.team_b)}</div><div class="odds-votes">${o.team_b_votes??0} votes</div><div class="odds-val">${o.team_b_odds??'–'}x</div></div>
+    </div>`;
+  }catch{}
+  open('modal-result');
+}
+
+async function submitResult(side){
+  if(!resultTarget)return;
+  const winner=side==='a'?resultTarget.team_a:resultTarget.team_b;
+  const ep=resultForce?`/api/admin/matches/${resultTarget.id}/force-result`:`/api/admin/matches/${resultTarget.id}/result`;
+  try{
+    await api(ep,'POST',{winner});
+    close('modal-result');
+    toast(`✓ ${winner} wins. Leaderboard updated.`);
+    await loadMatchesList();await loadDash();
+  }catch(e){toast(e.message,'err');}
+}
+
+// ── PLAYERS ───────────────────────────────────────────────────────────────────
+async function loadPlayers(){
+  const el=document.getElementById('players-list');
+  try{
+    const rows=await api('/api/admin/players');
+    el.innerHTML=rows.length?`<table class="tbl">
+      <thead><tr><th>Name</th><th>Primary email</th><th>First match</th><th>Alias emails</th><th>Actions</th></tr></thead>
+      <tbody>${rows.map(p=>`<tr>
+        <td style="font-weight:500">${esc(p.display_name)}</td>
+        <td class="mono">${esc(p.primary_email)}</td>
+        <td class="mono">${p.first_match_num??'—'}</td>
+        <td style="font-size:10px;color:var(--text3)">${esc(p.all_emails||p.primary_email)}</td>
+        <td><div class="btn-row">
+          <button class="btn btn-ghost btn-sm" onclick="editPlayer('${esc(p.primary_email)}','${esc(p.display_name)}',${p.first_match_num||''})">Edit</button>
+          <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delPlayer('${esc(p.primary_email)}')">Delete</button>
+        </div></td>
+      </tr>`).join('')}</tbody>
+    </table>`:'<p style="color:var(--text3)">No players yet.</p>';
+  }catch(e){toast(e.message,'err');}
+}
+
+function openPlayerModal(){
+  sv('mp-h','Add player');sv('mp-orig-email','');sv('mp-name','');sv('mp-email','');sv('mp-aliases','');sv('mp-first','');
+  document.getElementById('mp-email').disabled=false;
+  open('modal-player');
+}
+
+function editPlayer(email,name,first){
+  document.getElementById('mp-h').textContent='Edit player';
+  sv('mp-orig-email',email);sv('mp-name',name);sv('mp-email',email);sv('mp-aliases','');sv('mp-first',first||'');
+  document.getElementById('mp-email').disabled=true; // can't change primary email
+  open('modal-player');
+}
+
+async function savePlayer(){
+  const orig=gv('mp-orig-email'),name=gv('mp-name'),email=gv('mp-email').toLowerCase();
+  const aliases=gv('mp-aliases').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+  const first=gv('mp-first');
+  if(!name||!email){toast('Name and email required','err');return;}
+  try{
+    if(orig){
+      await api(`/api/admin/players/${encodeURIComponent(orig)}`,'PATCH',{
+        display_name:name,
+        ...(first?{first_match_num:+first}:{})
+      });
+      if(aliases.length)
+        for(const a of aliases)
+          await api('/api/admin/email-map','POST',{alias_email:a,primary_email:orig});
+    } else {
+      await api('/api/admin/players','POST',{display_name:name,primary_email:email,alias_emails:aliases,first_match_num:first?+first:null});
     }
-    await loadMatches();
-    document.getElementById('bm-import-btn').disabled = false;
-    document.getElementById('bm-import-btn').textContent = `Done — ${res.created} imported`;
-  } catch(e) {
-    toast(e.message, 'err');
-    document.getElementById('bm-import-btn').disabled = false;
-    document.getElementById('bm-import-btn').textContent = 'Retry';
-  }
+    close('modal-player');toast('Player saved');loadPlayers();
+  }catch(e){toast(e.message,'err');}
+}
+
+async function delPlayer(email){
+  if(!confirm(`Delete player ${email}? This removes their account but NOT their votes/scores.`))return;
+  try{await api(`/api/admin/players/${encodeURIComponent(email)}`,'DELETE');toast('Player deleted');loadPlayers();}
+  catch(e){toast(e.message,'err');}
 }
 
 // ── BULK RESPONSES ────────────────────────────────────────────────────────────
-let bulkRespParsed = [];
-
-async function loadBRMatchIds() {
-  try {
-    const ms = await api('/api/matches');
-    allMatches = ms;
-    document.getElementById('br-match-ids').innerHTML = `
-      <table class="admin-table">
-        <thead><tr><th>DB ID</th><th>Match #</th><th>Title</th><th>Status</th></tr></thead>
-        <tbody>${ms.map(m => `<tr>
-          <td class="mono" style="font-weight:600;color:var(--blue)">${m.id}</td>
-          <td class="mono">M${m.match_number}</td>
-          <td>${esc(m.title)}</td>
-          <td><span class="status-badge s-${m.status}">${m.status}</span></td>
-        </tr>`).join('')}</tbody>
-      </table>`;
-  } catch(e) { document.getElementById('br-match-ids').innerHTML = '<p style="color:var(--muted)">Could not load matches.</p>'; }
+async function loadBRRef(){
+  try{
+    const ms=await api('/api/matches');
+    document.getElementById('br-match-ref').innerHTML=`<table class="tbl">
+      <thead><tr><th>DB ID</th><th>M#</th><th>Title</th><th>Teams</th><th>Status</th></tr></thead>
+      <tbody>${ms.map(m=>`<tr>
+        <td class="mono" style="color:var(--blue);font-weight:600">${m.id}</td>
+        <td class="mono">M${m.match_number}</td>
+        <td>${esc(m.title)}</td>
+        <td style="font-size:11px;color:var(--text3)">${esc(m.team_a)} vs ${esc(m.team_b)}</td>
+        <td><span class="badge b-${m.status}">${m.status}</span></td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+  }catch{}
 }
 
-function previewBulkResponses() {
-  const raw = document.getElementById('bulk-resp-input').value.trim();
-  if (!raw) { toast('Paste responses first', 'err'); return; }
-
-  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
-  bulkRespParsed = [];
-
-  // Skip header rows
-  const dataLines = lines.filter(l => !l.toLowerCase().startsWith('email'));
-
-  dataLines.forEach((line, i) => {
-    const parts = line.includes('\t')
-      ? line.split('\t').map(s => s.trim())
-      : line.split(',').map(s => s.trim());
-
-    if (parts.length < 3) {
-      bulkRespParsed.push({ status:'error', reason:'Need at least: Email, Match ID, Team', email:'', matchId:'', team:'', ts:'' });
-      return;
-    }
-
-    const [email, matchIdStr, team, ...tsParts] = parts;
-    const ts = tsParts.join(',').trim();
-    const matchId = parseInt(matchIdStr);
-
-    if (!email || !email.includes('@')) { bulkRespParsed.push({ status:'error', reason:'Invalid email', email, matchId:matchIdStr, team, ts }); return; }
-    if (isNaN(matchId)) { bulkRespParsed.push({ status:'error', reason:'Match ID must be a number', email, matchId:matchIdStr, team, ts }); return; }
-    if (!team) { bulkRespParsed.push({ status:'error', reason:'Missing team', email, matchId, team, ts }); return; }
-
-    bulkRespParsed.push({ status:'ok', email:email.toLowerCase(), matchId, team, ts });
+function previewBulkResponses(){
+  const raw=document.getElementById('br-input').value.trim();
+  if(!raw){toast('Paste responses first','err');return;}
+  const lines=raw.split('\n').map(l=>l.trim()).filter(l=>!l.toLowerCase().startsWith('email'));
+  brParsed=[];
+  lines.forEach((line,i)=>{
+    const parts=line.includes('\t')?line.split('\t').map(s=>s.trim()):line.split(',').map(s=>s.trim());
+    if(parts.length<3){brParsed.push({ok:false,reason:'Need Email, Match ID, Team',email:'',matchId:'',team:'',ts:''});return;}
+    const[email,matchIdS,team,...tp]=parts;
+    const ts=tp.join(',').trim();
+    const matchId=parseInt(matchIdS);
+    if(!email||!email.includes('@')){brParsed.push({ok:false,reason:'Invalid email',email,matchId:matchIdS,team,ts});return;}
+    if(isNaN(matchId)){brParsed.push({ok:false,reason:'Match ID must be number',email,matchId:matchIdS,team,ts});return;}
+    if(!team){brParsed.push({ok:false,reason:'Missing team',email,matchId,team,ts});return;}
+    brParsed.push({ok:true,email:email.toLowerCase(),matchId,team,ts});
   });
-
-  const ok = bulkRespParsed.filter(r => r.status === 'ok').length;
-  const err = bulkRespParsed.filter(r => r.status === 'error').length;
-
-  document.getElementById('br-preview-title').textContent = `Preview — ${ok} ready, ${err} errors`;
-  document.getElementById('br-import-btn').textContent = `Import ${ok} response${ok !== 1 ? 's' : ''}`;
-  document.getElementById('br-preview-body').innerHTML = bulkRespParsed.map(r => `
-    <tr style="${r.status === 'error' ? 'background:#fef2f2' : ''}">
-      <td class="mono">${esc(r.email)}</td>
-      <td class="mono">${r.matchId}</td>
-      <td>${esc(r.team)}</td>
-      <td class="mono" style="font-size:11px">${esc(r.ts) || '—'}</td>
-      <td>${r.status === 'ok' ? '<span style="color:var(--green)">✓</span>' : `<span style="color:var(--red)">✗ ${esc(r.reason)}</span>`}</td>
-    </tr>`).join('');
-
-  document.getElementById('bulk-resp-preview').style.display = 'block';
+  const ok=brParsed.filter(r=>r.ok).length;
+  document.getElementById('br-title').textContent=`Preview — ${ok} ready`;
+  document.getElementById('br-import-btn').textContent=`Import ${ok}`;
+  document.getElementById('br-tbody').innerHTML=brParsed.map(r=>`<tr style="${!r.ok?'background:var(--red-s)':''}">
+    <td class="mono">${esc(r.email)}</td><td class="mono">${r.matchId}</td><td>${esc(r.team)}</td>
+    <td class="mono" style="font-size:10px">${esc(r.ts)||'—'}</td>
+    <td>${r.ok?'<span style="color:var(--green)">✓</span>':'<span style="color:var(--red)">✗ '+esc(r.reason)+'</span>'}</td>
+  </tr>`).join('');
+  document.getElementById('br-preview').style.display='block';
 }
 
-async function importBulkResponses() {
-  const toImport = bulkRespParsed.filter(r => r.status === 'ok');
-  if (!toImport.length) { toast('No valid responses', 'err'); return; }
-
-  document.getElementById('br-import-btn').disabled = true;
-  document.getElementById('br-import-btn').textContent = 'Importing…';
-
-  const logEl = document.getElementById('br-log');
-  logEl.style.display = 'block';
-  logEl.innerHTML = '';
-
-  const predictions = toImport.map(r => ({
-    email: r.email,
-    match_id: r.matchId,
-    predicted_team: r.team,
-    submitted_at: r.ts ? new Date(r.ts).toISOString() : undefined,
-  }));
-
-  try {
-    const res = await api('/api/admin/predictions/bulk', { method:'POST', body:JSON.stringify({ predictions }) });
-    logEl.innerHTML = `<div style="color:var(--green)">✓ ${res.imported} imported</div>` +
-      (res.skipped ? `<div style="color:var(--amber)">⚠ ${res.skipped} skipped</div>` : '') +
-      (res.errors || []).map(e => `<div style="color:var(--red)">✗ ${esc(e)}</div>`).join('');
-    toast(`${res.imported} responses imported, ${res.skipped} skipped`);
-    document.getElementById('br-import-btn').textContent = 'Done';
-  } catch(e) {
-    toast(e.message, 'err');
-    document.getElementById('br-import-btn').disabled = false;
-    document.getElementById('br-import-btn').textContent = 'Retry';
-  }
+async function importBulkResponses(){
+  const toImport=brParsed.filter(r=>r.ok);
+  if(!toImport.length){toast('No valid responses','err');return;}
+  document.getElementById('br-import-btn').disabled=true;
+  const log=document.getElementById('br-log');
+  log.style.display='block';log.innerHTML='';
+  try{
+    const res=await api('/api/admin/predictions/bulk','POST',{predictions:toImport.map(r=>({email:r.email,match_id:r.matchId,predicted_team:r.team,submitted_at:r.ts?new Date(r.ts).toISOString():undefined}))});
+    log.innerHTML=`<div class="log-ok">✓ ${res.imported} imported</div>`
+      +(res.skipped?`<div class="log-skip">⚠ ${res.skipped} skipped (duplicates)</div>`:'')
+      +(res.errors||[]).map(e=>`<div class="log-err">✗ ${esc(e)}</div>`).join('');
+    toast(`${res.imported} imported, ${res.skipped} skipped`);
+    document.getElementById('br-import-btn').textContent='Done';
+  }catch(e){toast(e.message,'err');document.getElementById('br-import-btn').disabled=false;}
 }
 
-// ── EMAIL MAP ──────────────────────────────────────────────────────────────────
-async function loadEmailMap() {
-  const el = document.getElementById('emailmap-list');
-  try {
-    const rows = await api('/api/admin/email-map');
-    el.innerHTML = rows.length
-      ? `<table class="admin-table">
-          <thead><tr><th>Alias email</th><th>→ Primary email</th></tr></thead>
-          <tbody>${rows.map(r => `<tr>
-            <td class="mono">${esc(r.alias_email)}</td>
-            <td class="mono">${esc(r.primary_email)}</td>
-          </tr>`).join('')}</tbody>
-        </table>`
-      : '<p style="color:var(--muted)">No mappings yet.</p>';
-  } catch(e) { toast(e.message, 'err'); }
+// ── EMAIL MAP ─────────────────────────────────────────────────────────────────
+async function loadEmailMap(){
+  const el=document.getElementById('emailmap-list');
+  try{
+    const rows=await api('/api/admin/email-map');
+    el.innerHTML=rows.length?`<table class="tbl">
+      <thead><tr><th>Alias email</th><th>→ Primary email</th><th></th></tr></thead>
+      <tbody>${rows.map(r=>`<tr>
+        <td class="mono">${esc(r.alias_email)}</td>
+        <td class="mono">${esc(r.primary_email)}</td>
+        <td><button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delAlias('${esc(r.alias_email)}')">Delete</button></td>
+      </tr>`).join('')}</tbody>
+    </table>`:'<p style="color:var(--text3)">No mappings.</p>';
+  }catch(e){toast(e.message,'err');}
 }
-
-function openAddAlias() {
-  ['alias-email','alias-primary'].forEach(id => document.getElementById(id).value = '');
-  openModal('modal-alias');
+function openAliasModal(){sv('al-alias','');sv('al-primary','');open('modal-alias');}
+async function saveAlias(){
+  const alias=gv('al-alias').toLowerCase(),primary=gv('al-primary').toLowerCase();
+  if(!alias||!primary){toast('Fill both','err');return;}
+  try{await api('/api/admin/email-map','POST',{alias_email:alias,primary_email:primary});close('modal-alias');toast('Mapped');loadEmailMap();}
+  catch(e){toast(e.message,'err');}
 }
-
-async function saveAlias() {
-  const alias   = document.getElementById('alias-email').value.trim().toLowerCase();
-  const primary = document.getElementById('alias-primary').value.trim().toLowerCase();
-  if (!alias || !primary) { toast('Fill both emails', 'err'); return; }
-  try {
-    await api('/api/admin/email-map', { method:'POST', body:JSON.stringify({ alias_email:alias, primary_email:primary }) });
-    closeModal('modal-alias'); toast('Alias mapped'); loadEmailMap();
-  } catch(e) { toast(e.message, 'err'); }
+async function delAlias(alias){
+  if(!confirm('Remove this alias mapping?'))return;
+  try{await api(`/api/admin/email-map/${encodeURIComponent(alias)}`,'DELETE');toast('Removed');loadEmailMap();}
+  catch(e){toast(e.message,'err');}
 }
 
 // ── PREDICTIONS ───────────────────────────────────────────────────────────────
-function loadPredMatchSelect() {
-  const sel = document.getElementById('pred-match-select');
-  sel.innerHTML = allMatches.map(m => `<option value="${m.id}">M${m.match_number} — ${esc(m.title)} (${m.status})</option>`).join('');
+function loadPredSel(){
+  const sel=document.getElementById('pred-sel');
+  sel.innerHTML=matches.map(m=>`<option value="${m.id}">M${m.match_number} — ${esc(m.title)} (${m.status})</option>`).join('');
+}
+async function loadPreds(){
+  const id=document.getElementById('pred-sel').value;
+  const el=document.getElementById('pred-list');
+  el.innerHTML='<p style="color:var(--text3)">Loading…</p>';
+  try{
+    const[preds,odds]=await Promise.all([api(`/api/admin/matches/${id}/predictions`),api(`/api/matches/${id}/odds`)]);
+    const m=matches.find(x=>x.id==id);
+    document.getElementById('pred-odds').innerHTML=m?`<div class="odds-row" style="margin-bottom:14px">
+      <div class="odds-team"><div class="odds-name">${esc(m.team_a)}</div><div class="odds-votes">${odds.team_a_votes??0} votes</div><div class="odds-val">${odds.team_a_odds??'–'}x</div></div>
+      <div class="odds-team"><div class="odds-name">${esc(m.team_b)}</div><div class="odds-votes">${odds.team_b_votes??0} votes</div><div class="odds-val">${odds.team_b_odds??'–'}x</div></div>
+    </div>`:'';
+    const valid=preds.filter(p=>p.is_valid==1).length,dupes=preds.filter(p=>p.is_valid==0).length;
+    el.innerHTML=`<p style="font-size:11px;color:var(--text3);margin-bottom:10px">${valid} valid · ${dupes} blocked</p>
+    <table class="tbl">
+      <thead><tr><th>Player</th><th>Email</th><th>Prediction</th><th>Submitted (IST)</th><th>Valid</th></tr></thead>
+      <tbody>${preds.map(p=>`<tr>
+        <td>${esc(p.display_name||'—')}</td>
+        <td class="mono">${esc(p.raw_email)}</td>
+        <td style="font-weight:${p.is_valid?600:400}">${esc(p.predicted_team)}</td>
+        <td class="mono" style="font-size:10px">${new Date(p.submitted_at).toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})}</td>
+        <td style="color:${p.is_valid?'var(--green)':'var(--red)'}">${p.is_valid?'✓':'✗ '+(p.invalid_reason||'')}</td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+  }catch(e){toast(e.message,'err');}
 }
 
-async function loadMatchPredictions() {
-  const matchId = document.getElementById('pred-match-select').value;
-  const el = document.getElementById('predictions-list');
-  el.innerHTML = '<p style="color:var(--muted)">Loading…</p>';
-  try {
-    const [preds, odds] = await Promise.all([
-      api(`/api/admin/matches/${matchId}/predictions`),
-      api(`/api/matches/${matchId}/odds`),
-    ]);
-    const match = allMatches.find(m => m.id == matchId);
-    document.getElementById('pred-odds-display').innerHTML = match ? `
-      <div class="odds-display" style="margin-bottom:14px">
-        <div class="odds-team">
-          <div class="name">${esc(match.team_a)}</div>
-          <div class="votes">${odds.team_a_votes ?? 0} votes</div>
-          <div class="odds-val">${odds.team_a_odds ?? '–'}x</div>
-        </div>
-        <div class="odds-team">
-          <div class="name">${esc(match.team_b)}</div>
-          <div class="votes">${odds.team_b_votes ?? 0} votes</div>
-          <div class="odds-val">${odds.team_b_odds ?? '–'}x</div>
-        </div>
-      </div>` : '';
-
-    const valid = preds.filter(p => p.is_valid == 1).length;
-    const dupes = preds.filter(p => p.is_valid == 0).length;
-    el.innerHTML = `
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">${valid} valid vote(s) · ${dupes} duplicate attempt(s) blocked</p>
-      <table class="admin-table">
-        <thead><tr><th>Player</th><th>Email</th><th>Prediction</th><th>Submitted</th><th>Valid</th></tr></thead>
-        <tbody>${preds.map(p => `<tr>
-          <td>${esc(p.display_name || '–')}</td>
-          <td class="mono">${esc(p.raw_email)}</td>
-          <td style="font-weight:${p.is_valid ? 600 : 400}">${esc(p.predicted_team)}</td>
-          <td class="mono" style="font-size:11px">${new Date(p.submitted_at).toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})}</td>
-          <td style="color:${p.is_valid ? 'var(--green)' : 'var(--red)'}">${p.is_valid ? '✓' : '✗ ' + (p.invalid_reason||'')}</td>
-        </tr>`).join('')}</tbody>
-      </table>`;
-  } catch(e) { toast(e.message, 'err'); }
+// ── PENALTIES ─────────────────────────────────────────────────────────────────
+async function loadPenalties(){
+  const el=document.getElementById('penalties-list');
+  try{
+    const rows=await api('/api/admin/bonus-points').then(()=>null).catch(()=>null); // placeholder
+    // Fetch from penalties directly via export
+    const data=await api('/api/admin/export');
+    const pens=data.penalties||[];
+    const ps=data.players||[];
+    const ms=data.matches||[];
+    const nameMap=Object.fromEntries(ps.map(p=>[p.primary_email,p.display_name]));
+    const matchMap=Object.fromEntries(ms.map(m=>[m.id,'M'+m.match_number+' '+m.title]));
+    el.innerHTML=pens.length?`<table class="tbl">
+      <thead><tr><th>Player</th><th>Match</th><th class="num">Penalty</th><th>Reason</th><th></th></tr></thead>
+      <tbody>${pens.map(p=>`<tr>
+        <td>${esc(nameMap[p.primary_email]||p.primary_email)}</td>
+        <td class="mono" style="font-size:11px">${esc(matchMap[p.match_id]||p.match_id)}</td>
+        <td class="num mono" style="color:var(--red)">${p.penalty_pts}</td>
+        <td class="mono" style="font-size:11px">${esc(p.reason)}</td>
+        <td><button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delPenalty(${p.id})">Delete</button></td>
+      </tr>`).join('')}</tbody>
+    </table>`:'<p style="color:var(--text3)">No penalties.</p>';
+  }catch(e){toast(e.message,'err');}
+}
+async function delPenalty(id){
+  if(!confirm('Remove this penalty?'))return;
+  try{await api(`/api/admin/penalties/${id}`,'DELETE');toast('Penalty removed');loadPenalties();}
+  catch(e){toast(e.message,'err');}
 }
 
-// ── ADMIN LEADERBOARD ─────────────────────────────────────────────────────────
-async function loadAdminLeaderboard() {
-  const el = document.getElementById('admin-lb-list');
-  const asOf = document.getElementById('lb-as-of').value;
-  try {
-    const lb = await api(`/api/admin/leaderboard${asOf ? '?asOf='+asOf : ''}`);
-    const titleNote = asOf ? ` <span style="font-size:12px;color:var(--muted)">as of ${asOf}</span>` : '';
-    el.innerHTML = lb.length
-      ? `<table class="admin-table">
-          <thead><tr><th>#</th><th>Player</th><th style="text-align:right">Gross</th><th style="text-align:right">Penalties</th><th style="text-align:right">Bonuses</th><th style="text-align:right">Net</th><th style="text-align:right">Played</th><th style="text-align:right">Correct</th></tr></thead>
-          <tbody>${lb.map(p => `<tr>
-            <td class="mono">${p.rank}</td>
-            <td>${esc(p.display_name)}<br><span style="color:var(--muted);font-size:11px">${esc(p.primary_email)}</span></td>
-            <td style="text-align:right;font-family:var(--mono)">${p.gross_points}</td>
-            <td style="text-align:right;font-family:var(--mono);color:${p.penalties < 0 ? 'var(--red)' : 'var(--muted)'}">${p.penalties}</td>
-            <td style="text-align:right;font-family:var(--mono);color:var(--purple)">${p.bonuses}</td>
-            <td style="text-align:right;font-family:var(--mono);font-weight:600;color:${p.net_points >= 0 ? 'var(--green)' : 'var(--red)'}">${p.net_points}</td>
-            <td style="text-align:right;color:var(--muted)">${p.matches_played}</td>
-            <td style="text-align:right;color:var(--muted)">${p.correct_predictions}</td>
-          </tr>`).join('')}</tbody>
-        </table>`
-      : '<p style="color:var(--muted)">No data yet.</p>';
-  } catch(e) { toast(e.message, 'err'); }
+// ── LEADERBOARD ───────────────────────────────────────────────────────────────
+async function loadAdminLB(){
+  const asOf=gv('lb-asof');
+  const el=document.getElementById('admin-lb');
+  try{
+    const lb=await api(`/api/admin/leaderboard${asOf?'?asOf='+asOf:''}`);
+    el.innerHTML=lb.length?`<table class="tbl">
+      <thead><tr><th>#</th><th>Player</th><th class="num">Gross</th><th class="num">Penalties</th><th class="num">Bonuses</th><th class="num">Net</th><th class="num">Played</th><th class="num">Correct</th></tr></thead>
+      <tbody>${lb.map(p=>`<tr>
+        <td class="mono">${p.rank}</td>
+        <td>${esc(p.display_name)}<br><span style="font-size:10px;color:var(--text3)">${esc(p.primary_email)}</span></td>
+        <td class="num mono">${p.gross_points}</td>
+        <td class="num mono" style="color:${p.penalties<0?'var(--red)':'var(--text3)'}">${p.penalties}</td>
+        <td class="num mono" style="color:var(--purple)">${p.bonuses>0?'+':''}${p.bonuses}</td>
+        <td class="num mono" style="font-weight:600;color:${p.net_points>=0?'var(--green)':'var(--red)'}">${p.net_points>=0?'+':''}${p.net_points}</td>
+        <td class="num" style="color:var(--text3)">${p.matches_played}</td>
+        <td class="num" style="color:var(--text3)">${p.correct_predictions}</td>
+      </tr>`).join('')}</tbody>
+    </table>`:'<p style="color:var(--text3)">No data yet.</p>';
+  }catch(e){toast(e.message,'err');}
+}
+
+// ── INSIGHTS ──────────────────────────────────────────────────────────────────
+async function loadInsights(){
+  const el=document.getElementById('insights-container');
+  el.innerHTML='<div style="color:var(--text3);padding:40px;text-align:center">Loading insights…</div>';
+  try{
+    const d=await api('/api/insights');
+
+    // Streaks
+    const streakHTML=d.streaks.length?d.streaks.map(s=>`
+      <div class="streak-row">
+        <div class="streak-name">${esc(s.name)}</div>
+        <div class="streak-val">${s.streak} 🔥</div>
+      </div>`).join(''):'<p style="color:var(--text3);font-size:12px">No active streaks</p>';
+
+    // Hardest matches
+    const hardHTML=d.hardest.map(m=>`
+      <div class="upset-row">
+        <div class="upset-match">M${m.match_number} · ${esc(m.winner)} won</div>
+        <div class="upset-pct">Only ${m.correct_pct}% got it right (${m.correct_count}/${m.total_count})</div>
+      </div>`).join('');
+
+    // Top vs Bottom
+    const compareHTML=d.matchComparison.slice(0,8).map(m=>{
+      const topA=(m.top5_picks.find(p=>p.predicted_team===m.team_a)||{}).c||0;
+      const topB=(m.top5_picks.find(p=>p.predicted_team===m.team_b)||{}).c||0;
+      const botA=(m.bot5_picks.find(p=>p.predicted_team===m.team_a)||{}).c||0;
+      const botB=(m.bot5_picks.find(p=>p.predicted_team===m.team_b)||{}).c||0;
+      const topTot=topA+topB||1,botTot=botA+botB||1;
+      const topAp=Math.round(topA/topTot*100),botAp=Math.round(botA/botTot*100);
+      return `<div class="compare-row">
+        <div class="compare-match">M${m.match_number}</div>
+        <div style="flex:1">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:3px">Top 5: ${m.team_a} ${topAp}% · ${m.team_b} ${100-topAp}%</div>
+          <div style="font-size:10px;color:var(--text3)">Bot 5: ${m.team_a} ${botAp}% · ${m.team_b} ${100-botAp}%</div>
+        </div>
+        <div class="compare-winner">${m.winner||'—'} won</div>
+      </div>`;
+    }).join('');
+
+    el.innerHTML=`
+      <div class="insight-grid">
+        <div class="insight-card">
+          <div class="insight-title">Current hot streaks</div>
+          ${streakHTML}
+        </div>
+        <div class="insight-card">
+          <div class="insight-title">Biggest upsets (hardest to predict)</div>
+          ${hardHTML||'<p style="color:var(--text3);font-size:12px">No data yet</p>'}
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Top 5 vs Bottom 5 — who picked what</div></div>
+        <div class="card-body">${compareHTML||'<p style="color:var(--text3)">No data yet</p>'}</div>
+      </div>`;
+  }catch(e){el.innerHTML=`<div style="color:var(--red);padding:20px">${esc(e.message)}</div>`;}
 }
 
 // ── VARIATIONS ────────────────────────────────────────────────────────────────
-async function loadVariations() {
-  const el = document.getElementById('variations-list');
-  try {
-    const rows = await api('/api/admin/variations');
-    const dhNote = `
-      <div class="variation-card">
-        <div class="v-dot active"></div>
-        <div class="v-info">
-          <div class="v-name">Double Header Bonus <span class="v-type">built-in</span></div>
-          <div class="v-desc">+50 pts for players who correctly predict BOTH matches on a 2-match day. Auto-calculated every time a result is entered.</div>
-        </div>
-        <div style="font-size:12px;color:var(--green);font-weight:600">Always ON</div>
-      </div>`;
-
-    if (!rows.length) {
-      el.innerHTML = dhNote + '<p style="color:var(--muted);padding:10px 0">No custom variations yet. Click "+ Add variation" to create one.</p>';
-      return;
-    }
-    el.innerHTML = dhNote + rows.map(v => `
-      <div class="variation-card">
-        <div class="v-dot ${v.is_active ? 'active' : 'inactive'}"></div>
-        <div class="v-info">
-          <div class="v-name">${esc(v.name)} <span class="v-type">${esc(v.type)}</span></div>
-          <div class="v-desc">${esc(v.description || '')}${v.details ? ` — <code style="font-size:11px">${esc(v.details)}</code>` : ''}</div>
-          ${v.applies_to_match_id ? `<div style="font-size:11px;color:var(--muted);margin-top:4px">Match ID: ${v.applies_to_match_id}</div>` : ''}
-        </div>
-        <div style="display:flex;gap:6px;align-items:center">
-          <button class="btn btn-sm ${v.is_active ? 'btn-outline' : 'btn-green'}" onclick="toggleVariation(${v.id},${v.is_active})">${v.is_active ? 'Disable' : 'Enable'}</button>
-          <button class="btn btn-sm btn-red" onclick="deleteVariation(${v.id})">Delete</button>
-        </div>
-      </div>`).join('');
-  } catch(e) { el.innerHTML = `<p style="color:var(--red)">${esc(e.message)}</p>`; }
+async function loadVariations(){
+  const el=document.getElementById('variations-list');
+  try{
+    const rows=await api('/api/admin/variations');
+    const builtIn=`<div class="var-card">
+      <div class="var-dot on"></div>
+      <div class="var-info">
+        <div class="var-name">Double Header Bonus <span class="var-type-pill">built-in</span></div>
+        <div class="var-desc">+50 pts when a player correctly predicts BOTH matches on a 2-match day. Auto-calculated every time a result is entered.</div>
+      </div>
+      <div style="font-size:11px;color:var(--green);font-weight:500">Always ON</div>
+    </div>`;
+    const custom=rows.map(v=>`<div class="var-card">
+      <div class="var-dot ${v.is_active?'on':'off'}"></div>
+      <div class="var-info">
+        <div class="var-name">${esc(v.name)} <span class="var-type-pill">${esc(v.type)}</span></div>
+        <div class="var-desc">${esc(v.description||'')}${v.details?` · <code style="font-size:10px">${esc(v.details)}</code>`:''}</div>
+        ${v.applies_to_match_id?`<div style="font-size:10px;color:var(--text3);margin-top:3px">Match ID: ${v.applies_to_match_id}</div>`:''}
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-outline btn-sm" onclick="toggleVar(${v.id},${v.is_active})">${v.is_active?'Disable':'Enable'}</button>
+        <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delVar(${v.id})">✕</button>
+      </div>
+    </div>`).join('');
+    el.innerHTML=builtIn+custom+(rows.length?'':'<p style="color:var(--text3);font-size:12px;padding:6px 0">No custom variations yet.</p>');
+  }catch(e){toast(e.message,'err');}
 }
-
-function openAddVariation() {
-  ['v-name','v-desc','v-match-id','v-details'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('v-type').value = 'manual_bonus';
-  openModal('modal-variation');
+function openVarModal(){['vr-name','vr-desc','vr-match','vr-details'].forEach(id=>sv(id,''));sv('vr-type','manual_bonus');open('modal-variation');}
+async function saveVariation(){
+  const name=gv('vr-name'),type=gv('vr-type'),desc=gv('vr-desc'),matchId=gv('vr-match'),detRaw=gv('vr-details');
+  if(!name){toast('Name required','err');return;}
+  let details=null;
+  if(detRaw){try{details=JSON.parse(detRaw);}catch{toast('Details must be valid JSON','err');return;}}
+  try{
+    await api('/api/admin/variations','POST',{name,type,description:desc,applies_to_match_id:matchId?+matchId:null,details});
+    close('modal-variation');toast('Variation saved');loadVariations();
+  }catch(e){toast(e.message,'err');}
 }
-
-async function saveVariation() {
-  const name = document.getElementById('v-name').value.trim();
-  const type = document.getElementById('v-type').value;
-  const description = document.getElementById('v-desc').value.trim();
-  const matchId = document.getElementById('v-match-id').value;
-  const detailsRaw = document.getElementById('v-details').value.trim();
-
-  if (!name) { toast('Name required', 'err'); return; }
-  let details = null;
-  if (detailsRaw) {
-    try { details = JSON.parse(detailsRaw); }
-    catch { toast('Details must be valid JSON', 'err'); return; }
-  }
-
-  try {
-    await api('/api/admin/variations', { method:'POST', body:JSON.stringify({
-      name, type, description, applies_to_match_id: matchId ? parseInt(matchId) : null, details
-    })});
-    closeModal('modal-variation'); toast('Variation saved'); loadVariations();
-  } catch(e) { toast(e.message, 'err'); }
+async function toggleVar(id,active){
+  try{await api(`/api/admin/variations/${id}`,'PATCH',{is_active:active?0:1});loadVariations();}
+  catch(e){toast(e.message,'err');}
 }
-
-async function toggleVariation(id, currentActive) {
-  try {
-    await api(`/api/admin/variations/${id}`, { method:'PATCH', body:JSON.stringify({ is_active: currentActive ? 0 : 1 }) });
-    toast(currentActive ? 'Variation disabled' : 'Variation enabled'); loadVariations();
-  } catch(e) { toast(e.message, 'err'); }
-}
-
-async function deleteVariation(id) {
-  if (!confirm('Delete this variation?')) return;
-  try {
-    await api(`/api/admin/variations/${id}`, { method:'DELETE' });
-    toast('Variation deleted'); loadVariations();
-  } catch(e) { toast(e.message, 'err'); }
-}
-
-async function recalcAll() {
-  try {
-    await api('/api/admin/variations/recalc', { method:'POST' });
-    toast('Recalculation complete — leaderboard updated');
-  } catch(e) { toast(e.message, 'err'); }
+async function delVar(id){
+  if(!confirm('Delete this variation?'))return;
+  try{await api(`/api/admin/variations/${id}`,'DELETE');toast('Deleted');loadVariations();}
+  catch(e){toast(e.message,'err');}
 }
 
 // ── BONUS POINTS ──────────────────────────────────────────────────────────────
-async function loadBonusPoints() {
-  const el = document.getElementById('bonus-list');
-  try {
-    const rows = await api('/api/admin/bonus-points');
-    el.innerHTML = rows.length
-      ? `<table class="admin-table">
-          <thead><tr><th>Player</th><th>Match</th><th style="text-align:right">Points</th><th>Reason</th><th>Details</th><th></th></tr></thead>
-          <tbody>${rows.map(r => `<tr>
-            <td>${esc(r.display_name || r.primary_email)}</td>
-            <td class="mono">${r.match_number ? 'M'+r.match_number : '—'}</td>
-            <td style="text-align:right;font-family:var(--mono);font-weight:600;color:${r.bonus_pts >= 0 ? 'var(--green)' : 'var(--red)'}">
-              ${r.bonus_pts >= 0 ? '+' : ''}${r.bonus_pts}
-            </td>
-            <td class="mono">${esc(r.reason)}</td>
-            <td style="font-size:12px;color:var(--muted)">${esc(r.details || '')}</td>
-            <td><button class="btn btn-sm btn-red" onclick="deleteBonus(${r.id})">✕</button></td>
-          </tr>`).join('')}</tbody>
-        </table>`
-      : '<p style="color:var(--muted)">No bonus points yet.</p>';
-  } catch(e) { toast(e.message, 'err'); }
+async function loadBonus(){
+  const el=document.getElementById('bonus-list');
+  try{
+    const rows=await api('/api/admin/bonus-points');
+    el.innerHTML=rows.length?`<table class="tbl">
+      <thead><tr><th>Player</th><th>Match</th><th class="num">Points</th><th>Reason</th><th>Details</th><th></th></tr></thead>
+      <tbody>${rows.map(r=>`<tr>
+        <td>${esc(r.display_name||r.primary_email)}</td>
+        <td class="mono">${r.match_number?'M'+r.match_number:'—'}</td>
+        <td class="num mono" style="font-weight:500;color:${r.bonus_pts>=0?'var(--green)':'var(--red)'}">${r.bonus_pts>=0?'+':''}${r.bonus_pts}</td>
+        <td class="mono" style="font-size:11px">${esc(r.reason)}</td>
+        <td style="font-size:11px;color:var(--text3)">${esc(r.details||'')}</td>
+        <td><button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delBonus(${r.id})">✕</button></td>
+      </tr>`).join('')}</tbody>
+    </table>`:'<p style="color:var(--text3)">No bonus points yet.</p>';
+  }catch(e){toast(e.message,'err');}
+}
+function openBonusModal(){['bp-email','bp-pts','bp-reason','bp-match','bp-notes'].forEach(id=>sv(id,''));open('modal-bonus');}
+async function saveBonus(){
+  const email=gv('bp-email').toLowerCase(),pts=parseFloat(gv('bp-pts')),
+        reason=gv('bp-reason')||'manual',matchId=gv('bp-match'),details=gv('bp-notes');
+  if(!email||isNaN(pts)){toast('Email and points required','err');return;}
+  try{
+    await api('/api/admin/bonus-points','POST',{primary_email:email,bonus_pts:pts,reason,match_id:matchId?+matchId:null,details});
+    close('modal-bonus');toast('Bonus awarded');loadBonus();
+  }catch(e){toast(e.message,'err');}
+}
+async function delBonus(id){
+  if(!confirm('Remove this bonus?'))return;
+  try{await api(`/api/admin/bonus-points/${id}`,'DELETE');toast('Removed');loadBonus();}
+  catch(e){toast(e.message,'err');}
 }
 
-function openAddBonus() {
-  ['bp-email','bp-pts','bp-reason','bp-match-id','bp-details'].forEach(id => document.getElementById(id).value = '');
-  openModal('modal-bonus');
+// ── AUDIT ─────────────────────────────────────────────────────────────────────
+async function loadAudit(){
+  const el=document.getElementById('audit-list');
+  try{
+    const rows=await api('/api/admin/audit');
+    el.innerHTML=rows.length?`<table class="tbl">
+      <thead><tr><th>Time (IST)</th><th>Action</th><th>Actor</th><th>Entity</th><th>Details</th></tr></thead>
+      <tbody>${rows.map(r=>`<tr>
+        <td class="mono" style="font-size:10px">${new Date(r.created_at).toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})}</td>
+        <td class="mono">${esc(r.action)}</td>
+        <td class="mono">${esc(r.actor)}</td>
+        <td class="mono" style="font-size:11px">${esc(r.entity||'')} ${esc(r.entity_id||'')}</td>
+        <td style="font-size:11px;color:var(--text3)">${esc(r.details||'')}</td>
+      </tr>`).join('')}</tbody>
+    </table>`:'<p style="color:var(--text3)">No entries.</p>';
+  }catch(e){toast(e.message,'err');}
 }
 
-async function saveBonus() {
-  const email = document.getElementById('bp-email').value.trim().toLowerCase();
-  const pts = parseFloat(document.getElementById('bp-pts').value);
-  const reason = document.getElementById('bp-reason').value.trim() || 'manual';
-  const matchId = document.getElementById('bp-match-id').value;
-  const details = document.getElementById('bp-details').value.trim();
-  if (!email || isNaN(pts)) { toast('Email and points required', 'err'); return; }
-  try {
-    await api('/api/admin/bonus-points', { method:'POST', body:JSON.stringify({
-      primary_email:email, bonus_pts:pts, reason, match_id:matchId ? parseInt(matchId) : null, details
-    })});
-    closeModal('modal-bonus'); toast('Bonus awarded'); loadBonusPoints();
-  } catch(e) { toast(e.message, 'err'); }
+// ── EXPORT ────────────────────────────────────────────────────────────────────
+async function dlExport(){
+  try{
+    const d=await api('/api/admin/export');
+    const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download=`predictor-export-${new Date().toISOString().slice(0,10)}.json`;a.click();
+    toast('Downloaded');
+  }catch(e){toast(e.message,'err');}
 }
-
-async function deleteBonus(id) {
-  if (!confirm('Remove this bonus?')) return;
-  try {
-    await api(`/api/admin/bonus-points/${id}`, { method:'DELETE' });
-    toast('Bonus removed'); loadBonusPoints();
-  } catch(e) { toast(e.message, 'err'); }
+async function dlCSV(){
+  try{
+    const lb=await api('/api/leaderboard');
+    const h=['Rank','Name','Email','Gross','Penalties','Bonuses','Net','Played','Correct'];
+    const rows=lb.map(p=>[p.rank,p.display_name,p.primary_email,p.gross_points,p.penalties,p.bonuses,p.net_points,p.matches_played,p.correct_predictions]);
+    const csv=[h,...rows].map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+    const blob=new Blob([csv],{type:'text/csv'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download=`leaderboard-${new Date().toISOString().slice(0,10)}.csv`;a.click();
+    toast('Downloaded');
+  }catch(e){toast(e.message,'err');}
 }
-
-// ── AUDIT ──────────────────────────────────────────────────────────────────────
-async function loadAudit() {
-  const el = document.getElementById('audit-list');
-  try {
-    const rows = await api('/api/admin/audit');
-    el.innerHTML = rows.length
-      ? `<table class="admin-table">
-          <thead><tr><th>Time</th><th>Action</th><th>Actor</th><th>Entity</th><th>Details</th></tr></thead>
-          <tbody>${rows.map(r => `<tr>
-            <td class="mono" style="font-size:11px">${new Date(r.created_at).toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})}</td>
-            <td class="mono">${esc(r.action)}</td>
-            <td class="mono">${esc(r.actor)}</td>
-            <td class="mono">${esc(r.entity||'')} ${esc(r.entity_id||'')}</td>
-            <td style="font-size:12px;color:var(--muted)">${esc(r.details||'')}</td>
-          </tr>`).join('')}</tbody>
-        </table>`
-      : '<p style="color:var(--muted)">No log entries.</p>';
-  } catch(e) { toast(e.message, 'err'); }
+async function pushSheets(){
+  const url=gv('sheets-url');
+  if(!url){toast('Enter webhook URL','err');return;}
+  try{
+    const d=await api('/api/admin/export');
+    await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});
+    toast('Pushed to Sheets');
+  }catch(e){toast('Push failed: '+e.message,'err');}
 }
-
-// ── EXPORT ─────────────────────────────────────────────────────────────────────
-async function downloadExport() {
-  try {
-    const data = await api('/api/admin/export');
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url;
-    a.download = `predictor-export-${new Date().toISOString().slice(0,10)}.json`;
-    a.click();
-    toast('Export downloaded');
-  } catch(e) { toast(e.message, 'err'); }
-}
-
-async function downloadLeaderboardCSV() {
-  try {
-    const lb = await api('/api/leaderboard');
-    const headers = ['Rank','Name','Email','Gross','Penalties','Bonuses','Net','Played','Correct'];
-    const rows = lb.map(p => [p.rank, p.display_name, p.primary_email, p.gross_points, p.penalties, p.bonuses||0, p.net_points, p.matches_played, p.correct_predictions]);
-    const csv = [headers, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
-    const blob = new Blob([csv], { type:'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url;
-    a.download = `leaderboard-${new Date().toISOString().slice(0,10)}.csv`;
-    a.click();
-    toast('CSV downloaded');
-  } catch(e) { toast(e.message, 'err'); }
-}
-
-async function pushToSheets() {
-  const webhookUrl = document.getElementById('sheets-webhook-url').value.trim();
-  if (!webhookUrl) { toast('Enter your Apps Script webhook URL', 'err'); return; }
-  try {
-    const data = await api('/api/admin/export');
-    await fetch(webhookUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) });
-    toast('Data pushed to Google Sheets');
-  } catch(e) { toast('Failed to push: ' + e.message, 'err'); }
-}
-
-function esc(s) { return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 </script>
 </body>
 </html>
