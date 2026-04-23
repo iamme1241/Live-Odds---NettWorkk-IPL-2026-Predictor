@@ -1,949 +1,813 @@
 /**
- * Predictor League — Cloudflare Worker API v2
- * New in v2:
- *  - Double-header bonus engine
- *  - Variations / bonuses framework (pluggable)
- *  - Bulk match creation
- *  - Bulk predictions (historical import)
- *  - Historical leaderboard (as-of any date)
- *  - Manual match status override (force close/open/result past matches)
- *  - Password / secret change via env only (documented in guide)
+ * Predictor League Worker API v3
+ * Full feature set: scoring, penalties, double-header bonus,
+ * variations framework, bulk operations, historical leaderboard,
+ * force-result for historical matches, full CRUD on all entities
  */
 
 // ─── CORS ────────────────────────────────────────────────────────────────────
 function cors() {
   return {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS, PATCH',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   };
 }
-
-function json(data, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { 'Content-Type': 'application/json', ...cors() },
-  });
-}
-
-function err(msg, status = 400) {
-  return json({ error: msg }, status);
-}
+const R = (data, status = 200) => new Response(JSON.stringify(data), {
+  status, headers: { 'Content-Type': 'application/json', ...cors() }
+});
+const E = (msg, status = 400) => R({ error: msg }, status);
 
 // ─── AUTH ─────────────────────────────────────────────────────────────────────
-function requireAdmin(req, env) {
-  const auth = req.headers.get('Authorization') || '';
-  const token = auth.replace('Bearer ', '');
-  const expected = btoa(`${env.ADMIN_SECRET_PATH}:${env.ADMIN_PASSWORD}`);
-  return token === expected;
+function isAdmin(req, env) {
+  const token = (req.headers.get('Authorization') || '').replace('Bearer ', '');
+  return token === btoa(`${env.ADMIN_SECRET_PATH}:${env.ADMIN_PASSWORD}`);
 }
 
-// ─── ODDS ENGINE ─────────────────────────────────────────────────────────────
-async function computeOdds(db, matchId) {
+// ─── ODDS ─────────────────────────────────────────────────────────────────────
+async function getOdds(db, matchId) {
+  const match = await db.prepare('SELECT team_a, team_b FROM matches WHERE id=?').bind(matchId).first();
+  if (!match) return null;
   const votes = await db.prepare(
-    `SELECT predicted_team, COUNT(*) as cnt FROM predictions
-     WHERE match_id = ? AND is_valid = 1 GROUP BY predicted_team`
+    `SELECT predicted_team, COUNT(*) c FROM predictions WHERE match_id=? AND is_valid=1 GROUP BY predicted_team`
   ).bind(matchId).all();
-
-  const match = await db.prepare('SELECT team_a, team_b FROM matches WHERE id = ?')
-    .bind(matchId).first();
-
   let a = 0, b = 0;
-  for (const row of votes.results) {
-    if (row.predicted_team === match.team_a) a = row.cnt;
-    else if (row.predicted_team === match.team_b) b = row.cnt;
+  for (const v of votes.results) {
+    if (v.predicted_team === match.team_a) a = v.c;
+    else if (v.predicted_team === match.team_b) b = v.c;
   }
-  const total = a + b;
+  const t = a + b;
   return {
-    team_a_votes: a,
-    team_b_votes: b,
-    total_votes: total,
-    team_a_odds: total > 0 && a > 0 ? parseFloat((total / a).toFixed(2)) : null,
-    team_b_odds: total > 0 && b > 0 ? parseFloat((total / b).toFixed(2)) : null,
-    team_a: match.team_a,
-    team_b: match.team_b,
+    team_a: match.team_a, team_b: match.team_b,
+    team_a_votes: a, team_b_votes: b, total_votes: t,
+    team_a_odds: t > 0 && a > 0 ? parseFloat((t / a).toFixed(2)) : null,
+    team_b_odds: t > 0 && b > 0 ? parseFloat((t / b).toFixed(2)) : null,
   };
+}
+
+// ─── RESOLVE EMAIL ────────────────────────────────────────────────────────────
+async function resolveEmail(db, raw) {
+  const e = raw.trim().toLowerCase();
+  const r = await db.prepare('SELECT primary_email FROM email_map WHERE alias_email=?').bind(e).first();
+  return r ? r.primary_email : e;
+}
+
+// ─── ENSURE PLAYER ───────────────────────────────────────────────────────────
+async function ensurePlayer(db, primaryEmail, rawEmail, matchNum, displayName) {
+  let p = await db.prepare('SELECT * FROM players WHERE primary_email=?').bind(primaryEmail).first();
+  if (!p) {
+    const name = displayName || rawEmail.split('@')[0];
+    await db.prepare(`INSERT INTO players (display_name, primary_email, first_match_num) VALUES (?,?,?)`)
+      .bind(name, primaryEmail, matchNum).run();
+    await db.prepare(`INSERT OR IGNORE INTO email_map (alias_email, primary_email) VALUES (?,?)`)
+      .bind(primaryEmail, primaryEmail).run();
+    if (rawEmail !== primaryEmail) {
+      await db.prepare(`INSERT OR IGNORE INTO email_map (alias_email, primary_email) VALUES (?,?)`)
+        .bind(rawEmail, primaryEmail).run();
+    }
+  } else {
+    if (!p.first_match_num || matchNum < p.first_match_num) {
+      await db.prepare(`UPDATE players SET first_match_num=? WHERE primary_email=?`)
+        .bind(matchNum, primaryEmail).run();
+    }
+    // Update name if provided and different
+    if (displayName && displayName !== p.display_name) {
+      await db.prepare(`UPDATE players SET display_name=? WHERE primary_email=?`)
+        .bind(displayName, primaryEmail).run();
+    }
+  }
+}
+
+// ─── SCORE MATCH ─────────────────────────────────────────────────────────────
+async function scoreMatch(db, matchId, winner) {
+  const match = await db.prepare('SELECT * FROM matches WHERE id=?').bind(matchId).first();
+  let snap = await db.prepare(`SELECT * FROM odds_snapshots WHERE match_id=? AND is_final=1`).bind(matchId).first();
+  if (!snap) {
+    const o = await getOdds(db, matchId);
+    await db.prepare(
+      `INSERT OR REPLACE INTO odds_snapshots (match_id,team_a_votes,team_b_votes,total_votes,team_a_odds,team_b_odds,is_final)
+       VALUES (?,?,?,?,?,?,1)`
+    ).bind(matchId, o.team_a_votes, o.team_b_votes, o.total_votes, o.team_a_odds, o.team_b_odds).run();
+    snap = o;
+  }
+  const preds = await db.prepare(`SELECT * FROM predictions WHERE match_id=? AND is_valid=1`).bind(matchId).all();
+  for (const p of preds.results) {
+    const oddsUsed = p.predicted_team === match.team_a ? snap.team_a_odds : snap.team_b_odds;
+    const pts = p.predicted_team === winner ? parseFloat((100 * (oddsUsed || 1)).toFixed(2)) : 0;
+    await db.prepare(
+      `INSERT OR REPLACE INTO scores (match_id,primary_email,predicted_team,winner,odds_at_close,base_points,points_earned)
+       VALUES (?,?,?,?,?,100,?)`
+    ).bind(matchId, p.primary_email, p.predicted_team, winner, oddsUsed || 1, pts).run();
+  }
+  await db.prepare(`UPDATE matches SET status='resulted',winner=?,updated_at=datetime('now') WHERE id=?`)
+    .bind(winner, matchId).run();
+}
+
+// ─── PENALTY ENGINE ───────────────────────────────────────────────────────────
+async function recalcPenalties(db) {
+  const resulted = await db.prepare(
+    `SELECT id, match_number FROM matches WHERE status='resulted' ORDER BY match_number`
+  ).all();
+  if (!resulted.results.length) return;
+  const players = await db.prepare(
+    `SELECT primary_email, first_match_num FROM players WHERE first_match_num IS NOT NULL`
+  ).all();
+  await db.prepare(`DELETE FROM penalties WHERE reason='missed_vote'`).run();
+  for (const pl of players.results) {
+    const obligated = resulted.results.filter(m => m.match_number >= pl.first_match_num);
+    const voted = await db.prepare(
+      `SELECT m.match_number FROM predictions p JOIN matches m ON m.id=p.match_id
+       WHERE p.primary_email=? AND p.is_valid=1`
+    ).bind(pl.primary_email).all();
+    const votedNums = new Set(voted.results.map(r => r.match_number));
+    for (const m of obligated) {
+      if (!votedNums.has(m.match_number)) {
+        await db.prepare(
+          `INSERT OR IGNORE INTO penalties (primary_email,match_id,penalty_pts,reason) VALUES (?,?,-50,'missed_vote')`
+        ).bind(pl.primary_email, m.id).run();
+      }
+    }
+  }
 }
 
 // ─── DOUBLE HEADER BONUS ─────────────────────────────────────────────────────
 async function applyDoubleHeaderBonus(db) {
-  // Get all resulted matches grouped by date
   const resulted = await db.prepare(
-    `SELECT id, match_number, match_time, winner, team_a, team_b
-     FROM matches WHERE status = 'resulted' ORDER BY match_number`
+    `SELECT id, match_number, match_time, winner, team_a, team_b FROM matches WHERE status='resulted' ORDER BY match_number`
   ).all();
-
-  // Group by calendar date (IST = UTC+5:30)
   const byDate = {};
   for (const m of resulted.results) {
-    const d = new Date(m.match_time);
-    // IST date
-    const istDate = new Date(d.getTime() + 5.5 * 3600000);
-    const key = istDate.toISOString().slice(0, 10);
+    const ist = new Date(new Date(m.match_time).getTime() + 5.5 * 3600000);
+    const key = ist.toISOString().slice(0, 10);
     if (!byDate[key]) byDate[key] = [];
     byDate[key].push(m);
   }
-
-  // Find double-header days (exactly 2 matches)
-  const doubleHeaderDays = Object.values(byDate).filter(ms => ms.length === 2);
-
-  // Delete existing double-header bonuses (recalculate fresh)
-  await db.prepare(`DELETE FROM bonus_points WHERE reason = 'double_header'`).run();
-
-  for (const [m1, m2] of doubleHeaderDays) {
-    // Find players who voted correctly in BOTH matches
-    const correct1 = await db.prepare(
-      `SELECT primary_email FROM scores WHERE match_id = ? AND predicted_team = ?`
-    ).bind(m1.id, m1.winner).all();
-
-    const correct2 = await db.prepare(
-      `SELECT primary_email FROM scores WHERE match_id = ? AND predicted_team = ?`
-    ).bind(m2.id, m2.winner).all();
-
-    const set1 = new Set(correct1.results.map(r => r.primary_email));
-    const set2 = new Set(correct2.results.map(r => r.primary_email));
-
-    for (const email of set1) {
-      if (set2.has(email)) {
-        // Award 50 bonus for this double header day — use higher match_id as anchor
+  await db.prepare(`DELETE FROM bonus_points WHERE reason='double_header'`).run();
+  for (const ms of Object.values(byDate)) {
+    if (ms.length !== 2) continue;
+    const [m1, m2] = ms;
+    const c1 = await db.prepare(`SELECT primary_email FROM scores WHERE match_id=? AND predicted_team=?`)
+      .bind(m1.id, m1.winner).all();
+    const c2 = await db.prepare(`SELECT primary_email FROM scores WHERE match_id=? AND predicted_team=?`)
+      .bind(m2.id, m2.winner).all();
+    const s1 = new Set(c1.results.map(r => r.primary_email));
+    const s2 = new Set(c2.results.map(r => r.primary_email));
+    for (const email of s1) {
+      if (s2.has(email)) {
         await db.prepare(
-          `INSERT OR IGNORE INTO bonus_points (primary_email, match_id, bonus_pts, reason, details)
-           VALUES (?, ?, 50, 'double_header', ?)`
-        ).bind(email, m2.id, `Double header: M${m1.match_number} + M${m2.match_number}`).run();
+          `INSERT OR IGNORE INTO bonus_points (primary_email,match_id,bonus_pts,reason,details)
+           VALUES (?,?,50,'double_header',?)`
+        ).bind(email, m2.id, `Double header: M${m1.match_number}+M${m2.match_number}`).run();
       }
     }
   }
 }
 
-// ─── CUSTOM VARIATIONS ENGINE ────────────────────────────────────────────────
-// Variations are stored in DB and evaluated when results are entered
-async function applyVariations(db, matchId) {
-  const variations = await db.prepare(
-    `SELECT * FROM variations WHERE is_active = 1 AND
-     (applies_to_match_id = ? OR applies_to_match_id IS NULL)`
-  ).bind(matchId).all();
-
-  for (const v of variations.results) {
-    if (v.type === 'double_header') continue; // handled separately
-    if (v.type === 'manual_bonus') {
-      // Manual bonus: admin specified email + pts directly
-      // Stored as JSON in details field: {"email":"x@y.com","pts":100}
-      try {
-        const d = JSON.parse(v.details);
-        if (d.email && d.pts) {
-          await db.prepare(
-            `INSERT OR IGNORE INTO bonus_points (primary_email, match_id, bonus_pts, reason, details)
-             VALUES (?, ?, ?, ?, ?)`
-          ).bind(d.email, matchId, d.pts, v.name, v.description || '').run();
-        }
-      } catch {}
-    }
-    // More variation types can be added here
-  }
-}
-
-// ─── PENALTY ENGINE ──────────────────────────────────────────────────────────
-async function recalcPenalties(db) {
-  const resulted = await db.prepare(
-    `SELECT id, match_number FROM matches WHERE status = 'resulted' ORDER BY match_number`
-  ).all();
-  if (!resulted.results.length) return;
-
-  const players = await db.prepare(
-    `SELECT primary_email, first_match_num FROM players WHERE first_match_num IS NOT NULL`
-  ).all();
-
-  await db.prepare(`DELETE FROM penalties WHERE reason = 'missed_vote'`).run();
-
-  for (const player of players.results) {
-    const { primary_email, first_match_num } = player;
-    const obligated = resulted.results.filter(m => m.match_number >= first_match_num);
-
-    const voted = await db.prepare(
-      `SELECT m.match_number FROM predictions p
-       JOIN matches m ON m.id = p.match_id
-       WHERE p.primary_email = ? AND p.is_valid = 1`
-    ).bind(primary_email).all();
-
-    const votedNums = new Set(voted.results.map(r => r.match_number));
-
-    for (const m of obligated) {
-      if (!votedNums.has(m.match_number)) {
-        await db.prepare(
-          `INSERT OR IGNORE INTO penalties (primary_email, match_id, penalty_pts, reason)
-           VALUES (?, ?, -50, 'missed_vote')`
-        ).bind(primary_email, m.id).run();
-      }
-    }
-  }
-}
-
-// ─── RESOLVE EMAIL → PRIMARY ─────────────────────────────────────────────────
-async function resolveEmail(db, rawEmail) {
-  const email = rawEmail.trim().toLowerCase();
-  const row = await db.prepare(
-    'SELECT primary_email FROM email_map WHERE alias_email = ?'
-  ).bind(email).first();
-  return row ? row.primary_email : email;
-}
-
-// ─── LEADERBOARD QUERY ───────────────────────────────────────────────────────
-async function buildLeaderboard(db, asOfDate = null) {
-  // asOfDate: ISO date string, only count matches resulted on or before this date
-  let matchFilter = `m.status = 'resulted'`;
-  if (asOfDate) {
-    matchFilter = `m.status = 'resulted' AND m.updated_at <= '${asOfDate}T23:59:59Z'`;
-  }
+// ─── LEADERBOARD ─────────────────────────────────────────────────────────────
+async function buildLB(db, asOf) {
+  let matchCond = `status='resulted'`;
+  if (asOf) matchCond += ` AND updated_at <= '${asOf}T23:59:59'`;
+  const matchIds = await db.prepare(`SELECT id FROM matches WHERE ${matchCond}`).all();
+  if (!matchIds.results.length) return [];
+  const ids = matchIds.results.map(m => m.id).join(',');
+  if (!ids) return [];
 
   const players = await db.prepare(
     `SELECT p.primary_email, p.display_name, p.first_match_num,
-            COALESCE(SUM(s.points_earned), 0) as total_points,
-            COALESCE(SUM(pen.penalty_pts), 0) as total_penalties,
-            COALESCE(SUM(bp.bonus_pts), 0) as total_bonuses,
-            COUNT(DISTINCT s.match_id) as matches_played,
-            COUNT(DISTINCT CASE WHEN s.points_earned > 0 THEN s.match_id END) as correct_predictions
+            COALESCE(SUM(CASE WHEN s.match_id IN (${ids}) THEN s.points_earned ELSE 0 END),0) gross,
+            COALESCE(SUM(CASE WHEN pen.match_id IN (${ids}) THEN pen.penalty_pts ELSE 0 END),0) pen,
+            COALESCE(SUM(CASE WHEN bp.match_id IN (${ids}) THEN bp.bonus_pts ELSE 0 END),0) bonus,
+            COUNT(DISTINCT CASE WHEN s.match_id IN (${ids}) THEN s.match_id END) played,
+            COUNT(DISTINCT CASE WHEN s.match_id IN (${ids}) AND s.points_earned>0 THEN s.match_id END) correct
      FROM players p
-     LEFT JOIN scores s ON s.primary_email = p.primary_email
-       JOIN matches sm ON sm.id = s.match_id AND ${matchFilter.replace(/m\./g, 'sm.')}
-     LEFT JOIN penalties pen ON pen.primary_email = p.primary_email
-       JOIN matches pm ON pm.id = pen.match_id AND ${matchFilter.replace(/m\./g, 'pm.')}
-     LEFT JOIN bonus_points bp ON bp.primary_email = p.primary_email
-       JOIN matches bm ON bm.id = bp.match_id AND ${matchFilter.replace(/m\./g, 'bm.')}
+     LEFT JOIN scores s ON s.primary_email=p.primary_email
+     LEFT JOIN penalties pen ON pen.primary_email=p.primary_email
+     LEFT JOIN bonus_points bp ON bp.primary_email=p.primary_email
      WHERE p.first_match_num IS NOT NULL
      GROUP BY p.primary_email
-     ORDER BY (COALESCE(SUM(s.points_earned),0) + COALESCE(SUM(pen.penalty_pts),0) + COALESCE(SUM(bp.bonus_pts),0)) DESC`
+     ORDER BY (COALESCE(SUM(CASE WHEN s.match_id IN (${ids}) THEN s.points_earned ELSE 0 END),0)+
+               COALESCE(SUM(CASE WHEN pen.match_id IN (${ids}) THEN pen.penalty_pts ELSE 0 END),0)+
+               COALESCE(SUM(CASE WHEN bp.match_id IN (${ids}) THEN bp.bonus_pts ELSE 0 END),0)) DESC`
   ).all();
 
   return players.results.map((p, i) => ({
     rank: i + 1,
     display_name: p.display_name,
     primary_email: p.primary_email,
-    gross_points: parseFloat((p.total_points || 0).toFixed(2)),
-    penalties: parseFloat((p.total_penalties || 0).toFixed(2)),
-    bonuses: parseFloat((p.total_bonuses || 0).toFixed(2)),
-    net_points: parseFloat(((p.total_points || 0) + (p.total_penalties || 0) + (p.total_bonuses || 0)).toFixed(2)),
-    matches_played: p.matches_played,
-    correct_predictions: p.correct_predictions,
+    gross_points: +p.gross.toFixed(2),
+    penalties: +p.pen.toFixed(2),
+    bonuses: +p.bonus.toFixed(2),
+    net_points: +(p.gross + p.pen + p.bonus).toFixed(2),
+    matches_played: p.played,
+    correct_predictions: p.correct,
     first_match: p.first_match_num,
   }));
 }
 
-// Simpler leaderboard without date join complexity
-async function buildLeaderboardSimple(db) {
-  const players = await db.prepare(
-    `SELECT p.primary_email, p.display_name, p.first_match_num,
-            COALESCE(SUM(s.points_earned), 0) as total_points,
-            COALESCE(SUM(pen.penalty_pts), 0) as total_penalties,
-            COALESCE(SUM(bp.bonus_pts), 0) as total_bonuses,
-            COUNT(DISTINCT s.match_id) as matches_played,
-            COUNT(DISTINCT CASE WHEN s.points_earned > 0 THEN s.match_id END) as correct_predictions
-     FROM players p
-     LEFT JOIN scores s ON s.primary_email = p.primary_email
-     LEFT JOIN penalties pen ON pen.primary_email = p.primary_email
-     LEFT JOIN bonus_points bp ON bp.primary_email = p.primary_email
-     WHERE p.first_match_num IS NOT NULL
-     GROUP BY p.primary_email
-     ORDER BY (COALESCE(SUM(s.points_earned),0) + COALESCE(SUM(pen.penalty_pts),0) + COALESCE(SUM(bp.bonus_pts),0)) DESC`
+// ─── INSIGHTS ────────────────────────────────────────────────────────────────
+async function buildInsights(db) {
+  // Most popular picks per match
+  const popular = await db.prepare(
+    `SELECT m.match_number, m.title, m.winner,
+            p.predicted_team,
+            COUNT(*) cnt,
+            m.team_a, m.team_b
+     FROM predictions p JOIN matches m ON m.id=p.match_id
+     WHERE p.is_valid=1 AND m.status='resulted'
+     GROUP BY m.id, p.predicted_team ORDER BY m.match_number, cnt DESC`
   ).all();
 
-  return players.results.map((p, i) => ({
-    rank: i + 1,
-    display_name: p.display_name,
-    primary_email: p.primary_email,
-    gross_points: parseFloat((p.total_points || 0).toFixed(2)),
-    penalties: parseFloat((p.total_penalties || 0).toFixed(2)),
-    bonuses: parseFloat((p.total_bonuses || 0).toFixed(2)),
-    net_points: parseFloat(((p.total_points || 0) + (p.total_penalties || 0) + (p.total_bonuses || 0)).toFixed(2)),
-    matches_played: p.matches_played,
-    correct_predictions: p.correct_predictions,
-    first_match: p.first_match_num,
-  }));
-}
+  // Player streaks (current correct streak)
+  const players = await db.prepare(`SELECT primary_email, display_name FROM players`).all();
+  const streaks = [];
+  for (const pl of players.results) {
+    const history = await db.prepare(
+      `SELECT s.points_earned, m.match_number FROM scores s
+       JOIN matches m ON m.id=s.match_id
+       WHERE s.primary_email=? ORDER BY m.match_number DESC LIMIT 10`
+    ).bind(pl.primary_email).all();
+    let streak = 0;
+    for (const h of history.results) {
+      if (h.points_earned > 0) streak++;
+      else break;
+    }
+    if (streak > 0) streaks.push({ name: pl.display_name, email: pl.primary_email, streak });
+  }
+  streaks.sort((a, b) => b.streak - a.streak);
 
-// ─── SCORE ONE MATCH ─────────────────────────────────────────────────────────
-async function scoreMatch(db, matchId, winner) {
-  const match = await db.prepare('SELECT * FROM matches WHERE id=?').bind(matchId).first();
-  const snap = await db.prepare(
-    `SELECT * FROM odds_snapshots WHERE match_id=? AND is_final=1`
-  ).bind(matchId).first();
-  const odds = snap || await computeOdds(db, matchId);
+  // Top vs Bottom analysis
+  const lb = await buildLB(db, null);
+  const top5 = lb.slice(0, 5).map(p => p.primary_email);
+  const bot5 = lb.slice(-5).map(p => p.primary_email);
 
-  const preds = await db.prepare(
-    `SELECT * FROM predictions WHERE match_id=? AND is_valid=1`
-  ).bind(matchId).all();
-
-  for (const p of preds.results) {
-    const correct = p.predicted_team === winner;
-    const oddsUsed = p.predicted_team === match.team_a ? odds.team_a_odds : odds.team_b_odds;
-    const pts = correct ? parseFloat((100 * (oddsUsed || 1)).toFixed(2)) : 0;
-
-    await db.prepare(
-      `INSERT OR REPLACE INTO scores (match_id, primary_email, predicted_team, winner, odds_at_close, base_points, points_earned)
-       VALUES (?,?,?,?,?,100,?)`
-    ).bind(matchId, p.primary_email, p.predicted_team, winner, oddsUsed || 1, pts).run();
+  const matchComparison = [];
+  const resulted = await db.prepare(`SELECT id, match_number, title, winner, team_a, team_b FROM matches WHERE status='resulted' ORDER BY match_number DESC LIMIT 10`).all();
+  for (const m of resulted.results) {
+    const topPicks = await db.prepare(
+      `SELECT predicted_team, COUNT(*) c FROM predictions WHERE match_id=? AND is_valid=1 AND primary_email IN (${top5.map(() => '?').join(',')}) GROUP BY predicted_team`
+    ).bind(m.id, ...top5).all();
+    const botPicks = await db.prepare(
+      `SELECT predicted_team, COUNT(*) c FROM predictions WHERE match_id=? AND is_valid=1 AND primary_email IN (${bot5.map(() => '?').join(',')}) GROUP BY predicted_team`
+    ).bind(m.id, ...bot5).all();
+    matchComparison.push({
+      match_number: m.match_number, title: m.title, winner: m.winner,
+      team_a: m.team_a, team_b: m.team_b,
+      top5_picks: topPicks.results, bot5_picks: botPicks.results,
+    });
   }
 
-  await db.prepare(`UPDATE matches SET status='resulted', winner=?, updated_at=datetime('now') WHERE id=?`)
-    .bind(winner, matchId).run();
+  // Upset meter — matches where majority got it wrong
+  const upsets = await db.prepare(
+    `SELECT m.match_number, m.title, m.winner, m.team_a, m.team_b,
+            COUNT(CASE WHEN s.points_earned>0 THEN 1 END) correct_count,
+            COUNT(s.id) total_count
+     FROM matches m LEFT JOIN scores s ON s.match_id=m.id
+     WHERE m.status='resulted'
+     GROUP BY m.id
+     HAVING total_count > 0
+     ORDER BY (CAST(correct_count AS REAL)/total_count) ASC LIMIT 10`
+  ).all();
+
+  // Hardest matches (lowest correct %)
+  const hardest = upsets.results.map(u => ({
+    ...u,
+    correct_pct: u.total_count > 0 ? Math.round(u.correct_count / u.total_count * 100) : 0
+  }));
+
+  return { popular: popular.results, streaks: streaks.slice(0, 10), matchComparison, hardest };
 }
 
 // ─── ROUTER ──────────────────────────────────────────────────────────────────
 export default {
 
-  async scheduled(event, env, ctx) {
+  // Cron: auto-close matches
+  async scheduled(event, env) {
     const db = env.DB;
     const now = new Date().toISOString();
     const toClose = await db.prepare(
-      `SELECT id FROM matches WHERE status = 'open' AND match_time <= ?`
+      `SELECT id FROM matches WHERE status='open' AND match_time<=?`
     ).bind(now).all();
-
     for (const m of toClose.results) {
-      const odds = await computeOdds(db, m.id);
+      const o = await getOdds(db, m.id);
       await db.prepare(
-        `INSERT OR REPLACE INTO odds_snapshots (match_id, team_a_votes, team_b_votes, total_votes, team_a_odds, team_b_odds, is_final)
-         VALUES (?, ?, ?, ?, ?, ?, 1)`
-      ).bind(m.id, odds.team_a_votes, odds.team_b_votes, odds.total_votes,
-              odds.team_a_odds, odds.team_b_odds).run();
-
-      await db.prepare(`UPDATE matches SET status='closed', updated_at=datetime('now') WHERE id=?`)
-        .bind(m.id).run();
+        `INSERT OR REPLACE INTO odds_snapshots (match_id,team_a_votes,team_b_votes,total_votes,team_a_odds,team_b_odds,is_final)
+         VALUES (?,?,?,?,?,?,1)`
+      ).bind(m.id, o.team_a_votes, o.team_b_votes, o.total_votes, o.team_a_odds, o.team_b_odds).run();
+      await db.prepare(`UPDATE matches SET status='closed',updated_at=datetime('now') WHERE id=?`).bind(m.id).run();
     }
   },
 
-  async fetch(req, env, ctx) {
+  async fetch(req, env) {
     const url = new URL(req.url);
     const path = url.pathname;
     const method = req.method;
     const db = env.DB;
 
-    if (method === 'OPTIONS') {
-      return new Response(null, { status: 204, headers: cors() });
-    }
+    if (method === 'OPTIONS') return new Response(null, { status: 204, headers: cors() });
 
-    // ── PUBLIC ROUTES ─────────────────────────────────────────────────────────
+    // ── PUBLIC ────────────────────────────────────────────────────────────────
 
-    // GET /api/matches
     if (path === '/api/matches' && method === 'GET') {
       const rows = await db.prepare(
-        `SELECT id, match_number, title, team_a, team_b, match_time, status, winner
-         FROM matches ORDER BY match_number ASC`
+        `SELECT id, match_number, title, team_a, team_b, match_time, status, winner FROM matches ORDER BY match_number`
       ).all();
-      return json(rows.results);
+      return R(rows.results);
     }
 
-    // GET /api/matches/:id/odds
     if (path.match(/^\/api\/matches\/(\d+)\/odds$/) && method === 'GET') {
-      const matchId = parseInt(path.split('/')[3]);
-      const match = await db.prepare('SELECT * FROM matches WHERE id=?').bind(matchId).first();
-      if (!match) return err('Match not found', 404);
-
+      const id = +path.split('/')[3];
+      const match = await db.prepare('SELECT status FROM matches WHERE id=?').bind(id).first();
+      if (!match) return E('Match not found', 404);
       if (match.status === 'resulted' || match.status === 'closed') {
-        const snap = await db.prepare(
-          `SELECT * FROM odds_snapshots WHERE match_id=? AND is_final=1`
-        ).bind(matchId).first();
-        return json({ ...snap, frozen: true });
+        const snap = await db.prepare(`SELECT * FROM odds_snapshots WHERE match_id=? AND is_final=1`).bind(id).first();
+        return R({ ...snap, frozen: true });
       }
-      const odds = await computeOdds(db, matchId);
-      return json({ ...odds, frozen: false });
+      return R({ ...await getOdds(db, id), frozen: false });
     }
 
-    // GET /api/leaderboard?asOf=YYYY-MM-DD
     if (path === '/api/leaderboard' && method === 'GET') {
-      const asOf = url.searchParams.get('asOf');
-      const board = await buildLeaderboardSimple(db);
-      return json(board);
+      return R(await buildLB(db, null));
     }
 
-    // GET /api/players/:email/history
-    if (path.match(/^\/api\/players\/(.+)\/history$/) && method === 'GET') {
+    if (path.match(/^\/api\/players\/.+\/history$/) && method === 'GET') {
       const rawEmail = decodeURIComponent(path.split('/')[3]);
-      const primaryEmail = await resolveEmail(db, rawEmail);
-
-      const player = await db.prepare('SELECT * FROM players WHERE primary_email=?')
-        .bind(primaryEmail).first();
-      if (!player) return err('Player not found', 404);
-
+      const primary = await resolveEmail(db, rawEmail);
+      const player = await db.prepare('SELECT * FROM players WHERE primary_email=?').bind(primary).first();
+      if (!player) return E('Player not found', 404);
       const history = await db.prepare(
         `SELECT m.match_number, m.title, m.team_a, m.team_b, m.winner, m.match_time,
                 p.predicted_team, p.submitted_at,
                 s.points_earned, s.odds_at_close,
-                pen.penalty_pts,
-                bp.bonus_pts, bp.reason as bonus_reason
+                pen.penalty_pts, bp.bonus_pts, bp.reason as bonus_reason
          FROM matches m
-         LEFT JOIN predictions p ON p.match_id = m.id AND p.primary_email = ?
-         LEFT JOIN scores s ON s.match_id = m.id AND s.primary_email = ?
-         LEFT JOIN penalties pen ON pen.match_id = m.id AND pen.primary_email = ?
-         LEFT JOIN bonus_points bp ON bp.match_id = m.id AND bp.primary_email = ?
+         LEFT JOIN predictions p ON p.match_id=m.id AND p.primary_email=?
+         LEFT JOIN scores s ON s.match_id=m.id AND s.primary_email=?
+         LEFT JOIN penalties pen ON pen.match_id=m.id AND pen.primary_email=?
+         LEFT JOIN bonus_points bp ON bp.match_id=m.id AND bp.primary_email=?
          WHERE m.status IN ('resulted','closed','open')
          ORDER BY m.match_number ASC`
-      ).bind(primaryEmail, primaryEmail, primaryEmail, primaryEmail).all();
-
-      return json({ player, history: history.results });
+      ).bind(primary, primary, primary, primary).all();
+      return R({ player, history: history.results });
     }
 
-    // POST /api/predict
-    if (path === '/api/predict' && method === 'POST') {
-      let body;
-      try { body = await req.json(); } catch { return err('Invalid JSON'); }
+    if (path === '/api/insights' && method === 'GET') {
+      return R(await buildInsights(db));
+    }
 
-      const { email, match_id, predicted_team } = body;
-      if (!email || !match_id || !predicted_team)
-        return err('Missing email, match_id, or predicted_team');
+    if (path === '/api/predict' && method === 'POST') {
+      let body; try { body = await req.json(); } catch { return E('Invalid JSON'); }
+      const { email, match_id, predicted_team, name } = body;
+      if (!email || !match_id || !predicted_team) return E('Missing fields');
 
       const match = await db.prepare('SELECT * FROM matches WHERE id=?').bind(match_id).first();
-      if (!match) return err('Match not found', 404);
-      if (match.status !== 'open') return err('Predictions are closed for this match');
-      if (predicted_team !== match.team_a && predicted_team !== match.team_b)
-        return err('Invalid team selection');
+      if (!match) return E('Match not found', 404);
+      if (match.status !== 'open') return E('Predictions closed for this match');
+      if (predicted_team !== match.team_a && predicted_team !== match.team_b) return E('Invalid team');
 
       const rawEmail = email.trim().toLowerCase();
-      const primaryEmail = await resolveEmail(db, rawEmail);
+      const primary = await resolveEmail(db, rawEmail);
 
       const existing = await db.prepare(
         `SELECT id FROM predictions WHERE match_id=? AND primary_email=? AND is_valid=1`
-      ).bind(match_id, primaryEmail).first();
+      ).bind(match_id, primary).first();
 
       if (existing) {
         await db.prepare(
-          `INSERT INTO predictions (match_id, primary_email, raw_email, predicted_team, is_valid, invalid_reason)
-           VALUES (?, ?, ?, ?, 0, 'duplicate_vote')`
-        ).bind(match_id, primaryEmail, rawEmail, predicted_team).run();
-        return err('You have already voted for this match. First vote stands.', 409);
+          `INSERT INTO predictions (match_id,primary_email,raw_email,predicted_team,is_valid,invalid_reason)
+           VALUES (?,?,?,?,0,'duplicate_vote')`
+        ).bind(match_id, primary, rawEmail, predicted_team).run();
+        return E('Already voted. First vote stands.', 409);
       }
 
-      let player = await db.prepare('SELECT * FROM players WHERE primary_email=?')
-        .bind(primaryEmail).first();
-
-      if (!player) {
-        const displayName = rawEmail.split('@')[0];
-        await db.prepare(
-          `INSERT INTO players (display_name, primary_email, first_match_num) VALUES (?,?,?)`
-        ).bind(displayName, primaryEmail, match.match_number).run();
-        await db.prepare(`INSERT OR IGNORE INTO email_map (alias_email, primary_email) VALUES (?,?)`)
-          .bind(primaryEmail, primaryEmail).run();
-        if (rawEmail !== primaryEmail) {
-          await db.prepare(`INSERT OR IGNORE INTO email_map (alias_email, primary_email) VALUES (?,?)`)
-            .bind(rawEmail, primaryEmail).run();
-        }
-      } else if (!player.first_match_num) {
-        await db.prepare(`UPDATE players SET first_match_num=? WHERE primary_email=?`)
-          .bind(match.match_number, primaryEmail).run();
-      }
-
+      await ensurePlayer(db, primary, rawEmail, match.match_number, name);
       await db.prepare(
-        `INSERT INTO predictions (match_id, primary_email, raw_email, predicted_team, is_valid)
-         VALUES (?,?,?,?,1)`
-      ).bind(match_id, primaryEmail, rawEmail, predicted_team).run();
+        `INSERT INTO predictions (match_id,primary_email,raw_email,predicted_team,is_valid) VALUES (?,?,?,?,1)`
+      ).bind(match_id, primary, rawEmail, predicted_team).run();
 
-      const odds = await computeOdds(db, match_id);
-      return json({ success: true, odds });
+      return R({ success: true, odds: await getOdds(db, match_id) });
     }
 
-    // ── ADMIN ROUTES ──────────────────────────────────────────────────────────
-    if (!requireAdmin(req, env)) return err('Unauthorized', 401);
+    // Google Forms webhook (uses match_number not match_id)
+    if (path === '/api/forms-submit' && method === 'POST') {
+      let body; try { body = await req.json(); } catch { return E('Invalid JSON'); }
+      const { email, match_number, predicted_team, name } = body;
+      if (!email || !match_number || !predicted_team) return E('Missing fields');
 
-    // POST /api/admin/matches
+      // Look up match by match_number
+      const match = await db.prepare('SELECT * FROM matches WHERE match_number=?').bind(+match_number).first();
+      if (!match) return E(`Match number ${match_number} not found. Add it in admin first.`, 404);
+      if (match.status !== 'open') return E('Predictions closed for this match');
+      if (predicted_team !== match.team_a && predicted_team !== match.team_b) return E('Invalid team');
+
+      const rawEmail = email.trim().toLowerCase();
+      const primary = await resolveEmail(db, rawEmail);
+
+      const existing = await db.prepare(
+        `SELECT id FROM predictions WHERE match_id=? AND primary_email=? AND is_valid=1`
+      ).bind(match.id, primary).first();
+
+      if (existing) {
+        await db.prepare(
+          `INSERT INTO predictions (match_id,primary_email,raw_email,predicted_team,is_valid,invalid_reason)
+           VALUES (?,?,?,?,0,'duplicate_vote')`
+        ).bind(match.id, primary, rawEmail, predicted_team).run();
+        return E('Already voted. First vote stands.', 409);
+      }
+
+      await ensurePlayer(db, primary, rawEmail, match.match_number, name);
+      await db.prepare(
+        `INSERT INTO predictions (match_id,primary_email,raw_email,predicted_team,is_valid) VALUES (?,?,?,?,1)`
+      ).bind(match.id, primary, rawEmail, predicted_team).run();
+
+      return R({ success: true });
+    }
+
+    // ── ADMIN ─────────────────────────────────────────────────────────────────
+    if (!isAdmin(req, env)) return E('Unauthorized', 401);
+
+    // ── MATCH CRUD ────────────────────────────────────────────────────────────
+
     if (path === '/api/admin/matches' && method === 'POST') {
-      const body = await req.json();
-      const { match_number, title, team_a, team_b, match_time } = body;
-      if (!match_number || !title || !team_a || !team_b || !match_time)
-        return err('Missing fields');
-
-      const result = await db.prepare(
-        `INSERT INTO matches (match_number, title, team_a, team_b, match_time, status)
-         VALUES (?,?,?,?,?,'upcoming')`
-      ).bind(match_number, title, team_a, team_b, match_time).run();
-
+      const { match_number, title, team_a, team_b, match_time } = await req.json();
+      if (!match_number || !title || !team_a || !team_b || !match_time) return E('Missing fields');
+      const r = await db.prepare(
+        `INSERT INTO matches (match_number,title,team_a,team_b,match_time,status) VALUES (?,?,?,?,?,'upcoming')`
+      ).bind(+match_number, title, team_a, team_b, match_time).run();
       await db.prepare(`INSERT INTO audit_log (action,actor,entity,entity_id,details) VALUES (?,?,?,?,?)`)
-        .bind('match_created', 'admin', 'match', String(result.meta.last_row_id), title).run();
-
-      return json({ id: result.meta.last_row_id });
+        .bind('match_created','admin','match',String(r.meta.last_row_id),title).run();
+      return R({ id: r.meta.last_row_id });
     }
 
-    // POST /api/admin/matches/bulk — bulk create matches
     if (path === '/api/admin/matches/bulk' && method === 'POST') {
-      const body = await req.json();
-      const { matches } = body;
-      if (!Array.isArray(matches) || !matches.length) return err('No matches provided');
-
+      const { matches } = await req.json();
+      if (!Array.isArray(matches)) return E('matches array required');
       let created = 0, skipped = 0, errors = [];
-
       for (const m of matches) {
         const { match_number, title, team_a, team_b, match_time } = m;
         if (!match_number || !title || !team_a || !team_b || !match_time) {
-          errors.push(`Row ${match_number || '?'}: missing fields`);
-          skipped++;
-          continue;
+          errors.push(`M${match_number||'?'}: missing fields`); skipped++; continue;
         }
         try {
           await db.prepare(
-            `INSERT INTO matches (match_number, title, team_a, team_b, match_time, status)
-             VALUES (?,?,?,?,?,'upcoming')`
-          ).bind(match_number, title, team_a, team_b, match_time).run();
+            `INSERT INTO matches (match_number,title,team_a,team_b,match_time,status) VALUES (?,?,?,?,?,'upcoming')`
+          ).bind(+match_number, title, team_a, team_b, match_time).run();
           created++;
-        } catch (e) {
-          errors.push(`Match ${match_number}: ${e.message}`);
-          skipped++;
-        }
+        } catch(e) { errors.push(`M${match_number}: ${e.message}`); skipped++; }
       }
-
-      await db.prepare(`INSERT INTO audit_log (action,actor,entity,entity_id,details) VALUES (?,?,?,?,?)`)
-        .bind('bulk_matches_created', 'admin', 'match', 'bulk', `${created} created, ${skipped} skipped`).run();
-
-      return json({ created, skipped, errors });
+      return R({ created, skipped, errors });
     }
 
-    // PATCH /api/admin/matches/:id — update match fields (status override, time, etc.)
     if (path.match(/^\/api\/admin\/matches\/(\d+)$/) && method === 'PATCH') {
-      const matchId = parseInt(path.split('/')[4]);
+      const id = +path.split('/')[4];
       const body = await req.json();
-      const fields = [], vals = [];
-
-      if (body.status !== undefined)     { fields.push('status=?');     vals.push(body.status); }
-      if (body.match_time !== undefined)  { fields.push('match_time=?'); vals.push(body.match_time); }
-      if (body.title !== undefined)       { fields.push('title=?');      vals.push(body.title); }
-      if (body.winner !== undefined)      { fields.push('winner=?');     vals.push(body.winner); }
-      if (body.team_a !== undefined)      { fields.push('team_a=?');     vals.push(body.team_a); }
-      if (body.team_b !== undefined)      { fields.push('team_b=?');     vals.push(body.team_b); }
-
-      if (!fields.length) return err('Nothing to update');
-      fields.push("updated_at=datetime('now')");
-      vals.push(matchId);
-
-      await db.prepare(`UPDATE matches SET ${fields.join(',')} WHERE id=?`).bind(...vals).run();
-      await db.prepare(`INSERT INTO audit_log (action,actor,entity,entity_id,details) VALUES (?,?,?,?,?)`)
-        .bind('match_patched', 'admin', 'match', String(matchId), JSON.stringify(body)).run();
-
-      return json({ success: true });
+      const f = [], v = [];
+      if (body.status     !== undefined) { f.push('status=?');     v.push(body.status); }
+      if (body.match_time !== undefined) { f.push('match_time=?'); v.push(body.match_time); }
+      if (body.title      !== undefined) { f.push('title=?');      v.push(body.title); }
+      if (body.team_a     !== undefined) { f.push('team_a=?');     v.push(body.team_a); }
+      if (body.team_b     !== undefined) { f.push('team_b=?');     v.push(body.team_b); }
+      if (body.winner     !== undefined) { f.push('winner=?');     v.push(body.winner); }
+      if (!f.length) return E('Nothing to update');
+      f.push("updated_at=datetime('now')"); v.push(id);
+      await db.prepare(`UPDATE matches SET ${f.join(',')} WHERE id=?`).bind(...v).run();
+      return R({ success: true });
     }
 
-    // POST /api/admin/matches/:id/open
+    if (path.match(/^\/api\/admin\/matches\/(\d+)$/) && method === 'DELETE') {
+      const id = +path.split('/')[4];
+      // Only allow deleting upcoming matches
+      const m = await db.prepare('SELECT status FROM matches WHERE id=?').bind(id).first();
+      if (!m) return E('Not found', 404);
+      if (m.status !== 'upcoming') return E('Can only delete upcoming matches. Use force-delete for others.');
+      await db.prepare('DELETE FROM matches WHERE id=?').bind(id).run();
+      return R({ success: true });
+    }
+
+    if (path.match(/^\/api\/admin\/matches\/(\d+)\/force-delete$/) && method === 'DELETE') {
+      const id = +path.split('/')[4];
+      // Clean up all related data
+      await db.prepare('DELETE FROM predictions WHERE match_id=?').bind(id).run();
+      await db.prepare('DELETE FROM scores WHERE match_id=?').bind(id).run();
+      await db.prepare('DELETE FROM penalties WHERE match_id=?').bind(id).run();
+      await db.prepare('DELETE FROM bonus_points WHERE match_id=?').bind(id).run();
+      await db.prepare('DELETE FROM odds_snapshots WHERE match_id=?').bind(id).run();
+      await db.prepare('DELETE FROM matches WHERE id=?').bind(id).run();
+      return R({ success: true });
+    }
+
     if (path.match(/^\/api\/admin\/matches\/(\d+)\/open$/) && method === 'POST') {
-      const matchId = parseInt(path.split('/')[4]);
-      await db.prepare(`UPDATE matches SET status='open', updated_at=datetime('now') WHERE id=?`)
-        .bind(matchId).run();
-      return json({ success: true });
+      const id = +path.split('/')[4];
+      await db.prepare(`UPDATE matches SET status='open',updated_at=datetime('now') WHERE id=?`).bind(id).run();
+      return R({ success: true });
     }
 
-    // POST /api/admin/matches/:id/close
     if (path.match(/^\/api\/admin\/matches\/(\d+)\/close$/) && method === 'POST') {
-      const matchId = parseInt(path.split('/')[4]);
-      const odds = await computeOdds(db, matchId);
-
+      const id = +path.split('/')[4];
+      const o = await getOdds(db, id);
       await db.prepare(
-        `INSERT OR REPLACE INTO odds_snapshots (match_id, team_a_votes, team_b_votes, total_votes, team_a_odds, team_b_odds, is_final)
+        `INSERT OR REPLACE INTO odds_snapshots (match_id,team_a_votes,team_b_votes,total_votes,team_a_odds,team_b_odds,is_final)
          VALUES (?,?,?,?,?,?,1)`
-      ).bind(matchId, odds.team_a_votes, odds.team_b_votes, odds.total_votes,
-              odds.team_a_odds, odds.team_b_odds).run();
-
-      await db.prepare(`UPDATE matches SET status='closed', updated_at=datetime('now') WHERE id=?`)
-        .bind(matchId).run();
-      return json({ success: true, odds });
+      ).bind(id, o.team_a_votes, o.team_b_votes, o.total_votes, o.team_a_odds, o.team_b_odds).run();
+      await db.prepare(`UPDATE matches SET status='closed',updated_at=datetime('now') WHERE id=?`).bind(id).run();
+      return R({ success: true, odds: o });
     }
 
-    // POST /api/admin/matches/:id/result
     if (path.match(/^\/api\/admin\/matches\/(\d+)\/result$/) && method === 'POST') {
-      const matchId = parseInt(path.split('/')[4]);
-      const body = await req.json();
-      const { winner } = body;
-
-      const match = await db.prepare('SELECT * FROM matches WHERE id=?').bind(matchId).first();
-      if (!match) return err('Match not found', 404);
-      if (!['closed', 'resulted'].includes(match.status))
-        return err('Match must be closed before entering result');
-
-      // Snapshot odds if not already done
-      const snapExists = await db.prepare(
-        `SELECT id FROM odds_snapshots WHERE match_id=? AND is_final=1`
-      ).bind(matchId).first();
-
-      if (!snapExists) {
-        const odds = await computeOdds(db, matchId);
-        await db.prepare(
-          `INSERT INTO odds_snapshots (match_id, team_a_votes, team_b_votes, total_votes, team_a_odds, team_b_odds, is_final)
-           VALUES (?,?,?,?,?,?,1)`
-        ).bind(matchId, odds.team_a_votes, odds.team_b_votes, odds.total_votes,
-                odds.team_a_odds, odds.team_b_odds).run();
-      }
-
-      await scoreMatch(db, matchId, winner);
+      const id = +path.split('/')[4];
+      const { winner } = await req.json();
+      const m = await db.prepare('SELECT * FROM matches WHERE id=?').bind(id).first();
+      if (!m) return E('Not found', 404);
+      if (m.status !== 'closed') return E('Close match first (or use force-result)');
+      await scoreMatch(db, id, winner);
       await recalcPenalties(db);
       await applyDoubleHeaderBonus(db);
-      await applyVariations(db, matchId);
-
       await db.prepare(`INSERT INTO audit_log (action,actor,entity,entity_id,details) VALUES (?,?,?,?,?)`)
-        .bind('result_entered', 'admin', 'match', String(matchId), `Winner: ${winner}`).run();
-
-      const board = await buildLeaderboardSimple(db);
-      return json({ success: true, leaderboard_preview: board.slice(0, 5) });
+        .bind('result_entered','admin','match',String(id),`Winner: ${winner}`).run();
+      return R({ success: true });
     }
 
-    // POST /api/admin/matches/:id/force-result — for historical matches (skip closed check)
+    // Force result — works on any status (for historical matches)
     if (path.match(/^\/api\/admin\/matches\/(\d+)\/force-result$/) && method === 'POST') {
-      const matchId = parseInt(path.split('/')[4]);
-      const body = await req.json();
-      const { winner } = body;
-
-      const match = await db.prepare('SELECT * FROM matches WHERE id=?').bind(matchId).first();
-      if (!match) return err('Match not found', 404);
-
-      // Force close first if needed
-      if (match.status !== 'closed') {
-        const odds = await computeOdds(db, matchId);
+      const id = +path.split('/')[4];
+      const { winner } = await req.json();
+      const m = await db.prepare('SELECT * FROM matches WHERE id=?').bind(id).first();
+      if (!m) return E('Not found', 404);
+      // Force close if not already
+      if (m.status !== 'closed' && m.status !== 'resulted') {
+        const o = await getOdds(db, id);
         await db.prepare(
-          `INSERT OR REPLACE INTO odds_snapshots (match_id, team_a_votes, team_b_votes, total_votes, team_a_odds, team_b_odds, is_final)
+          `INSERT OR REPLACE INTO odds_snapshots (match_id,team_a_votes,team_b_votes,total_votes,team_a_odds,team_b_odds,is_final)
            VALUES (?,?,?,?,?,?,1)`
-        ).bind(matchId, odds.team_a_votes, odds.team_b_votes, odds.total_votes,
-                odds.team_a_odds, odds.team_b_odds).run();
-        await db.prepare(`UPDATE matches SET status='closed', updated_at=datetime('now') WHERE id=?`)
-          .bind(matchId).run();
+        ).bind(id, o.team_a_votes, o.team_b_votes, o.total_votes, o.team_a_odds, o.team_b_odds).run();
       }
-
-      await scoreMatch(db, matchId, winner);
+      await scoreMatch(db, id, winner);
       await recalcPenalties(db);
       await applyDoubleHeaderBonus(db);
-
       await db.prepare(`INSERT INTO audit_log (action,actor,entity,entity_id,details) VALUES (?,?,?,?,?)`)
-        .bind('force_result', 'admin', 'match', String(matchId), `Winner: ${winner}`).run();
-
-      const board = await buildLeaderboardSimple(db);
-      return json({ success: true, leaderboard_preview: board.slice(0, 5) });
+        .bind('force_result','admin','match',String(id),`Winner: ${winner}`).run();
+      return R({ success: true });
     }
 
-    // GET /api/admin/matches/:id/predictions
     if (path.match(/^\/api\/admin\/matches\/(\d+)\/predictions$/) && method === 'GET') {
-      const matchId = parseInt(path.split('/')[4]);
+      const id = +path.split('/')[4];
       const rows = await db.prepare(
         `SELECT p.*, pl.display_name FROM predictions p
-         LEFT JOIN players pl ON pl.primary_email = p.primary_email
-         WHERE p.match_id = ? ORDER BY p.submitted_at ASC`
-      ).bind(matchId).all();
-      return json(rows.results);
+         LEFT JOIN players pl ON pl.primary_email=p.primary_email
+         WHERE p.match_id=? ORDER BY p.submitted_at`
+      ).bind(id).all();
+      return R(rows.results);
     }
 
-    // POST /api/admin/predictions/bulk — import historical responses
+    // ── BULK PREDICTIONS ──────────────────────────────────────────────────────
     if (path === '/api/admin/predictions/bulk' && method === 'POST') {
-      const body = await req.json();
-      const { predictions } = body;
-      if (!Array.isArray(predictions)) return err('predictions array required');
-
+      const { predictions } = await req.json();
+      if (!Array.isArray(predictions)) return E('predictions array required');
       let imported = 0, skipped = 0, errors = [];
 
       for (const pred of predictions) {
-        const { email, match_id, predicted_team, submitted_at } = pred;
+        const { email, match_id, predicted_team, submitted_at, name } = pred;
         if (!email || !match_id || !predicted_team) {
-          errors.push(`Row: missing email/match_id/team`);
-          skipped++;
-          continue;
+          errors.push(`Missing fields for ${email||'?'}`); skipped++; continue;
         }
-
-        const match = await db.prepare('SELECT * FROM matches WHERE id=?').bind(match_id).first();
+        const match = await db.prepare('SELECT * FROM matches WHERE id=?').bind(+match_id).first();
         if (!match) { errors.push(`Match ${match_id} not found`); skipped++; continue; }
-
         const rawEmail = email.trim().toLowerCase();
-        const primaryEmail = await resolveEmail(db, rawEmail);
-
-        // Register player if new
-        let player = await db.prepare('SELECT * FROM players WHERE primary_email=?')
-          .bind(primaryEmail).first();
-        if (!player) {
-          await db.prepare(
-            `INSERT INTO players (display_name, primary_email, first_match_num) VALUES (?,?,?)`
-          ).bind(rawEmail.split('@')[0], primaryEmail, match.match_number).run();
-          await db.prepare(`INSERT OR IGNORE INTO email_map (alias_email, primary_email) VALUES (?,?)`)
-            .bind(primaryEmail, primaryEmail).run();
-        } else if (!player.first_match_num || match.match_number < player.first_match_num) {
-          await db.prepare(`UPDATE players SET first_match_num=? WHERE primary_email=?`)
-            .bind(match.match_number, primaryEmail).run();
-        }
-
-        // Check for existing valid prediction
+        const primary = await resolveEmail(db, rawEmail);
         const existing = await db.prepare(
           `SELECT id FROM predictions WHERE match_id=? AND primary_email=? AND is_valid=1`
-        ).bind(match_id, primaryEmail).first();
-
-        if (existing) {
-          errors.push(`${rawEmail} already voted M${match.match_number} — skipped`);
-          skipped++;
-          continue;
-        }
-
-        const ts = submitted_at || new Date().toISOString();
+        ).bind(+match_id, primary).first();
+        if (existing) { errors.push(`${rawEmail} already voted M${match.match_number}`); skipped++; continue; }
+        await ensurePlayer(db, primary, rawEmail, match.match_number, name);
         await db.prepare(
-          `INSERT INTO predictions (match_id, primary_email, raw_email, predicted_team, submitted_at, is_valid)
-           VALUES (?,?,?,?,?,1)`
-        ).bind(match_id, primaryEmail, rawEmail, predicted_team, ts).run();
+          `INSERT INTO predictions (match_id,primary_email,raw_email,predicted_team,submitted_at,is_valid) VALUES (?,?,?,?,?,1)`
+        ).bind(+match_id, primary, rawEmail, predicted_team, submitted_at || new Date().toISOString()).run();
         imported++;
       }
-
-      await db.prepare(`INSERT INTO audit_log (action,actor,entity,entity_id,details) VALUES (?,?,?,?,?)`)
-        .bind('bulk_predictions_imported', 'admin', 'prediction', 'bulk',
-          `${imported} imported, ${skipped} skipped`).run();
-
-      return json({ imported, skipped, errors });
+      return R({ imported, skipped, errors });
     }
 
-    // GET /api/admin/players
+    // ── PLAYER CRUD ───────────────────────────────────────────────────────────
+
     if (path === '/api/admin/players' && method === 'GET') {
       const rows = await db.prepare(
-        `SELECT p.*, GROUP_CONCAT(em.alias_email) as all_emails
-         FROM players p
-         LEFT JOIN email_map em ON em.primary_email = p.primary_email
+        `SELECT p.*, GROUP_CONCAT(em.alias_email) all_emails FROM players p
+         LEFT JOIN email_map em ON em.primary_email=p.primary_email
          GROUP BY p.primary_email ORDER BY p.display_name`
       ).all();
-      return json(rows.results);
+      return R(rows.results);
     }
 
-    // POST /api/admin/players
     if (path === '/api/admin/players' && method === 'POST') {
-      const body = await req.json();
-      const { display_name, primary_email, alias_emails } = body;
-      if (!display_name || !primary_email) return err('Missing fields');
-
+      const { display_name, primary_email, alias_emails, first_match_num } = await req.json();
+      if (!display_name || !primary_email) return E('Missing fields');
+      const email = primary_email.toLowerCase();
       await db.prepare(
-        `INSERT INTO players (display_name, primary_email) VALUES (?,?)
-         ON CONFLICT(primary_email) DO UPDATE SET display_name=excluded.display_name`
-      ).bind(display_name, primary_email.toLowerCase()).run();
-
-      await db.prepare(`INSERT OR IGNORE INTO email_map (alias_email, primary_email) VALUES (?,?)`)
-        .bind(primary_email.toLowerCase(), primary_email.toLowerCase()).run();
-
-      if (alias_emails && Array.isArray(alias_emails)) {
-        for (const alias of alias_emails) {
-          await db.prepare(`INSERT OR IGNORE INTO email_map (alias_email, primary_email) VALUES (?,?)`)
-            .bind(alias.trim().toLowerCase(), primary_email.toLowerCase()).run();
+        `INSERT INTO players (display_name,primary_email,first_match_num) VALUES (?,?,?)
+         ON CONFLICT(primary_email) DO UPDATE SET display_name=excluded.display_name,
+         first_match_num=COALESCE(excluded.first_match_num, first_match_num)`
+      ).bind(display_name, email, first_match_num || null).run();
+      await db.prepare(`INSERT OR IGNORE INTO email_map (alias_email,primary_email) VALUES (?,?)`).bind(email, email).run();
+      if (Array.isArray(alias_emails)) {
+        for (const a of alias_emails) {
+          if (a) await db.prepare(`INSERT OR IGNORE INTO email_map (alias_email,primary_email) VALUES (?,?)`)
+            .bind(a.trim().toLowerCase(), email).run();
         }
       }
-      return json({ success: true });
+      return R({ success: true });
     }
 
-    // PUT /api/admin/players/:email/name
-    if (path.match(/^\/api\/admin\/players\/.+\/name$/) && method === 'PUT') {
-      const rawEmail = decodeURIComponent(path.split('/')[4]);
-      const body = await req.json();
-      await db.prepare(`UPDATE players SET display_name=? WHERE primary_email=?`)
-        .bind(body.display_name, rawEmail).run();
-      return json({ success: true });
-    }
-
-    // PATCH /api/admin/players/:email — update player details
     if (path.match(/^\/api\/admin\/players\/.+$/) && method === 'PATCH') {
-      const rawEmail = decodeURIComponent(path.split('/')[4]);
+      const email = decodeURIComponent(path.split('/')[4]);
       const body = await req.json();
-      if (body.display_name) {
-        await db.prepare(`UPDATE players SET display_name=? WHERE primary_email=?`)
-          .bind(body.display_name, rawEmail).run();
-      }
-      if (body.first_match_num !== undefined) {
-        await db.prepare(`UPDATE players SET first_match_num=? WHERE primary_email=?`)
-          .bind(body.first_match_num || null, rawEmail).run();
-        // Recalculate penalties since first match changed
-        await recalcPenalties(db);
-      }
-      return json({ success: true });
+      const f = [], v = [];
+      if (body.display_name   !== undefined) { f.push('display_name=?');   v.push(body.display_name); }
+      if (body.first_match_num!== undefined) { f.push('first_match_num=?'); v.push(body.first_match_num); }
+      if (!f.length) return E('Nothing to update');
+      v.push(email);
+      await db.prepare(`UPDATE players SET ${f.join(',')} WHERE primary_email=?`).bind(...v).run();
+      if (body.first_match_num !== undefined) await recalcPenalties(db);
+      return R({ success: true });
     }
 
-    // POST /api/admin/email-map
-    if (path === '/api/admin/email-map' && method === 'POST') {
-      const body = await req.json();
-      const { alias_email, primary_email } = body;
-      await db.prepare(`INSERT OR REPLACE INTO email_map (alias_email, primary_email) VALUES (?,?)`)
-        .bind(alias_email.toLowerCase(), primary_email.toLowerCase()).run();
-      return json({ success: true });
+    if (path.match(/^\/api\/admin\/players\/.+$/) && method === 'DELETE') {
+      const email = decodeURIComponent(path.split('/')[4]);
+      await db.prepare('DELETE FROM email_map WHERE primary_email=?').bind(email).run();
+      await db.prepare('DELETE FROM players WHERE primary_email=?').bind(email).run();
+      return R({ success: true });
     }
 
-    // GET /api/admin/email-map
+    // ── EMAIL MAP ─────────────────────────────────────────────────────────────
+
     if (path === '/api/admin/email-map' && method === 'GET') {
-      const rows = await db.prepare(`SELECT * FROM email_map ORDER BY primary_email, alias_email`).all();
-      return json(rows.results);
+      const rows = await db.prepare(`SELECT * FROM email_map ORDER BY primary_email`).all();
+      return R(rows.results);
     }
 
-    // ── VARIATIONS / BONUSES ──────────────────────────────────────────────────
+    if (path === '/api/admin/email-map' && method === 'POST') {
+      const { alias_email, primary_email } = await req.json();
+      await db.prepare(`INSERT OR REPLACE INTO email_map (alias_email,primary_email) VALUES (?,?)`)
+        .bind(alias_email.toLowerCase(), primary_email.toLowerCase()).run();
+      return R({ success: true });
+    }
 
-    // GET /api/admin/variations
+    if (path.match(/^\/api\/admin\/email-map\/.+$/) && method === 'DELETE') {
+      const alias = decodeURIComponent(path.split('/')[4]);
+      await db.prepare('DELETE FROM email_map WHERE alias_email=?').bind(alias).run();
+      return R({ success: true });
+    }
+
+    // ── VARIATIONS ────────────────────────────────────────────────────────────
+
     if (path === '/api/admin/variations' && method === 'GET') {
       const rows = await db.prepare(`SELECT * FROM variations ORDER BY created_at DESC`).all();
-      return json(rows.results);
+      return R(rows.results);
     }
 
-    // POST /api/admin/variations
     if (path === '/api/admin/variations' && method === 'POST') {
-      const body = await req.json();
-      const { name, type, description, applies_to_match_id, details } = body;
-      if (!name || !type) return err('name and type required');
-
-      const result = await db.prepare(
-        `INSERT INTO variations (name, type, description, applies_to_match_id, details, is_active)
-         VALUES (?,?,?,?,?,1)`
-      ).bind(name, type, description || '', applies_to_match_id || null,
-             typeof details === 'object' ? JSON.stringify(details) : (details || null)).run();
-
-      return json({ id: result.meta.last_row_id });
+      const { name, type, description, applies_to_match_id, details } = await req.json();
+      if (!name || !type) return E('name and type required');
+      const det = typeof details === 'object' ? JSON.stringify(details) : (details || null);
+      const r = await db.prepare(
+        `INSERT INTO variations (name,type,description,applies_to_match_id,details,is_active) VALUES (?,?,?,?,?,1)`
+      ).bind(name, type, description || '', applies_to_match_id || null, det).run();
+      return R({ id: r.meta.last_row_id });
     }
 
-    // PATCH /api/admin/variations/:id
     if (path.match(/^\/api\/admin\/variations\/(\d+)$/) && method === 'PATCH') {
-      const varId = parseInt(path.split('/')[4]);
+      const id = +path.split('/')[4];
       const body = await req.json();
-      const fields = [], vals = [];
-
-      if (body.is_active !== undefined) { fields.push('is_active=?'); vals.push(body.is_active ? 1 : 0); }
-      if (body.name !== undefined)      { fields.push('name=?');      vals.push(body.name); }
-      if (body.description !== undefined) { fields.push('description=?'); vals.push(body.description); }
-      if (body.details !== undefined)   {
-        fields.push('details=?');
-        vals.push(typeof body.details === 'object' ? JSON.stringify(body.details) : body.details);
+      const f = [], v = [];
+      if (body.name        !== undefined) { f.push('name=?');        v.push(body.name); }
+      if (body.description !== undefined) { f.push('description=?'); v.push(body.description); }
+      if (body.is_active   !== undefined) { f.push('is_active=?');   v.push(body.is_active ? 1 : 0); }
+      if (body.details     !== undefined) {
+        f.push('details=?');
+        v.push(typeof body.details === 'object' ? JSON.stringify(body.details) : body.details);
       }
-
-      if (!fields.length) return err('Nothing to update');
-      vals.push(varId);
-      await db.prepare(`UPDATE variations SET ${fields.join(',')} WHERE id=?`).bind(...vals).run();
-      return json({ success: true });
+      if (!f.length) return E('Nothing to update');
+      v.push(id);
+      await db.prepare(`UPDATE variations SET ${f.join(',')} WHERE id=?`).bind(...v).run();
+      return R({ success: true });
     }
 
-    // DELETE /api/admin/variations/:id
     if (path.match(/^\/api\/admin\/variations\/(\d+)$/) && method === 'DELETE') {
-      const varId = parseInt(path.split('/')[4]);
-      await db.prepare(`DELETE FROM variations WHERE id=?`).bind(varId).run();
-      return json({ success: true });
+      const id = +path.split('/')[4];
+      await db.prepare('DELETE FROM variations WHERE id=?').bind(id).run();
+      return R({ success: true });
     }
 
-    // POST /api/admin/variations/recalc — manually trigger recalculation
     if (path === '/api/admin/variations/recalc' && method === 'POST') {
       await applyDoubleHeaderBonus(db);
       await recalcPenalties(db);
-      const board = await buildLeaderboardSimple(db);
-      return json({ success: true, leaderboard_preview: board.slice(0, 5) });
+      return R({ success: true });
     }
 
-    // GET /api/admin/bonus-points — see all bonus rows
+    // ── BONUS POINTS ──────────────────────────────────────────────────────────
+
     if (path === '/api/admin/bonus-points' && method === 'GET') {
       const rows = await db.prepare(
         `SELECT bp.*, p.display_name, m.match_number FROM bonus_points bp
-         LEFT JOIN players p ON p.primary_email = bp.primary_email
-         LEFT JOIN matches m ON m.id = bp.match_id
+         LEFT JOIN players p ON p.primary_email=bp.primary_email
+         LEFT JOIN matches m ON m.id=bp.match_id
          ORDER BY bp.id DESC`
       ).all();
-      return json(rows.results);
+      return R(rows.results);
     }
 
-    // POST /api/admin/bonus-points — manual one-off bonus
     if (path === '/api/admin/bonus-points' && method === 'POST') {
-      const body = await req.json();
-      const { primary_email, match_id, bonus_pts, reason, details } = body;
-      if (!primary_email || !bonus_pts) return err('primary_email and bonus_pts required');
-
+      const { primary_email, match_id, bonus_pts, reason, details } = await req.json();
+      if (!primary_email || bonus_pts === undefined) return E('email and pts required');
       await db.prepare(
-        `INSERT INTO bonus_points (primary_email, match_id, bonus_pts, reason, details)
-         VALUES (?,?,?,?,?)`
+        `INSERT INTO bonus_points (primary_email,match_id,bonus_pts,reason,details) VALUES (?,?,?,?,?)`
       ).bind(primary_email, match_id || null, bonus_pts, reason || 'manual', details || '').run();
-
-      return json({ success: true });
+      return R({ success: true });
     }
 
-    // DELETE /api/admin/bonus-points/:id
+    if (path.match(/^\/api\/admin\/bonus-points\/(\d+)$/) && method === 'PATCH') {
+      const id = +path.split('/')[4];
+      const { bonus_pts, reason, details } = await req.json();
+      const f = [], v = [];
+      if (bonus_pts !== undefined) { f.push('bonus_pts=?'); v.push(bonus_pts); }
+      if (reason    !== undefined) { f.push('reason=?');    v.push(reason); }
+      if (details   !== undefined) { f.push('details=?');   v.push(details); }
+      if (!f.length) return E('Nothing to update');
+      v.push(id);
+      await db.prepare(`UPDATE bonus_points SET ${f.join(',')} WHERE id=?`).bind(...v).run();
+      return R({ success: true });
+    }
+
     if (path.match(/^\/api\/admin\/bonus-points\/(\d+)$/) && method === 'DELETE') {
-      const bpId = parseInt(path.split('/')[4]);
-      await db.prepare(`DELETE FROM bonus_points WHERE id=?`).bind(bpId).run();
-      return json({ success: true });
+      const id = +path.split('/')[4];
+      await db.prepare('DELETE FROM bonus_points WHERE id=?').bind(id).run();
+      return R({ success: true });
     }
 
-    // GET /api/admin/leaderboard?asOf=YYYY-MM-DD
+    // ── PENALTIES MANUAL OVERRIDE ─────────────────────────────────────────────
+
+    if (path.match(/^\/api\/admin\/penalties\/(\d+)$/) && method === 'DELETE') {
+      const id = +path.split('/')[4];
+      await db.prepare('DELETE FROM penalties WHERE id=?').bind(id).run();
+      return R({ success: true });
+    }
+
+    if (path === '/api/admin/penalties/recalc' && method === 'POST') {
+      await recalcPenalties(db);
+      return R({ success: true });
+    }
+
+    // ── LEADERBOARD (ADMIN with asOf) ─────────────────────────────────────────
+
     if (path === '/api/admin/leaderboard' && method === 'GET') {
-      const asOf = url.searchParams.get('asOf');
-      // For date-filtered leaderboard, we do it by match number/date
-      if (asOf) {
-        // Get all matches resulted on or before asOf
-        const matchIds = await db.prepare(
-          `SELECT id FROM matches WHERE status='resulted' AND updated_at <= ?`
-        ).bind(asOf + 'T23:59:59').all();
-
-        if (!matchIds.results.length) return json([]);
-
-        const ids = matchIds.results.map(m => m.id);
-        const idList = ids.join(',');
-
-        const players = await db.prepare(
-          `SELECT p.primary_email, p.display_name, p.first_match_num,
-                  COALESCE(SUM(CASE WHEN s.match_id IN (${idList}) THEN s.points_earned ELSE 0 END), 0) as total_points,
-                  COALESCE(SUM(CASE WHEN pen.match_id IN (${idList}) THEN pen.penalty_pts ELSE 0 END), 0) as total_penalties,
-                  COALESCE(SUM(CASE WHEN bp.match_id IN (${idList}) THEN bp.bonus_pts ELSE 0 END), 0) as total_bonuses,
-                  COUNT(DISTINCT CASE WHEN s.match_id IN (${idList}) THEN s.match_id END) as matches_played,
-                  COUNT(DISTINCT CASE WHEN s.match_id IN (${idList}) AND s.points_earned > 0 THEN s.match_id END) as correct_predictions
-           FROM players p
-           LEFT JOIN scores s ON s.primary_email = p.primary_email
-           LEFT JOIN penalties pen ON pen.primary_email = p.primary_email
-           LEFT JOIN bonus_points bp ON bp.primary_email = p.primary_email
-           WHERE p.first_match_num IS NOT NULL
-           GROUP BY p.primary_email
-           ORDER BY (COALESCE(SUM(CASE WHEN s.match_id IN (${idList}) THEN s.points_earned ELSE 0 END), 0) +
-                     COALESCE(SUM(CASE WHEN pen.match_id IN (${idList}) THEN pen.penalty_pts ELSE 0 END), 0) +
-                     COALESCE(SUM(CASE WHEN bp.match_id IN (${idList}) THEN bp.bonus_pts ELSE 0 END), 0)) DESC`
-        ).all();
-
-        return json(players.results.map((p, i) => ({
-          rank: i + 1,
-          display_name: p.display_name,
-          primary_email: p.primary_email,
-          gross_points: parseFloat((p.total_points || 0).toFixed(2)),
-          penalties: parseFloat((p.total_penalties || 0).toFixed(2)),
-          bonuses: parseFloat((p.total_bonuses || 0).toFixed(2)),
-          net_points: parseFloat(((p.total_points || 0) + (p.total_penalties || 0) + (p.total_bonuses || 0)).toFixed(2)),
-          matches_played: p.matches_played,
-          correct_predictions: p.correct_predictions,
-        })));
-      }
-
-      const board = await buildLeaderboardSimple(db);
-      return json(board);
+      const asOf = url.searchParams.get('asOf') || null;
+      return R(await buildLB(db, asOf));
     }
 
-    // GET /api/admin/audit
+    // ── AUDIT ─────────────────────────────────────────────────────────────────
+
     if (path === '/api/admin/audit' && method === 'GET') {
-      const rows = await db.prepare(
-        `SELECT * FROM audit_log ORDER BY created_at DESC LIMIT 500`
-      ).all();
-      return json(rows.results);
+      const rows = await db.prepare(`SELECT * FROM audit_log ORDER BY created_at DESC LIMIT 500`).all();
+      return R(rows.results);
     }
 
-    // GET /api/admin/export
+    // ── EXPORT ────────────────────────────────────────────────────────────────
+
     if (path === '/api/admin/export' && method === 'GET') {
-      const [matches, predictions, scores, penalties, players, emailMap, bonuses] = await Promise.all([
+      const [matches, predictions, scores, penalties, players, emailMap, bonuses, vars] = await Promise.all([
         db.prepare('SELECT * FROM matches ORDER BY match_number').all(),
-        db.prepare('SELECT * FROM predictions ORDER BY match_id, submitted_at').all(),
+        db.prepare('SELECT * FROM predictions ORDER BY match_id,submitted_at').all(),
         db.prepare('SELECT * FROM scores ORDER BY match_id').all(),
         db.prepare('SELECT * FROM penalties ORDER BY match_id').all(),
         db.prepare('SELECT * FROM players ORDER BY display_name').all(),
         db.prepare('SELECT * FROM email_map ORDER BY primary_email').all(),
         db.prepare('SELECT * FROM bonus_points ORDER BY id').all(),
+        db.prepare('SELECT * FROM variations ORDER BY id').all(),
       ]);
-      const board = await buildLeaderboardSimple(db);
-      return json({
+      return R({
         exported_at: new Date().toISOString(),
-        leaderboard: board,
-        matches: matches.results,
-        predictions: predictions.results,
-        scores: scores.results,
-        penalties: penalties.results,
-        players: players.results,
-        email_map: emailMap.results,
-        bonus_points: bonuses.results,
+        leaderboard: await buildLB(db, null),
+        matches: matches.results, predictions: predictions.results,
+        scores: scores.results, penalties: penalties.results,
+        players: players.results, email_map: emailMap.results,
+        bonus_points: bonuses.results, variations: vars.results,
       });
     }
 
-    // POST /api/admin/google-forms-webhook
-    if (path === '/api/admin/google-forms-webhook' && method === 'POST') {
-      const body = await req.json();
-      const publicUrl = new URL(req.url);
-      publicUrl.pathname = '/api/predict';
-      const predictReq = new Request(publicUrl.toString(), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: body.email, match_id: body.match_id, predicted_team: body.predicted_team }),
+    // ── CHANGE PASSWORD ───────────────────────────────────────────────────────
+    // Passwords are changed via Cloudflare Worker Variables — not via API
+    // This endpoint just documents the process
+    if (path === '/api/admin/change-credentials-info' && method === 'GET') {
+      return R({
+        instructions: [
+          "1. Go to dash.cloudflare.com → Workers & Pages → predictor-league-api",
+          "2. Click Settings → Variables and Secrets",
+          "3. Click Edit next to ADMIN_SECRET_PATH or ADMIN_PASSWORD",
+          "4. Change the value and click Save and deploy",
+          "5. Your new credentials are active within 30 seconds",
+          "6. Update your saved login details — old credentials will stop working immediately"
+        ]
       });
-      return this.fetch(predictReq, env, ctx);
     }
 
-    return err('Not found', 404);
+    return E('Not found', 404);
   }
 };
