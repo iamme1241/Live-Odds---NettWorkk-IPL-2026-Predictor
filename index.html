@@ -262,6 +262,9 @@ input  { font-family: 'Outfit', sans-serif; }
   -webkit-overflow-scrolling: touch;
   margin-bottom: 8px;
 }
+  .lb-head, .lb-row {
+  min-width: 700px;
+}
 .lb-head {
   display: grid;
   grid-template-columns: 56px 1fr 58px 90px 76px 70px 70px;
@@ -575,6 +578,7 @@ input  { font-family: 'Outfit', sans-serif; }
 /* ── MOBILE ───────────────────────────────────────────── */
 @media (max-width: 580px) {
   .lb-head, .lb-row { grid-template-columns: 46px 1fr 56px 84px; }
+}
   .lb-head, .lb-row {
   min-width: 650px;
   }
