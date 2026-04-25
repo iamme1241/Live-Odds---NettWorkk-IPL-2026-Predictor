@@ -26,7 +26,6 @@ button,input,select,textarea{font-family:var(--font);}
 button{cursor:pointer;}
 a{color:var(--accent2);text-decoration:none;}
 
-/* LOGIN */
 #login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 0%,#1a1f35 0%,var(--bg) 70%);}
 .login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px;width:380px;box-shadow:0 25px 80px rgba(0,0,0,.5);}
 .login-logo{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--accent2);letter-spacing:.1em;margin-bottom:4px;}
@@ -39,7 +38,6 @@ a{color:var(--accent2);text-decoration:none;}
 .login-btn:hover{opacity:.88;}
 .login-err{color:var(--red);font-size:12px;margin-top:10px;text-align:center;display:none;}
 
-/* LAYOUT */
 #app{display:none;height:100vh;flex-direction:row;}
 #app.on{display:flex;}
 aside{width:228px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;overflow-y:auto;}
@@ -58,7 +56,6 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 .signout-btn{width:100%;padding:7px;background:none;border:1px solid var(--border);border-radius:var(--r);color:var(--text3);font-size:11px;cursor:pointer;transition:all .12s;}
 .signout-btn:hover{border-color:var(--red);color:var(--red);}
 
-/* CONTENT */
 .content{flex:1;overflow-y:auto;height:100vh;}
 .content::-webkit-scrollbar{width:4px;}
 .content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
@@ -69,7 +66,6 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 .page-title{font-size:18px;font-weight:600;letter-spacing:-.02em;color:var(--text);}
 .page-title small{color:var(--text3);font-weight:400;font-size:13px;margin-left:8px;}
 
-/* BUTTONS */
 .btn{padding:7px 14px;border-radius:var(--r);font-size:12px;font-weight:500;border:none;cursor:pointer;transition:opacity .13s;display:inline-flex;align-items:center;gap:6px;}
 .btn:hover{opacity:.85;}
 .btn:disabled{opacity:.35;cursor:not-allowed;}
@@ -85,19 +81,16 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 .btn-xs{padding:2px 7px;font-size:10px;}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
 
-/* CARDS */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:16px;overflow:hidden;}
 .card-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);}
 .card-title{font-size:13px;font-weight:500;color:var(--text);}
 .card-body{padding:16px 18px;}
 
-/* STATS */
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:20px;}
 .stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:16px;}
 .stat-val{font-family:var(--mono);font-size:26px;font-weight:500;margin-bottom:2px;}
 .stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);}
 
-/* TABLE */
 .tbl{width:100%;border-collapse:collapse;font-size:12px;}
 .tbl th{text-align:left;padding:8px 12px;font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border);background:var(--surface2);}
 .tbl td{padding:9px 12px;border-bottom:1px solid rgba(42,48,80,.5);vertical-align:middle;}
@@ -105,20 +98,18 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 .tbl tr:hover td{background:rgba(255,255,255,.02);}
 .tbl .mono{font-family:var(--mono);font-size:11px;}
 .num{text-align:right;}
-.tbl th.chk{width:32px;}
-.tbl td.chk{width:32px;}
 input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:pointer;}
 
-/* STATUS BADGES */
 .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500;letter-spacing:.04em;}
 .b-upcoming{background:rgba(75,85,99,.2);color:#9ca3af;border:1px solid #374151;}
 .b-open{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.3);}
 .b-open::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1s infinite;}
 .b-closed{background:rgba(245,158,11,.1);color:var(--amber);border:1px solid rgba(245,158,11,.3);}
 .b-resulted{background:rgba(99,102,241,.1);color:var(--accent2);border:1px solid rgba(99,102,241,.3);}
+.b-abandoned{background:rgba(59,130,246,.1);color:var(--blue);border:1px solid rgba(59,130,246,.3);}
+.b-cancelled{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.3);}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* FORM */
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .form-grid.w1{grid-template-columns:1fr;}
 .fg{display:flex;flex-direction:column;}
@@ -128,7 +119,6 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
 .fg textarea{resize:vertical;}
 .fg select option{background:var(--surface2);}
 
-/* MODAL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:500;}
 .overlay.on{display:flex;}
 .modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:26px;width:560px;max-width:96vw;max-height:92vh;overflow-y:auto;box-shadow:0 40px 100px rgba(0,0,0,.6);}
@@ -138,27 +128,23 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
 .modal .modal-sub{font-size:12px;color:var(--text3);margin-bottom:20px;}
 .modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;}
 
-/* INFO BOXES */
 .info{background:var(--blue-s);border:1px solid rgba(59,130,246,.3);border-radius:var(--r);padding:10px 14px;font-size:12px;color:#93c5fd;line-height:1.6;margin-bottom:14px;}
 .warn{background:var(--amber-s);border:1px solid rgba(245,158,11,.3);border-radius:var(--r);padding:10px 14px;font-size:12px;color:#fcd34d;line-height:1.6;margin-bottom:14px;}
 .success-box{background:var(--green-s);border:1px solid rgba(34,197,94,.3);border-radius:var(--r);padding:10px 14px;font-size:12px;color:#86efac;line-height:1.6;margin-bottom:14px;}
 .err-box{background:var(--red-s);border:1px solid rgba(239,68,68,.3);border-radius:var(--r);padding:10px 14px;font-size:12px;color:#fca5a5;line-height:1.6;margin-bottom:14px;}
 
-/* TOAST */
 #toast{position:fixed;bottom:20px;right:20px;padding:11px 18px;border-radius:var(--r);font-size:12px;font-weight:500;z-index:999;transform:translateY(60px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);max-width:400px;}
 #toast.on{transform:translateY(0);opacity:1;}
 #toast.ok{background:var(--green);color:#fff;}
 #toast.err{background:var(--red);color:#fff;}
 #toast.info{background:var(--accent);color:#fff;}
 
-/* ODDS */
 .odds-row{display:flex;gap:10px;margin:12px 0;}
 .odds-team{flex:1;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);text-align:center;}
 .odds-name{font-size:12px;font-weight:500;margin-bottom:3px;}
 .odds-votes{font-size:10px;color:var(--text3);margin-bottom:6px;}
 .odds-val{font-family:var(--mono);font-size:22px;font-weight:500;color:var(--accent2);}
 
-/* VARIATION CARD */
 .var-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px;}
 .var-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
 .var-dot.on{background:var(--green);}
@@ -168,7 +154,6 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
 .var-desc{font-size:11px;color:var(--text3);}
 .var-type-pill{font-family:var(--mono);font-size:9px;background:var(--surface3);border:1px solid var(--border);border-radius:4px;padding:1px 5px;margin-left:6px;color:var(--text3);}
 
-/* LOG */
 .log{margin-top:10px;max-height:180px;overflow-y:auto;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;font-family:var(--mono);font-size:11px;line-height:1.8;display:none;}
 .log::-webkit-scrollbar{width:3px;}
 .log::-webkit-scrollbar-thumb{background:var(--border2);}
@@ -177,7 +162,6 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
 .log-err{color:var(--red);}
 .scroll-x{overflow-x:auto;}
 
-/* ALIAS CARDS */
 .alias-group{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:10px;}
 .alias-primary{font-size:13px;font-weight:600;color:var(--accent2);margin-bottom:8px;}
 .alias-tags{display:flex;flex-wrap:wrap;gap:6px;}
@@ -185,19 +169,22 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
 .alias-tag-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px;line-height:1;padding:0;}
 .alias-tag-del:hover{color:var(--red);}
 
-/* BULK SELECT BAR */
 .bulk-bar{display:none;align-items:center;gap:10px;padding:10px 14px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.3);border-radius:var(--r);margin-bottom:12px;flex-wrap:wrap;}
 .bulk-bar.on{display:flex;}
 .bulk-count{font-size:12px;color:var(--accent2);font-weight:500;}
 
-/* RELINK DIFF */
 .diff-row-changed td{background:rgba(99,102,241,.06)!important;}
 .diff-arrow{color:var(--amber);font-size:10px;}
+
+.eq-card{background:var(--surface2);border:1px solid rgba(168,85,247,.3);border-radius:var(--r);padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;}
+.eq-multiplier{font-family:var(--mono);font-size:24px;font-weight:500;color:var(--purple);min-width:60px;text-align:center;}
+.eq-info{flex:1;}
+.eq-name{font-size:13px;font-weight:500;}
+.eq-desc{font-size:11px;color:var(--text3);}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo">NETTWORKK // ADMIN</div>
@@ -211,7 +198,6 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
   </div>
 </div>
 
-<!-- APP -->
 <div id="app">
   <aside>
     <div class="aside-header">
@@ -240,6 +226,7 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
 
       <div class="nav-section">Scoring</div>
       <button class="nav-btn" onclick="nav('variations',this)"><span class="nav-icon">⚡</span>Variations &amp; Rules</button>
+      <button class="nav-btn" onclick="nav('equalizer',this)"><span class="nav-icon">⚖</span>Equalizer</button>
       <button class="nav-btn" onclick="nav('bonus-points',this)"><span class="nav-icon">★</span>Bonus Points</button>
       <button class="nav-btn" onclick="nav('team-aliases',this)"><span class="nav-icon">🏏</span>Team Name Aliases</button>
 
@@ -342,7 +329,7 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
         <div class="card">
           <div class="card-body">
             <textarea id="bp-input" style="width:100%;height:200px;resize:vertical;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--mono);font-size:12px;padding:10px;outline:none;"
-              placeholder="Rahul Sharma, rahul@gmail.com&#10;Priya Singh, priya@gmail.com, priya.work@company.com&#10;Karthik Nair, karthik@gmail.com"></textarea>
+              placeholder="Rahul Sharma, rahul@gmail.com&#10;Priya Singh, priya@gmail.com, priya.work@company.com"></textarea>
             <div class="btn-row" style="margin-top:10px">
               <button class="btn btn-accent" onclick="previewBulkPlayers()">Preview →</button>
               <button class="btn btn-outline" onclick="document.getElementById('bp-input').value=''">Clear</button>
@@ -410,7 +397,7 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
           <div class="page-title">Email Mapping</div>
           <button class="btn btn-accent" onclick="openAliasModal()">+ Add alias</button>
         </div>
-        <p style="font-size:12px;color:var(--text3);margin-bottom:14px">Map alias emails → primary email. Adding a mapping automatically re-links all existing data (predictions, scores, penalties) and recalculates.</p>
+        <p style="font-size:12px;color:var(--text3);margin-bottom:14px">Map alias emails → primary email. Adding a mapping automatically re-links all existing data and recalculates.</p>
         <div class="card">
           <div class="card-body scroll-x" id="emailmap-list">Loading…</div>
         </div>
@@ -418,12 +405,10 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
 
       <!-- RE-LINK EMAILS -->
       <div class="panel" id="p-relink">
-        <div class="page-hdr">
-          <div class="page-title">Re-link Emails</div>
-        </div>
+        <div class="page-hdr"><div class="page-title">Re-link Emails</div></div>
         <div class="info">
           Use this when you discover that old predictions were stored under an alias email instead of the correct primary email. This scans all predictions and re-resolves them against the current Email Mapping table.<br><br>
-          <b>Step 1:</b> Preview to see what will change. <b>Step 2:</b> Commit if it looks correct. Scores, penalties, and bonuses are recalculated automatically after commit.
+          <b>Step 1:</b> Preview to see what will change. <b>Step 2:</b> Commit if it looks correct.
         </div>
         <div class="btn-row" style="margin-bottom:16px">
           <button class="btn btn-accent" onclick="previewRelink()">1. Preview changes</button>
@@ -434,7 +419,7 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
         </div>
       </div>
 
-      <!-- PREDICTIONS (VIEW + EDIT + DELETE) -->
+      <!-- PREDICTIONS -->
       <div class="panel" id="p-predictions">
         <div class="page-hdr"><div class="page-title">View &amp; Edit Predictions</div></div>
         <div class="card" style="margin-bottom:14px">
@@ -462,7 +447,7 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
             <button class="btn btn-outline btn-sm" onclick="api('/api/admin/penalties/recalc','POST').then(()=>{toast('Recalculated');loadPenalties();}).catch(e=>toast(e.message,'err'))">↺ Recalculate</button>
           </div>
         </div>
-        <div class="info">Penalties are auto-calculated when results are entered. <b>Deleting a penalty row permanently exempts that player from that match's missed-vote penalty</b> — it won't be re-added on recalculate. Use "↺ Recalculate" to re-add penalties for non-exempt players.</div>
+        <div class="info">Penalties are auto-calculated when results are entered. <b>Deleting a penalty permanently exempts that player from that match's missed-vote penalty.</b></div>
         <div class="card">
           <div class="card-body scroll-x" id="penalties-list">Loading…</div>
         </div>
@@ -507,6 +492,20 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
         <div id="variations-list">Loading…</div>
       </div>
 
+      <!-- EQUALIZER -->
+      <div class="panel" id="p-equalizer">
+        <div class="page-hdr">
+          <div class="page-title">Equalizer <small>Late-joiner multiplier</small></div>
+          <button class="btn btn-accent" onclick="openEqualizerModal()">+ Add player</button>
+        </div>
+        <div class="info">
+          <b>Formula: M = 70 / (71 − joinMatch)</b><br>
+          For wins only, the player earns <code>points × M</code> instead of <code>points</code>. The extra <code>points × (M−1)</code> is added as an equalizer bonus. This statistically brings them to the same expected position as a Match 1 player by Match 70.<br><br>
+          Examples: Join M31 → <b>1.75×</b> · Join M34 → <b>1.89×</b> · Join M40 → <b>2.26×</b> · Join M50 → <b>3.33×</b>
+        </div>
+        <div id="equalizer-list">Loading…</div>
+      </div>
+
       <!-- BONUS POINTS -->
       <div class="panel" id="p-bonus-points">
         <div class="page-hdr">
@@ -525,8 +524,7 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
           <button class="btn btn-accent" onclick="openTeamAliasModal()">+ Add alias</button>
         </div>
         <div class="info">
-          Map alternate team names to their canonical primary name. E.g. <code>RCB → Royal Challengers Bengaluru</code>.<br>
-          When a player submits a vote with an alias, it is automatically normalized.
+          Map alternate team names to their canonical primary name. E.g. <code>RCB → Royal Challengers Bengaluru</code>.
         </div>
         <div class="card">
           <div class="card-body" id="team-aliases-list">Loading…</div>
@@ -592,9 +590,9 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
         </div>
       </div>
 
-    </div><!-- /inner -->
-  </div><!-- /content -->
-</div><!-- /app -->
+    </div>
+  </div>
+</div>
 
 <!-- ADD/EDIT MATCH MODAL -->
 <div class="overlay" id="modal-match">
@@ -651,22 +649,13 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
     <div class="modal-sub" id="res-sub"></div>
     <div id="res-odds"></div>
     <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Select winning team:</p>
+    <div style="display:flex;gap:10px;margin-bottom:10px;">
+      <button class="btn" style="flex:1;justify-content:center;font-size:14px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);" id="res-a" onclick="submitResult('team_a')"></button>
+      <button class="btn" style="flex:1;justify-content:center;font-size:14px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);" id="res-b" onclick="submitResult('team_b')"></button>
+    </div>
     <div style="display:flex;gap:10px;">
-  <button class="btn" style="flex:1;justify-content:center;font-size:14px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);" id="res-a" onclick="submitResult('a')"></button>
-
-  <button class="btn" style="flex:1;justify-content:center;font-size:14px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);" id="res-b" onclick="submitResult('b')"></button>
-</div>
-
-<!-- ✅ MOVE OUTSIDE -->
-<div style="display:flex;gap:10px;margin-top:10px;">
-  <button class="btn btn-outline" style="flex:1;" onclick="submitResult('abandoned')">
-    🚫 Abandoned
-  </button>
-  <button class="btn btn-outline" style="flex:1;" onclick="submitResult('cancelled')">
-    ❌ Cancelled
-  </button>
-</div>
-    
+      <button class="btn btn-outline" style="flex:1;justify-content:center;" onclick="submitResult('abandoned')">🚫 Abandoned</button>
+      <button class="btn btn-outline" style="flex:1;justify-content:center;" onclick="submitResult('cancelled')">❌ Cancelled</button>
     </div>
     <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('modal-result')">Cancel</button></div>
   </div>
@@ -714,27 +703,17 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
     <input type="hidden" id="ep-id">
     <input type="hidden" id="ep-match-id">
     <div class="form-grid w1">
-      <div class="fg"><label>Predicted team</label>
-        <select id="ep-team"></select>
-      </div>
+      <div class="fg"><label>Predicted team</label><select id="ep-team"></select></div>
       <div class="fg"><label>Valid?</label>
         <select id="ep-valid">
           <option value="1">✓ Valid</option>
           <option value="0">✗ Invalid</option>
         </select>
       </div>
-      <div class="fg"><label>Invalid reason (if invalid)</label>
-        <input type="text" id="ep-reason" placeholder="e.g. duplicate_vote">
-      </div>
-      <div class="fg"><label>Submitted at (ISO timestamp, optional)</label>
-        <input type="text" id="ep-subat" placeholder="2026-04-20T19:30:00.000Z">
-      </div>
-      <div class="fg"><label>Player display name</label>
-        <input type="text" id="ep-display-name" placeholder="e.g. Rahul Sharma">
-      </div>
-      <div class="fg"><label>Re-assign to player (primary email)</label>
-        <input type="email" id="ep-email" placeholder="player@gmail.com">
-      </div>
+      <div class="fg"><label>Invalid reason (if invalid)</label><input type="text" id="ep-reason" placeholder="e.g. duplicate_vote"></div>
+      <div class="fg"><label>Submitted at (ISO timestamp, optional)</label><input type="text" id="ep-subat" placeholder="2026-04-20T19:30:00.000Z"></div>
+      <div class="fg"><label>Player display name</label><input type="text" id="ep-display-name" placeholder="e.g. Rahul Sharma"></div>
+      <div class="fg"><label>Re-assign to player (primary email)</label><input type="email" id="ep-email" placeholder="player@gmail.com"></div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('modal-edit-pred')">Cancel</button>
@@ -763,6 +742,29 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('modal-variation')">Cancel</button>
       <button class="btn btn-accent" onclick="saveVariation()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- EQUALIZER MODAL -->
+<div class="overlay" id="modal-equalizer">
+  <div class="modal">
+    <h3 id="eq-modal-h">Add Equalizer for Player</h3>
+    <div class="modal-sub">Automatically applies a winning-points multiplier to compensate for joining late. Only applied to match wins.</div>
+    <input type="hidden" id="eq-id">
+    <div class="form-grid w1">
+      <div class="fg"><label>Player primary email</label><input type="email" id="eq-email" placeholder="player@gmail.com"></div>
+      <div class="fg"><label>Joined from match # (first match they were eligible)</label><input type="number" id="eq-from" placeholder="e.g. 31" oninput="updateEqPreview()"></div>
+      <div class="fg"><label>Custom multiplier (leave blank to use formula)</label><input type="number" id="eq-custom" placeholder="auto" step="0.01" min="1" oninput="updateEqPreview()"></div>
+    </div>
+    <div id="eq-preview" style="margin:16px 0;padding:14px;background:var(--purple-s);border:1px solid rgba(168,85,247,.3);border-radius:var(--r);font-size:12px;display:none;">
+      <div style="color:var(--purple);font-size:11px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Computed multiplier</div>
+      <div id="eq-preview-val" style="font-family:var(--mono);font-size:28px;font-weight:500;color:var(--purple);">—</div>
+      <div id="eq-preview-desc" style="color:var(--text3);font-size:11px;margin-top:4px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-equalizer')">Cancel</button>
+      <button class="btn btn-accent" onclick="saveEqualizer()">Save &amp; apply</button>
     </div>
   </div>
 </div>
@@ -838,19 +840,15 @@ function fmtTShort(iso) {
   } catch { return iso; }
 }
 
-// Converts a datetime-local string to an ISO string, treating the local input as IST
 function localInputToISO(val) {
   if (!val) return null;
-  // datetime-local gives "YYYY-MM-DDTHH:MM" — treat it as IST (UTC+5:30)
   const d = new Date(val + ':00+05:30');
   return isNaN(d.getTime()) ? null : d.toISOString();
 }
 
-// Converts an ISO UTC string to datetime-local format in IST (for pre-filling inputs)
 function isoToLocalInput(iso) {
   if (!iso) return '';
   const d = new Date(iso);
-  // Offset by +5:30
   const ist = new Date(d.getTime() + (5.5 * 60 * 60 * 1000));
   return ist.toISOString().slice(0, 16);
 }
@@ -932,7 +930,12 @@ function nav(id, btn) {
     leaderboard: loadAdminLB, insights: loadInsights, audit: loadAudit,
     predictions: loadPredSel, variations: loadVariations, 'bonus-points': loadBonus,
     penalties: loadPenalties, 'bulk-responses': loadBRRef, 'team-aliases': loadTeamAliases,
-    relink: () => { relinkPreviewData = null; document.getElementById('relink-commit-btn').disabled = true; document.getElementById('relink-results').innerHTML = '<div style="color:var(--text3);font-size:12px">Click "Preview changes" to scan predictions.</div>'; }
+    equalizer: loadEqualizer,
+    relink: () => {
+      relinkPreviewData = null;
+      document.getElementById('relink-commit-btn').disabled = true;
+      document.getElementById('relink-results').innerHTML = '<div style="color:var(--text3);font-size:12px">Click "Preview changes" to scan predictions.</div>';
+    }
   };
   if (loaders[id]) loaders[id]();
 }
@@ -980,12 +983,13 @@ function renderMatches() {
       <td style="font-weight:500">${esc(m.title)}</td>
       <td class="mono" style="font-size:11px">${fmtTShort(m.match_time)}</td>
       <td><span class="badge b-${m.status}">${m.status}</span></td>
-      <td style="font-size:11px;color:var(--green)">${m.winner?'🏆 '+esc(m.winner):'—'}</td>
+      <td style="font-size:11px;color:var(--green)">${m.winner && m.winner !== 'abandoned' && m.winner !== 'cancelled' ? '🏆 '+esc(m.winner) : m.winner ? esc(m.winner) : '—'}</td>
       <td><div class="btn-row">
         ${m.status==='upcoming'?`<button class="btn btn-green btn-sm" onclick="matchAction(${m.id},'open')">Open</button>`:''}
         ${m.status==='open'?`<button class="btn btn-amber btn-sm" onclick="matchAction(${m.id},'close')">Close</button>`:''}
         ${m.status==='closed'?`<button class="btn btn-accent btn-sm" onclick="openResultModal(${m.id},false)">Result</button>`:''}
-        ${m.status!=='upcoming'?`<button class="btn btn-outline btn-sm" onclick="openResultModal(${m.id},true)" title="Force result">⚡ Force</button>`:''}
+        ${m.status!=='upcoming'&&m.status!=='resulted'&&m.status!=='abandoned'&&m.status!=='cancelled'?`<button class="btn btn-outline btn-sm" onclick="openResultModal(${m.id},true)" title="Force result">⚡ Force</button>`:''}
+        ${m.status==='resulted'||m.status==='abandoned'||m.status==='closed'?`<button class="btn btn-outline btn-sm" onclick="openResultModal(${m.id},true)" title="Force result">⚡ Force</button>`:''}
         <button class="btn btn-ghost btn-sm" onclick="openMatchEditModal(${m.id})" title="Edit">✎</button>
         <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delMatch(${m.id},'${esc(m.status)}')" title="Delete">✕</button>
       </div></td>
@@ -1011,7 +1015,6 @@ async function saveMatch() {
   } catch(e) { toast(e.message,'err'); }
 }
 
-// FIX: pre-populate current match values into the edit modal
 function openMatchEditModal(id) {
   const m = matches.find(x=>x.id===id); if (!m) return;
   sv('me-id', id);
@@ -1065,17 +1068,10 @@ async function delMatch(id, status) {
 
 // ── BULK MATCHES ──────────────────────────────────────────────────────────────
 function parseIST(s) {
-  // Try native parse first
   let d = new Date(s);
   if (!isNaN(d.getTime())) return d.toISOString();
-  // Try adding IST offset explicitly
-  const d2 = new Date(s.replace(/(\d{1,2})\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{4})\s+(\d{1,2}:\d{2})\s*(AM|PM)?/i, (_, day, mon, yr, time, ampm) => {
-    return `${day} ${mon} ${yr} ${time}${ampm?' '+ampm:''} GMT+0530`;
-  }));
+  const d2 = new Date(s + ' GMT+0530');
   if (!isNaN(d2.getTime())) return d2.toISOString();
-  // Last resort: append IST offset
-  const d3 = new Date(s + ' GMT+0530');
-  if (!isNaN(d3.getTime())) return d3.toISOString();
   return null;
 }
 
@@ -1134,10 +1130,10 @@ async function loadResults() {
         <td style="font-weight:500">${esc(m.title)}</td>
         <td class="mono" style="font-size:11px">${fmtTShort(m.match_time)}</td>
         <td><span class="badge b-${m.status}">${m.status}</span></td>
-        <td style="font-size:11px;color:var(--green)">${m.winner?'🏆 '+esc(m.winner):'—'}</td>
+        <td style="font-size:11px;color:var(--green)">${m.winner?esc(m.winner):'—'}</td>
         <td><div class="btn-row">
           ${m.status==='closed'?`<button class="btn btn-accent btn-sm" onclick="openResultModal(${m.id},false)">Enter result</button>`:''}
-          <button class="btn btn-outline btn-sm" onclick="openResultModal(${m.id},true)">⚡ Force result</button>
+          ${m.status!=='cancelled'?`<button class="btn btn-outline btn-sm" onclick="openResultModal(${m.id},true)">⚡ Force result</button>`:''}
         </div></td>
       </tr>`).join('')}</tbody>
     </table>`;
@@ -1167,40 +1163,47 @@ async function openResultModal(id, force) {
       <div class="odds-team"><div class="odds-name">${esc(m.team_b)}</div><div class="odds-votes">${o.team_b_votes??0} votes</div><div class="odds-val">${o.team_b_odds??'–'}x</div></div>
     </div>`;
   } catch {}
+
+  // Reset button states
+  document.getElementById('res-a').disabled = false;
+  document.getElementById('res-b').disabled = false;
   openModal('modal-result');
 }
 
+// FIX: submitResult now correctly maps 'team_a'/'team_b' to actual team names
 async function submitResult(type) {
-  
-  if (type === 'abandoned' || type === 'cancelled') {
-  api(`/api/admin/matches/${resultTarget.id}/${resultForce ? 'force-result' : 'result'}`, 'POST', {
-    winner: type
-  })
-  .then(() => {
-    toast(type === 'abandoned' ? 'Marked as Abandoned' : 'Marked as Cancelled');
-    closeModal('modal-result');
-    loadMatchesList();
-  })
-  .catch(e => toast(e.message, 'err'));
-  return;
-}
-  
   if (!resultTarget) return;
-  const winner = side==='a' ? resultTarget.team_a : resultTarget.team_b;
+
+  let winner;
+  if (type === 'team_a') {
+    winner = resultTarget.team_a;
+  } else if (type === 'team_b') {
+    winner = resultTarget.team_b;
+  } else if (type === 'abandoned' || type === 'cancelled') {
+    winner = type;
+  } else {
+    return;
+  }
+
   const ep = resultForce
     ? `/api/admin/matches/${resultTarget.id}/force-result`
     : `/api/admin/matches/${resultTarget.id}/result`;
-  const btnA = document.getElementById('res-a');
-  const btnB = document.getElementById('res-b');
-  btnA.disabled = btnB.disabled = true;
+
+  document.getElementById('res-a').disabled = true;
+  document.getElementById('res-b').disabled = true;
+
   try {
-    await api(ep,'POST',{winner});
+    await api(ep, 'POST', { winner });
     closeModal('modal-result');
-    toast(`✓ ${winner} wins. Scores updated.`);
-    await loadMatchesList(); await loadDash();
+    if (type === 'abandoned') toast('Match marked as abandoned — pool split equally among voters');
+    else if (type === 'cancelled') toast('Match cancelled — no points or penalties applied');
+    else toast(`✓ ${winner} wins. Scores updated.`);
+    await loadMatchesList();
+    await loadDash();
   } catch(e) {
-    toast(e.message,'err');
-    btnA.disabled = btnB.disabled = false;
+    toast(e.message, 'err');
+    document.getElementById('res-a').disabled = false;
+    document.getElementById('res-b').disabled = false;
   }
 }
 
@@ -1232,14 +1235,12 @@ function openPlayerModal() {
   openModal('modal-player');
 }
 
-// FIX: editPlayer now passes and pre-fills aliases from all_emails
 function editPlayer(email, name, first, allEmails) {
   document.getElementById('mp-h').textContent = 'Edit player';
   sv('mp-orig-email', email);
   sv('mp-name', name);
   sv('mp-email', email);
   sv('mp-first', first === 'null' ? '' : first);
-  // Pre-fill aliases: all_emails is comma-separated, remove primary email from it
   const aliases = (allEmails || '').split(',').map(e=>e.trim()).filter(e=>e && e !== email);
   sv('mp-aliases', aliases.join(', '));
   document.getElementById('mp-email').disabled = true;
@@ -1254,11 +1255,9 @@ async function savePlayer() {
   if (!name||!email) { toast('Name and email required','err'); return; }
   try {
     if (orig) {
-      // Editing existing player
       const patchBody = { display_name: name };
       if (first) patchBody.first_match_num = +first;
       await api(`/api/admin/players/${encodeURIComponent(orig)}`,'PATCH', patchBody);
-      // Add any new alias emails via email-map
       if (aliases.length) {
         for (const a of aliases) {
           if (a !== orig) {
@@ -1295,8 +1294,7 @@ function previewBulkPlayers() {
     bpParsed.push({lineNum:i+1,status:'ok',reason:'',name,email,aliases});
   });
   const ok = bpParsed.filter(p=>p.status==='ok').length;
-  const err = bpParsed.filter(p=>p.status==='error').length;
-  document.getElementById('bp-title').textContent = `Preview — ${ok} ready, ${err} errors`;
+  document.getElementById('bp-title').textContent = `Preview — ${ok} ready, ${bpParsed.length-ok} errors`;
   document.getElementById('bp-import-btn').textContent = `Import ${ok} player${ok!==1?'s':''}`;
   document.getElementById('bp-import-btn').disabled = !ok;
   document.getElementById('bp-tbody').innerHTML = bpParsed.map(p=>`<tr style="${p.status==='error'?'background:var(--red-s)':''}">
@@ -1350,7 +1348,6 @@ async function loadBRRef() {
   } catch(e) { document.getElementById('br-match-ref').innerHTML=`<p style="color:var(--red)">${esc(e.message)}</p>`; }
 }
 
-// FIX: name field (col 2) is now properly stored and sent to the API
 function previewBulkResponses() {
   const raw = document.getElementById('br-input').value.trim();
   const matchId = parseInt(gv('br-match-id'));
@@ -1370,9 +1367,7 @@ function previewBulkResponses() {
     const [tsRaw, email, name, team] = parts;
     if (!email||!email.includes('@')) { brParsed.push({ok:false,reason:'Invalid email',ts:tsRaw,email,name,team}); return; }
     if (!team) { brParsed.push({ok:false,reason:'Missing team',ts:tsRaw,email,name,team}); return; }
-    let tsISO = null;
-    if (tsRaw) tsISO = parseIST(tsRaw);
-    // FIX: name is now properly captured and stored on the parsed object
+    const tsISO = tsRaw ? parseIST(tsRaw) : null;
     brParsed.push({ok:true, ts:tsRaw, tsISO, email:email.toLowerCase(), name: name || '', team, matchId});
   });
 
@@ -1397,11 +1392,9 @@ async function importBulkResponses() {
   const log = document.getElementById('br-log');
   log.style.display='block'; log.innerHTML='Importing…';
   try {
-    // FIX: name is now included in the payload
     const res = await api('/api/admin/predictions/bulk','POST',{
       predictions: toImport.map(r=>({
-        email: r.email,
-        match_id: r.matchId,
+        email: r.email, match_id: r.matchId,
         name: r.name || undefined,
         predicted_team: r.team,
         submitted_at: r.tsISO || undefined
@@ -1424,7 +1417,6 @@ async function loadEmailMap() {
   const el = document.getElementById('emailmap-list');
   try {
     const rows = await api('/api/admin/email-map');
-    // Filter out self-mappings (alias = primary) for cleaner display
     const mappings = rows.filter(r => r.alias_email !== r.primary_email);
     el.innerHTML = mappings.length ? `<table class="tbl">
       <thead><tr><th>Alias email</th><th>→ Primary email</th><th></th></tr></thead>
@@ -1433,7 +1425,7 @@ async function loadEmailMap() {
         <td class="mono">${esc(r.primary_email)}</td>
         <td><button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delAlias('${esc(r.alias_email)}')">Delete</button></td>
       </tr>`).join('')}</tbody>
-    </table>` : '<p style="color:var(--text3)">No alias mappings. Self-mappings (alias = primary) are hidden.</p>';
+    </table>` : '<p style="color:var(--text3)">No alias mappings.</p>';
   } catch(e) { toast(e.message,'err'); }
 }
 
@@ -1452,7 +1444,7 @@ async function saveAlias() {
 }
 
 async function delAlias(alias) {
-  if (!confirm('Remove this alias mapping? Existing data re-link will NOT be reversed automatically. Use "Re-link Emails" afterwards if needed.')) return;
+  if (!confirm('Remove this alias mapping?')) return;
   try { await api(`/api/admin/email-map/${encodeURIComponent(alias)}`,'DELETE'); toast('Removed'); loadEmailMap(); }
   catch(e) { toast(e.message,'err'); }
 }
@@ -1475,7 +1467,7 @@ async function previewRelink() {
       <div class="card">
         <div class="card-body scroll-x">
           <table class="tbl">
-            <thead><tr><th>Pred ID</th><th>Raw email (submitted)</th><th>Current primary</th><th></th><th>New primary</th></tr></thead>
+            <thead><tr><th>Pred ID</th><th>Raw email</th><th>Current primary</th><th></th><th>New primary</th></tr></thead>
             <tbody>${data.changes.map(c=>`<tr class="diff-row-changed">
               <td class="mono" style="color:var(--text3)">#${c.id}</td>
               <td class="mono" style="font-size:11px">${esc(c.raw_email)}</td>
@@ -1539,10 +1531,9 @@ async function delTeamAlias(id) {
   catch(e) { toast(e.message,'err'); }
 }
 
-// ── PREDICTIONS (FULL CRUD + BULK DELETE) ─────────────────────────────────────
+// ── PREDICTIONS ───────────────────────────────────────────────────────────────
 async function loadPredSel() {
   try {
-    // Always fetch fresh list
     const ms = await api('/api/matches');
     matches = ms;
     const sel = document.getElementById('pred-sel');
@@ -1581,11 +1572,11 @@ async function loadPreds() {
     el.innerHTML = `<p style="font-size:11px;color:var(--text3);margin-bottom:10px">${valid} valid · ${dupes} blocked</p>
     <table class="tbl">
       <thead><tr>
-        <th class="chk"><input type="checkbox" id="pred-chk-all" onchange="toggleAllPreds(this)"></th>
+        <th style="width:32px"><input type="checkbox" id="pred-chk-all" onchange="toggleAllPreds(this)"></th>
         <th>Player</th><th>Raw email</th><th>Primary email</th><th>Prediction</th><th>Submitted (IST)</th><th>Valid</th><th>Actions</th>
       </tr></thead>
       <tbody>${preds.map(p=>`<tr id="pred-row-${p.id}">
-        <td class="chk"><input type="checkbox" class="pred-chk" value="${p.id}" onchange="updatePredBulkBar()"></td>
+        <td style="width:32px"><input type="checkbox" class="pred-chk" value="${p.id}" onchange="updatePredBulkBar()"></td>
         <td>${esc(p.display_name||'—')}</td>
         <td class="mono" style="font-size:11px;color:var(--text3)">${esc(p.raw_email)}</td>
         <td class="mono" style="font-size:11px;${p.raw_email!==p.primary_email?'color:var(--amber)':''}">${esc(p.primary_email)}</td>
@@ -1622,8 +1613,6 @@ function clearPredSelection() {
   document.getElementById('pred-bulk-bar').classList.remove('on');
 }
 
-// FIX: openEditPred now takes a single object argument (avoids escaping issues)
-// and pre-fills display_name
 function openEditPred(data) {
   const { id, matchId, team, isValid, reason, subAt, email, name } = data;
   sv('ep-id', id);
@@ -1641,7 +1630,6 @@ function openEditPred(data) {
   sv('ep-reason', reason);
   sv('ep-subat', subAt);
   sv('ep-email', email);
-  // FIX: pre-fill display name
   sv('ep-display-name', name);
   openModal('modal-edit-pred');
 }
@@ -1654,13 +1642,11 @@ async function saveEditPred() {
   if (team) body.predicted_team = team;
   const valid = gv('ep-valid');
   if (valid !== '') body.is_valid = +valid;
-  const reason = document.getElementById('ep-reason').value; // don't trim — could be empty intentionally
-  body.invalid_reason = reason;
+  body.invalid_reason = document.getElementById('ep-reason').value;
   const subAt = gv('ep-subat');
   if (subAt) body.submitted_at = subAt;
   const email = gv('ep-email');
   if (email) body.primary_email = email.toLowerCase();
-  // FIX: include display_name to update the player's name
   const displayName = gv('ep-display-name');
   if (displayName) body.display_name = displayName;
   try {
@@ -1704,14 +1690,14 @@ async function loadPenalties() {
         <td class="mono" style="font-size:11px">${p.match_number?'M'+p.match_number+' '+esc(p.title):esc(p.match_id||'—')}</td>
         <td class="num mono" style="color:var(--red)">${p.penalty_pts}</td>
         <td class="mono" style="font-size:11px">${esc(p.reason)}</td>
-        <td><button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delPenalty(${p.id})" title="Delete and exempt from recalculation">Delete</button></td>
+        <td><button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delPenalty(${p.id})">Delete</button></td>
       </tr>`).join('')}</tbody>
     </table>` : '<p style="color:var(--text3)">No penalties.</p>';
   } catch(e) { toast(e.message,'err'); }
 }
 
 async function delPenalty(id) {
-  if (!confirm('Remove this penalty? This player will be permanently exempt from this missed-vote penalty — it will not be re-added on recalculation.')) return;
+  if (!confirm('Remove this penalty? This player will be permanently exempt from this missed-vote penalty.')) return;
   try { await api(`/api/admin/penalties/${id}`,'DELETE'); toast('Penalty removed and exempted'); loadPenalties(); }
   catch(e) { toast(e.message,'err'); }
 }
@@ -1740,7 +1726,7 @@ async function loadAdminLB() {
 }
 
 async function recalcAll() {
-  if (!confirm('Recalculate ALL scores, penalties, and bonuses from scratch? Manually-exempted penalties will be preserved. This may take a few seconds.')) return;
+  if (!confirm('Recalculate ALL scores, penalties, and bonuses from scratch? Manually-exempted penalties will be preserved.')) return;
   try {
     toast('Recalculating…','info');
     const res = await api('/api/admin/recalculate-all','POST');
@@ -1811,6 +1797,121 @@ async function toggleVar(id, active) {
 async function delVar(id) {
   if (!confirm('Delete this variation?')) return;
   try { await api(`/api/admin/variations/${id}`,'DELETE'); toast('Deleted'); loadVariations(); }
+  catch(e) { toast(e.message,'err'); }
+}
+
+// ── EQUALIZER ─────────────────────────────────────────────────────────────────
+function calcMultiplier(joinMatch, custom) {
+  if (custom && custom > 0) return parseFloat(custom).toFixed(4);
+  const remaining = 71 - joinMatch;
+  if (remaining <= 0) return '1.0000';
+  return (70 / remaining).toFixed(4);
+}
+
+function updateEqPreview() {
+  const fromMatch = parseInt(gv('eq-from'));
+  const custom = parseFloat(gv('eq-custom')) || null;
+  const preview = document.getElementById('eq-preview');
+  const val = document.getElementById('eq-preview-val');
+  const desc = document.getElementById('eq-preview-desc');
+  if (!fromMatch || fromMatch < 1 || fromMatch > 70) { preview.style.display='none'; return; }
+  preview.style.display='block';
+  const m = calcMultiplier(fromMatch, custom);
+  val.textContent = m + '×';
+  if (custom) {
+    desc.textContent = `Custom multiplier (overrides formula)`;
+  } else {
+    const remaining = 71 - fromMatch;
+    const missed = fromMatch - 1;
+    desc.textContent = `Formula: 70 / (71 − ${fromMatch}) = 70/${remaining} — compensates for ${missed} missed match${missed!==1?'es':''}`;
+  }
+}
+
+async function loadEqualizer() {
+  const el = document.getElementById('equalizer-list');
+  el.innerHTML='<div style="color:var(--text3);font-size:12px">Loading…</div>';
+  try {
+    const rows = await api('/api/admin/equalizer');
+    if (!rows.length) {
+      el.innerHTML='<div class="card"><div class="card-body"><p style="color:var(--text3)">No equalizer configs yet. Add players who joined late.</p></div></div>';
+      return;
+    }
+    el.innerHTML = rows.map(r=>`
+      <div class="eq-card">
+        <div class="eq-multiplier">${parseFloat(r.computed_multiplier).toFixed(2)}×</div>
+        <div class="eq-info">
+          <div class="eq-name">${esc(r.display_name||r.primary_email)} ${r.is_active?'':'<span style="color:var(--text3);font-size:10px">(disabled)</span>'}</div>
+          <div class="eq-desc">${esc(r.primary_email)} · Joined from M${r.from_match_number}${r.custom_multiplier?` · Custom: ${r.custom_multiplier}x`:' · Auto formula'}</div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-outline btn-sm" onclick="editEqualizer(${r.id},${JSON.stringify({email:r.primary_email,from:r.from_match_number,custom:r.custom_multiplier||'',active:r.is_active})})"style="font-size:11px">Edit</button>
+          <button class="btn btn-outline btn-sm" onclick="toggleEqualizer(${r.id},${r.is_active})">${r.is_active?'Disable':'Enable'}</button>
+          <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delEqualizer(${r.id})">✕</button>
+        </div>
+      </div>`).join('');
+  } catch(e) { el.innerHTML=`<div class="err-box">${esc(e.message)}</div>`; }
+}
+
+function openEqualizerModal() {
+  document.getElementById('eq-modal-h').textContent = 'Add Equalizer for Player';
+  sv('eq-id',''); sv('eq-email',''); sv('eq-from',''); sv('eq-custom','');
+  document.getElementById('eq-preview').style.display='none';
+  document.getElementById('eq-email').disabled = false;
+  openModal('modal-equalizer');
+}
+
+function editEqualizer(id, data) {
+  document.getElementById('eq-modal-h').textContent = 'Edit Equalizer';
+  sv('eq-id', id);
+  sv('eq-email', data.email);
+  sv('eq-from', data.from);
+  sv('eq-custom', data.custom || '');
+  document.getElementById('eq-email').disabled = true;
+  updateEqPreview();
+  openModal('modal-equalizer');
+}
+
+async function saveEqualizer() {
+  const id = gv('eq-id');
+  const email = gv('eq-email').toLowerCase();
+  const fromMatch = parseInt(gv('eq-from'));
+  const customRaw = gv('eq-custom');
+  const custom = customRaw ? parseFloat(customRaw) : null;
+
+  if (!email) { toast('Email required','err'); return; }
+  if (!fromMatch || fromMatch < 1) { toast('Valid from-match required','err'); return; }
+
+  try {
+    if (id) {
+      await api(`/api/admin/equalizer/${id}`, 'PATCH', {
+        from_match_number: fromMatch,
+        custom_multiplier: custom
+      });
+    } else {
+      const res = await api('/api/admin/equalizer', 'POST', {
+        primary_email: email,
+        from_match_number: fromMatch,
+        custom_multiplier: custom
+      });
+      toast(`Equalizer added — multiplier: ${parseFloat(res.computed_multiplier).toFixed(4)}×`);
+    }
+    closeModal('modal-equalizer');
+    toast('Equalizer saved & applied to past matches');
+    loadEqualizer();
+  } catch(e) { toast(e.message,'err'); }
+}
+
+async function toggleEqualizer(id, active) {
+  try {
+    await api(`/api/admin/equalizer/${id}`, 'PATCH', { is_active: active ? 0 : 1 });
+    toast(active ? 'Equalizer disabled' : 'Equalizer enabled');
+    loadEqualizer();
+  } catch(e) { toast(e.message,'err'); }
+}
+
+async function delEqualizer(id) {
+  if (!confirm('Remove equalizer? All equalizer bonus points for this player will be deleted.')) return;
+  try { await api(`/api/admin/equalizer/${id}`,'DELETE'); toast('Equalizer removed'); loadEqualizer(); }
   catch(e) { toast(e.message,'err'); }
 }
 
