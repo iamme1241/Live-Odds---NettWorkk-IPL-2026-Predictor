@@ -472,6 +472,9 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
       <div class="panel" id="p-leaderboard">
         <div class="page-hdr">
           <div class="page-title">Leaderboard</div>
+          <button class="btn btn-red btn-sm" onclick="recalcAll()">
+          ⚡ Recalculate All
+          </button>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
             <span style="font-size:12px;color:var(--text3)">As of date:</span>
             <input type="date" id="lb-asof" style="padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--mono);font-size:12px;outline:none;">
@@ -1443,6 +1446,23 @@ async function loadAdminLB() {
   } catch (e) { toast(e.message, 'err'); }
 }
 
+async function recalcAll() {
+  if (!confirm("This will recalculate ALL scores, penalties, and bonuses. Continue?")) return;
+
+  try {
+    toast("Recalculating...", "info");
+
+    const res = await api('/api/admin/recalculate-all', 'POST');
+
+    toast(`Done! ${res.matches_processed} matches recalculated`, "ok");
+
+    loadAdminLB(); // refresh leaderboard
+
+  } catch (e) {
+    toast(e.message, "err");
+  }
+}
+  
 // ── INSIGHTS ──────────────────────────────────────────────────────────────────
 async function loadInsights() {
   const el = document.getElementById('insights-container');
