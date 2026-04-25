@@ -203,7 +203,7 @@ async function scoreMatch(db, matchId, winner) {
 // row for that (primary_email, match_id) combo. recalcPenalties skips those combos.
 async function recalcPenalties(db) {
   const resulted = await db.prepare(
-    SELECT id, match_number FROM matches WHERE status IN ('resulted','abandoned') ORDER BY match_number`
+    `SELECT id, match_number FROM matches WHERE status IN ('resulted','abandoned') ORDER BY match_number`
   ).all();
   if (!resulted.results.length) return;
 
