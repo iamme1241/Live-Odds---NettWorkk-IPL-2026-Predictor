@@ -257,7 +257,11 @@ input  { font-family: 'Outfit', sans-serif; }
 .pod-won b { color: var(--teal); }
 
 /* TABLE */
-.lb-card { overflow: hidden; margin-bottom: 8px; }
+.lb-card {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 8px;
+}
 .lb-head {
   display: grid;
   grid-template-columns: 56px 1fr 58px 90px 76px 70px 70px;
@@ -571,7 +575,9 @@ input  { font-family: 'Outfit', sans-serif; }
 /* ── MOBILE ───────────────────────────────────────────── */
 @media (max-width: 580px) {
   .lb-head, .lb-row { grid-template-columns: 46px 1fr 56px 84px; }
-  .lb-th:nth-child(n+5), .lb-cell:nth-child(n+5) { display: none; }
+  .lb-head, .lb-row {
+  min-width: 650px;
+  }
   .c-row { grid-template-columns: 1fr; }
   .topbar-name { font-size: 14px; }
   .tab-btn { padding: 13px 14px; font-size: 13px; }
@@ -1064,7 +1070,7 @@ function loadLB() {
     });
     h += '</div>';
 
-    h += '<div class="card lb-card"><div class="lb-head">'+
+    h += '<div class="card lb-card" style="overflow-x:auto;"><div class="lb-head">'+
       '<div class="lb-th">#</div>'+
       '<div class="lb-th" style="text-align:left;padding-left:14px">Player</div>'+
       '<div class="lb-th">Won</div>'+
