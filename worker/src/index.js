@@ -535,9 +535,37 @@ export default {
       return R({ success: true });
     }
 
-    // ── ADMIN AUTH CHECK ──────────────────────────────────────────────────────
-    if (!isAdmin(req, env)) return E('Unauthorized', 401);
+    // ── ADMIN AUTH CHECK ──────────────────────────────────────────────
+if (!isAdmin(req, env)) return E('Unauthorized', 401);
 
+
+// 🔥 ADD THIS BLOCK HERE
+if (path === '/api/admin/recalculate-all' && method === 'POST') {
+
+  const matches = await db.prepare(`
+    SELECT id, winner
+    FROM matches
+    WHERE status='resulted'
+    ORDER BY match_number
+  `).all();
+
+  for (const m of matches.results) {
+
+    await db.prepare(`DELETE FROM scores WHERE match_id=?`)
+      .bind(m.id).run();
+
+    await scoreMatch(db, m.id, m.winner);
+  }
+
+  await recalcPenalties(db);
+  await applyDoubleHeaderBonus(db);
+
+  return R({
+    success: true,
+    matches_processed: matches.results.length
+  });
+}
+    
     // FORCE OPEN MATCH
 if (path === '/api/admin/match/force-open' && method === 'POST') {
   const { match_id } = await req.json();
