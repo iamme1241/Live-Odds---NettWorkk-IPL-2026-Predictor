@@ -318,10 +318,11 @@ export default {
         `INSERT OR REPLACE INTO odds_snapshots (match_id,team_a_votes,team_b_votes,total_votes,team_a_odds,team_b_odds,is_final)
          VALUES (?,?,?,?,?,?,1)`
       ).bind(m.id, o.team_a_votes, o.team_b_votes, o.total_votes, o.team_a_odds, o.team_b_odds).run();
-      await db.prepare(`UPDATE matches SET status='closed',updated_at=datetime('now') WHERE id=?`)
+      await db.prepare(`UPDATE matches SET status='closed', updated_at=datetime('now') WHERE id=?`)
   .bind(m.id).run();
-      await recalcPenalties(db);
-await applyDoubleHeaderBonus(db);
+
+// ⚠️ DO NOT calculate anything here
+// scoring happens ONLY after result
     }
   },
 
