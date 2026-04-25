@@ -36,10 +36,7 @@ a{color:var(--accent2);text-decoration:none;}
   border-radius:16px;padding:40px;width:380px;
   box-shadow:0 25px 80px rgba(0,0,0,.5);
 }
-.login-logo{
-  font-family:var(--mono);font-size:18px;font-weight:500;
-  color:var(--accent2);letter-spacing:.1em;margin-bottom:4px;
-}
+.login-logo{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--accent2);letter-spacing:.1em;margin-bottom:4px;}
 .login-sub{color:var(--text3);font-size:12px;margin-bottom:28px;}
 .field-label{display:block;font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
 .field-input{
@@ -68,23 +65,16 @@ aside{
 }
 aside::-webkit-scrollbar{width:3px;}
 aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
-.aside-header{
-  padding:18px 16px 14px;
-  border-bottom:1px solid var(--border);flex-shrink:0;
-}
+.aside-header{padding:18px 16px 14px;border-bottom:1px solid var(--border);flex-shrink:0;}
 .aside-brand{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--accent2);letter-spacing:.08em;}
 .aside-sub{font-size:10px;color:var(--text3);margin-top:2px;}
 .aside-nav{flex:1;padding:8px;}
-.nav-section{
-  font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--text3);padding:12px 10px 4px;
-}
+.nav-section{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);padding:12px 10px 4px;}
 .nav-btn{
   display:flex;align-items:center;gap:9px;width:100%;
   padding:8px 10px;border:none;background:none;
   color:var(--text2);font-size:12px;font-weight:400;
-  border-radius:var(--r);transition:all .12s;text-align:left;
-  cursor:pointer;
+  border-radius:var(--r);transition:all .12s;text-align:left;cursor:pointer;
 }
 .nav-btn:hover{background:var(--surface2);color:var(--text);}
 .nav-btn.active{background:rgba(99,102,241,.12);color:var(--accent2);}
@@ -131,26 +121,14 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;}
 
 /* ── CARDS ── */
-.card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r2);margin-bottom:16px;overflow:hidden;
-}
-.card-hdr{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:14px 18px;border-bottom:1px solid var(--border);
-}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:16px;overflow:hidden;}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);}
 .card-title{font-size:13px;font-weight:500;color:var(--text);}
 .card-body{padding:16px 18px;}
 
 /* ── STATS ── */
-.stats-grid{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
-  gap:12px;margin-bottom:20px;
-}
-.stat{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r2);padding:16px;
-}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:20px;}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:16px;}
 .stat-val{font-family:var(--mono);font-size:26px;font-weight:500;margin-bottom:2px;}
 .stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);}
 
@@ -159,8 +137,7 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 .tbl th{
   text-align:left;padding:8px 12px;
   font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--text3);border-bottom:1px solid var(--border);
-  background:var(--surface2);
+  color:var(--text3);border-bottom:1px solid var(--border);background:var(--surface2);
 }
 .tbl td{padding:10px 12px;border-bottom:1px solid rgba(42,48,80,.5);vertical-align:middle;}
 .tbl tr:last-child td{border-bottom:none;}
@@ -169,11 +146,7 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 .num{text-align:right;}
 
 /* STATUS BADGES */
-.badge{
-  display:inline-flex;align-items:center;gap:4px;
-  padding:2px 8px;border-radius:20px;
-  font-size:10px;font-weight:500;letter-spacing:.04em;
-}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500;letter-spacing:.04em;}
 .b-upcoming{background:rgba(75,85,99,.2);color:#9ca3af;border:1px solid #374151;}
 .b-open{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.3);}
 .b-open::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1s infinite;}
@@ -232,51 +205,20 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 
 /* ODDS PREVIEW */
 .odds-row{display:flex;gap:10px;margin:12px 0;}
-.odds-team{
-  flex:1;padding:12px;background:var(--surface2);border:1px solid var(--border);
-  border-radius:var(--r);text-align:center;
-}
+.odds-team{flex:1;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);text-align:center;}
 .odds-name{font-size:12px;font-weight:500;margin-bottom:3px;}
 .odds-votes{font-size:10px;color:var(--text3);margin-bottom:6px;}
 .odds-val{font-family:var(--mono);font-size:22px;font-weight:500;color:var(--accent2);}
 
 /* VARIATION CARD */
-.var-card{
-  background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);
-  padding:14px;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px;
-}
+.var-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px;}
 .var-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
 .var-dot.on{background:var(--green);}
 .var-dot.off{background:var(--text3);}
 .var-info{flex:1;}
 .var-name{font-size:13px;font-weight:500;margin-bottom:3px;}
 .var-desc{font-size:11px;color:var(--text3);}
-.var-type-pill{
-  font-family:var(--mono);font-size:9px;background:var(--surface3);
-  border:1px solid var(--border);border-radius:4px;padding:1px 5px;margin-left:6px;color:var(--text3);
-}
-
-/* INSIGHTS */
-.insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
-@media(max-width:700px){.insight-grid{grid-template-columns:1fr;}}
-.insight-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:16px;}
-.insight-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px;}
-.streak-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);}
-.streak-row:last-child{border-bottom:none;}
-.streak-name{font-size:12px;font-weight:500;}
-.streak-val{font-family:var(--mono);font-size:14px;color:var(--amber);font-weight:500;}
-.upset-row{padding:6px 0;border-bottom:1px solid var(--border);}
-.upset-row:last-child{border-bottom:none;}
-.upset-match{font-size:12px;font-weight:500;}
-.upset-pct{font-family:var(--mono);font-size:11px;color:var(--red);}
-.compare-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);}
-.compare-row:last-child{border-bottom:none;}
-.compare-match{font-size:11px;color:var(--text3);width:80px;flex-shrink:0;}
-.compare-bar-wrap{flex:1;display:flex;gap:4px;align-items:center;}
-.compare-bar{height:14px;border-radius:3px;min-width:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#fff;}
-.cbar-top{background:var(--accent);}
-.cbar-bot{background:var(--text3);}
-.compare-winner{font-size:10px;color:var(--green);font-weight:500;white-space:nowrap;}
+.var-type-pill{font-family:var(--mono);font-size:9px;background:var(--surface3);border:1px solid var(--border);border-radius:4px;padding:1px 5px;margin-left:6px;color:var(--text3);}
 
 /* PROGRESS */
 .prog-wrap{margin-top:12px;}
@@ -296,6 +238,14 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 .log-skip{color:var(--text3);}
 .log-err{color:var(--red);}
 .scroll-x{overflow-x:auto;}
+
+/* TEAM ALIAS CARD */
+.alias-group{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:10px;}
+.alias-primary{font-size:13px;font-weight:600;color:var(--accent2);margin-bottom:8px;}
+.alias-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.alias-tag{display:inline-flex;align-items:center;gap:5px;background:var(--surface3);border:1px solid var(--border2);border-radius:20px;padding:3px 10px;font-size:11px;font-family:var(--mono);color:var(--text2);}
+.alias-tag-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px;line-height:1;padding:0;}
+.alias-tag-del:hover{color:var(--red);}
 </style>
 </head>
 <body>
@@ -323,31 +273,32 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
     </div>
     <div class="aside-nav">
       <div class="nav-section">Overview</div>
-      <button class="nav-btn active" onclick="nav('dashboard')"><span class="nav-icon">▣</span>Dashboard</button>
-      <button class="nav-btn" onclick="nav('leaderboard')"><span class="nav-icon">◈</span>Leaderboard</button>
-      <button class="nav-btn" onclick="nav('insights')"><span class="nav-icon">◉</span>Insights</button>
+      <button class="nav-btn active" onclick="nav('dashboard',this)"><span class="nav-icon">▣</span>Dashboard</button>
+      <button class="nav-btn" onclick="nav('leaderboard',this)"><span class="nav-icon">◈</span>Leaderboard</button>
+      <button class="nav-btn" onclick="nav('insights',this)"><span class="nav-icon">◉</span>Insights</button>
 
       <div class="nav-section">Matches</div>
-      <button class="nav-btn" onclick="nav('matches')"><span class="nav-icon">◇</span>Manage Matches</button>
-      <button class="nav-btn" onclick="nav('bulk-matches')"><span class="nav-icon">⊞</span>Bulk Add Matches</button>
-      <button class="nav-btn" onclick="nav('results')"><span class="nav-icon">✦</span>Enter Results</button>
+      <button class="nav-btn" onclick="nav('matches',this)"><span class="nav-icon">◇</span>Manage Matches</button>
+      <button class="nav-btn" onclick="nav('bulk-matches',this)"><span class="nav-icon">⊞</span>Bulk Add Matches</button>
+      <button class="nav-btn" onclick="nav('results',this)"><span class="nav-icon">✦</span>Enter Results</button>
 
-      <div class="nav-section">Players & Votes</div>
-      <button class="nav-btn" onclick="nav('players')"><span class="nav-icon">○</span>Players</button>
+      <div class="nav-section">Players &amp; Votes</div>
+      <button class="nav-btn" onclick="nav('players',this)"><span class="nav-icon">○</span>Players</button>
       <button class="nav-btn" onclick="window.open('bulk-import.html','_self')"><span class="nav-icon">↑</span>Bulk Import Players</button>
-      <button class="nav-btn" onclick="nav('bulk-responses')"><span class="nav-icon">📋</span>Bulk Import Responses</button>
-      <button class="nav-btn" onclick="nav('emailmap')"><span class="nav-icon">⊡</span>Email Mapping</button>
-      <button class="nav-btn" onclick="nav('predictions')"><span class="nav-icon">⊹</span>View Predictions</button>
-      <button class="nav-btn" onclick="nav('penalties')"><span class="nav-icon">⚠</span>Penalties</button>
+      <button class="nav-btn" onclick="nav('bulk-responses',this)"><span class="nav-icon">📋</span>Bulk Import Responses</button>
+      <button class="nav-btn" onclick="nav('emailmap',this)"><span class="nav-icon">⊡</span>Email Mapping</button>
+      <button class="nav-btn" onclick="nav('predictions',this)"><span class="nav-icon">⊹</span>View Predictions</button>
+      <button class="nav-btn" onclick="nav('penalties',this)"><span class="nav-icon">⚠</span>Penalties</button>
 
       <div class="nav-section">Scoring</div>
-      <button class="nav-btn" onclick="nav('variations')"><span class="nav-icon">⚡</span>Variations &amp; Rules</button>
-      <button class="nav-btn" onclick="nav('bonus-points')"><span class="nav-icon">★</span>Bonus Points</button>
+      <button class="nav-btn" onclick="nav('variations',this)"><span class="nav-icon">⚡</span>Variations &amp; Rules</button>
+      <button class="nav-btn" onclick="nav('bonus-points',this)"><span class="nav-icon">★</span>Bonus Points</button>
+      <button class="nav-btn" onclick="nav('team-aliases',this)"><span class="nav-icon">🏏</span>Team Name Aliases</button>
 
-      <div class="nav-section">Settings & Data</div>
-      <button class="nav-btn" onclick="nav('credentials')"><span class="nav-icon">🔑</span>Change Credentials</button>
-      <button class="nav-btn" onclick="nav('export')"><span class="nav-icon">↗</span>Export / Backup</button>
-      <button class="nav-btn" onclick="nav('audit')"><span class="nav-icon">▤</span>Audit Log</button>
+      <div class="nav-section">Settings &amp; Data</div>
+      <button class="nav-btn" onclick="nav('credentials',this)"><span class="nav-icon">🔑</span>Change Credentials</button>
+      <button class="nav-btn" onclick="nav('export',this)"><span class="nav-icon">↗</span>Export / Backup</button>
+      <button class="nav-btn" onclick="nav('audit',this)"><span class="nav-icon">▤</span>Audit Log</button>
     </div>
     <div class="aside-footer">
       <button class="signout-btn" onclick="signout()">Sign out</button>
@@ -441,17 +392,22 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
       <div class="panel" id="p-bulk-responses">
         <div class="page-hdr"><div class="page-title">Bulk Import Responses<small>Historical data</small></div></div>
         <div class="info">
-          <b>Column format:</b> Email, Match ID (DB), Team name, Timestamp (optional)<br>
-          Match DB IDs are shown in the table below. Use those — not match numbers.
+          <b>Google Sheets column format:</b> Timestamp, Email, Name, Team<br>
+          Timestamp format: <code>4/20/2026 19:30:00</code> or <code>2026-04-20 19:30:00</code> — both accepted.<br>
+          First row with headers is automatically skipped. Match DB IDs are shown in the table below.
         </div>
         <div class="card" style="margin-bottom:14px">
-          <div class="card-hdr"><div class="card-title">Match ID reference</div></div>
+          <div class="card-hdr"><div class="card-title">Match ID reference — use DB ID column when importing</div></div>
           <div class="card-body scroll-x" id="br-match-ref">Loading…</div>
         </div>
         <div class="card">
           <div class="card-body">
-            <textarea id="br-input" style="width:100%;height:200px;resize:vertical;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--mono);font-size:12px;padding:10px;outline:none;"
-              placeholder="rahul@gmail.com, 1, Gujarat Titans, 2026-04-20 19:30:00&#10;priya@gmail.com, 1, Mumbai Indians"></textarea>
+            <div class="fg" style="margin-bottom:12px">
+              <label>Match DB ID (from table above)</label>
+              <input type="number" id="br-match-id" placeholder="e.g. 5" style="width:200px;">
+            </div>
+            <textarea id="br-input" style="width:100%;height:220px;resize:vertical;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--mono);font-size:12px;padding:10px;outline:none;"
+              placeholder="Paste Google Sheets data here — columns: Timestamp, Email, Name, Team&#10;4/20/2026 19:30:00&#9;rahul@gmail.com&#9;Rahul Sharma&#9;Gujarat Titans&#10;4/20/2026 19:31:00&#9;priya@gmail.com&#9;Priya Singh&#9;Mumbai Indians"></textarea>
             <div class="btn-row" style="margin-top:10px">
               <button class="btn btn-accent" onclick="previewBulkResponses()">Preview →</button>
               <button class="btn btn-outline" onclick="document.getElementById('br-input').value=''">Clear</button>
@@ -465,7 +421,7 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
               <button class="btn btn-green" id="br-import-btn" onclick="importBulkResponses()">Import</button>
             </div>
             <div class="card-body scroll-x">
-              <table class="tbl"><thead><tr><th>Email</th><th>Match ID</th><th>Team</th><th>Timestamp</th><th>Status</th></tr></thead>
+              <table class="tbl"><thead><tr><th>Timestamp</th><th>Email</th><th>Name</th><th>Team</th><th>Status</th></tr></thead>
               <tbody id="br-tbody"></tbody></table>
             </div>
             <div class="log" id="br-log"></div>
@@ -504,9 +460,9 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
       <div class="panel" id="p-penalties">
         <div class="page-hdr">
           <div class="page-title">Penalties</div>
-          <button class="btn btn-outline btn-sm" onclick="api('/api/admin/penalties/recalc','POST').then(()=>{toast('Recalculated');loadPenalties();})">↺ Recalculate all</button>
+          <button class="btn btn-outline btn-sm" onclick="api('/api/admin/penalties/recalc','POST').then(()=>{toast('Recalculated');loadPenalties();}).catch(e=>toast(e.message,'err'))">↺ Recalculate all</button>
         </div>
-        <div class="info">Penalties are auto-calculated when results are entered. Delete a row to manually remove a penalty. Recalculate to refresh after any player first_match changes.</div>
+        <div class="info">Penalties are auto-calculated when results are entered. Delete a row to manually remove a penalty.</div>
         <div class="card">
           <div class="card-body scroll-x" id="penalties-list">Loading…</div>
         </div>
@@ -543,10 +499,10 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
           <div class="page-title">Variations &amp; Rules</div>
           <div class="btn-row">
             <button class="btn btn-accent" onclick="openVarModal()">+ Add variation</button>
-            <button class="btn btn-outline btn-sm" onclick="api('/api/admin/variations/recalc','POST').then(()=>toast('Recalculated all bonuses'))">↺ Recalc all</button>
+            <button class="btn btn-outline btn-sm" onclick="api('/api/admin/variations/recalc','POST').then(()=>toast('Recalculated all bonuses')).catch(e=>toast(e.message,'err'))">↺ Recalc all</button>
           </div>
         </div>
-        <div class="info">The <b>Double Header Bonus</b> (+50 pts when a player predicts both matches correct on a 2-match day) is built-in and always active. Create custom variations below for any other league rules.</div>
+        <div class="info">The <b>Double Header Bonus</b> (+50 pts when a player predicts both matches correct on a 2-match day) is built-in and always active.</div>
         <div id="variations-list">Loading…</div>
       </div>
 
@@ -561,21 +517,35 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
         </div>
       </div>
 
+      <!-- TEAM ALIASES -->
+      <div class="panel" id="p-team-aliases">
+        <div class="page-hdr">
+          <div class="page-title">Team Name Aliases</div>
+          <button class="btn btn-accent" onclick="openTeamAliasModal()">+ Add alias</button>
+        </div>
+        <div class="info">
+          Map alternate team names to their canonical primary name. For example: <code>RCB → Royal Challengers Bengaluru</code>, <code>Royal Challengers Bangalore → Royal Challengers Bengaluru</code>.<br>
+          When a player submits a vote with an alias, it is automatically normalized to the primary name.
+        </div>
+        <div class="card">
+          <div class="card-body" id="team-aliases-list">Loading…</div>
+        </div>
+      </div>
+
       <!-- CREDENTIALS -->
       <div class="panel" id="p-credentials">
         <div class="page-hdr"><div class="page-title">Change Credentials</div></div>
         <div class="card">
           <div class="card-body">
-            <div class="success-box" style="margin-bottom:20px">Your credentials (secret path + password) are stored as Cloudflare Worker Variables — not in the database. This is more secure because they never touch your code.</div>
+            <div class="success-box" style="margin-bottom:20px">Your credentials (secret path + password) are stored as Cloudflare Worker Variables — not in the database.</div>
             <p style="font-size:13px;font-weight:500;margin-bottom:16px;color:var(--text)">To change your secret path or password:</p>
-            <div style="counter-reset:steps;">
-              ${['Go to <b>dash.cloudflare.com</b>','Click <b>Workers &amp; Pages</b> in the left sidebar','Click on <b>predictor-league-api</b>','Click the <b>Settings</b> tab','Click <b>Variables and Secrets</b>','Click the <b>pencil icon ✎</b> next to <b>ADMIN_SECRET_PATH</b> or <b>ADMIN_PASSWORD</b>','Type your new value and click <b>Save and deploy</b>','Wait 30 seconds — your new credentials are active','Log out of this admin panel and log in with the new credentials'].map((s,i)=>`
+            <div>
+              ${['Go to <b>dash.cloudflare.com</b>','Click <b>Workers &amp; Pages</b> in the left sidebar','Click on <b>predictor-league-api</b>','Click the <b>Settings</b> tab','Click <b>Variables and Secrets</b>','Click the <b>pencil icon ✎</b> next to <b>ADMIN_SECRET_PATH</b> or <b>ADMIN_PASSWORD</b>','Type your new value and click <b>Save and deploy</b>','Wait 30 seconds — your new credentials are active'].map((s,i)=>`
               <div style="display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;">
                 <div style="background:var(--accent);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;">${i+1}</div>
                 <div style="font-size:13px;padding-top:2px;">${s}</div>
               </div>`).join('')}
             </div>
-            <div class="warn" style="margin-top:16px">Important: write down your new credentials before saving. Once saved, the old ones stop working immediately.</div>
           </div>
         </div>
       </div>
@@ -635,7 +605,7 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 <div class="overlay" id="modal-match">
   <div class="modal">
     <h3 id="modal-match-h">Add match</h3>
-    <div class="modal-sub" id="modal-match-sub">Fill in match details</div>
+    <div class="modal-sub">Fill in match details. Time is your local IST.</div>
     <input type="hidden" id="mm-id">
     <div class="form-grid">
       <div class="fg"><label>Match number</label><input type="number" id="mm-num" placeholder="33"></div>
@@ -645,7 +615,7 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
       <div class="fg" style="grid-column:1/-1"><label>Match time (your local time)</label><input type="datetime-local" id="mm-time"></div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="close('modal-match')">Cancel</button>
+      <button class="btn btn-outline" onclick="closeModal('modal-match')">Cancel</button>
       <button class="btn btn-accent" onclick="saveMatch()">Save</button>
     </div>
   </div>
@@ -673,7 +643,7 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
       <div class="fg" style="grid-column:1/-1"><label>Override winner (use exact team name)</label><input type="text" id="me-winner" placeholder="leave blank to keep"></div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="close('modal-match-edit')">Cancel</button>
+      <button class="btn btn-outline" onclick="closeModal('modal-match-edit')">Cancel</button>
       <button class="btn btn-accent" onclick="saveMatchEdit()">Save changes</button>
     </div>
   </div>
@@ -690,7 +660,7 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
       <button class="btn" style="flex:1;justify-content:center;font-size:14px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);" id="res-a" onclick="submitResult('a')"></button>
       <button class="btn" style="flex:1;justify-content:center;font-size:14px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);" id="res-b" onclick="submitResult('b')"></button>
     </div>
-    <div class="modal-footer"><button class="btn btn-outline" onclick="close('modal-result')">Cancel</button></div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('modal-result')">Cancel</button></div>
   </div>
 </div>
 
@@ -703,10 +673,10 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
       <div class="fg"><label>Display name</label><input type="text" id="mp-name" placeholder="Rahul Sharma"></div>
       <div class="fg"><label>Primary email</label><input type="email" id="mp-email" placeholder="rahul@gmail.com"></div>
       <div class="fg"><label>Alias emails (comma-separated)</label><input type="text" id="mp-aliases" placeholder="rahul.old@gmail.com, r.sharma@work.com"></div>
-      <div class="fg"><label>First match number (optional — auto-detected from votes)</label><input type="number" id="mp-first" placeholder="e.g. 3"></div>
+      <div class="fg"><label>First match number (optional)</label><input type="number" id="mp-first" placeholder="e.g. 3"></div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="close('modal-player')">Cancel</button>
+      <button class="btn btn-outline" onclick="closeModal('modal-player')">Cancel</button>
       <button class="btn btn-accent" onclick="savePlayer()">Save</button>
     </div>
   </div>
@@ -722,7 +692,7 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
       <div class="fg"><label>Primary email (the real player)</label><input type="email" id="al-primary" placeholder="real@gmail.com"></div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="close('modal-alias')">Cancel</button>
+      <button class="btn btn-outline" onclick="closeModal('modal-alias')">Cancel</button>
       <button class="btn btn-accent" onclick="saveAlias()">Save mapping</button>
     </div>
   </div>
@@ -736,17 +706,17 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
       <div class="fg"><label>Name</label><input type="text" id="vr-name" placeholder="e.g. Streak Bonus"></div>
       <div class="fg"><label>Type</label>
         <select id="vr-type">
-          <option value="manual_bonus">manual_bonus — one-time award to specific player</option>
+          <option value="manual_bonus">manual_bonus — one-time award</option>
           <option value="streak">streak — future automation hook</option>
           <option value="custom">custom — documentation only</option>
         </select>
       </div>
       <div class="fg"><label>Description</label><textarea id="vr-desc" rows="2" placeholder="What this rule does…"></textarea></div>
       <div class="fg"><label>Applies to match ID (blank = global)</label><input type="number" id="vr-match" placeholder="leave blank"></div>
-      <div class="fg"><label>Details (JSON for manual_bonus: {"email":"x@y.com","pts":50})</label><textarea id="vr-details" rows="2" placeholder='{"email":"player@gmail.com","pts":50}'></textarea></div>
+      <div class="fg"><label>Details (JSON for manual_bonus)</label><textarea id="vr-details" rows="2" placeholder='{"email":"player@gmail.com","pts":50}'></textarea></div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="close('modal-variation')">Cancel</button>
+      <button class="btn btn-outline" onclick="closeModal('modal-variation')">Cancel</button>
       <button class="btn btn-accent" onclick="saveVariation()">Save</button>
     </div>
   </div>
@@ -764,8 +734,24 @@ aside::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
       <div class="fg"><label>Notes</label><input type="text" id="bp-notes" placeholder="Any extra context"></div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="close('modal-bonus')">Cancel</button>
+      <button class="btn btn-outline" onclick="closeModal('modal-bonus')">Cancel</button>
       <button class="btn btn-accent" onclick="saveBonus()">Award</button>
+    </div>
+  </div>
+</div>
+
+<!-- TEAM ALIAS MODAL -->
+<div class="overlay" id="modal-team-alias">
+  <div class="modal">
+    <h3>Add Team Name Alias</h3>
+    <div class="modal-sub">Map any alternate spelling or abbreviation to the canonical team name stored in your matches.</div>
+    <div class="form-grid w1">
+      <div class="fg"><label>Alias name (alternate / abbreviation)</label><input type="text" id="ta-alias" placeholder="e.g. RCB, Royal Challengers Bangalore"></div>
+      <div class="fg"><label>Primary name (exact name in matches table)</label><input type="text" id="ta-primary" placeholder="e.g. Royal Challengers Bengaluru"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-team-alias')">Cancel</button>
+      <button class="btn btn-accent" onclick="saveTeamAlias()">Save alias</button>
     </div>
   </div>
 </div>
@@ -777,137 +763,166 @@ const API = 'https://predictor-league-api.iamme1241.workers.dev';
 let token = '', matches = [], resultTarget = null, resultForce = false;
 let bmParsed = [], brParsed = [];
 
-// ── AUTH ──────────────────────────────────────────────────────────────────────
-function doLogin(){
-  const p=gv('lp'),w=gv('lw');
-  if(!p||!w){lerr('Fill both fields');return;}
-  token=btoa(`${p}:${w}`);
-  fetch(`${API}/api/admin/players`,{headers:{Authorization:'Bearer '+token}})
-    .then(r=>{
-      if(r.ok){
-        document.getElementById('login-screen').style.display='none';
-        document.getElementById('app').classList.add('on');
-        localStorage.setItem('nw_admin',token);
-        init();
-      } else {lerr('Invalid credentials.');token='';}
-    }).catch(()=>lerr('Network error.'));
-}
-function lerr(m){const e=document.getElementById('lerr');e.textContent=m;e.style.display='block';}
-function signout(){token='';localStorage.removeItem('nw_admin');location.reload();}
-document.getElementById('lw').onkeydown=e=>{if(e.key==='Enter')doLogin();};
+// ── MODAL HELPERS (FIXED) ──────────────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('on'); }
+function closeModal(id) { document.getElementById(id).classList.remove('on'); }
 
-window.addEventListener('DOMContentLoaded',()=>{
-  const t=localStorage.getItem('nw_admin');
-  if(!t)return;
-  token=t;
-  fetch(`${API}/api/admin/players`,{headers:{Authorization:'Bearer '+token}})
-    .then(r=>{
-      if(r.ok){
-        document.getElementById('login-screen').style.display='none';
-        document.getElementById('app').classList.add('on');
-        init();
-      } else {localStorage.removeItem('nw_admin');token='';}
-    }).catch(()=>{});
+// Close modal when clicking backdrop
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('overlay') && e.target.classList.contains('on')) {
+    e.target.classList.remove('on');
+  }
 });
 
-function init(){
+// ── TIME FORMAT HELPER (IST 12-hour) ─────────────────────────────────────────
+function fmtT(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleString('en-IN', {
+    day: 'numeric', month: 'short', year: 'numeric',
+    hour: 'numeric', minute: '2-digit', hour12: true,
+    timeZone: 'Asia/Kolkata'
+  }) + ' IST';
+}
+
+function fmtTShort(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleString('en-IN', {
+    day: 'numeric', month: 'short',
+    hour: 'numeric', minute: '2-digit', hour12: true,
+    timeZone: 'Asia/Kolkata'
+  }) + ' IST';
+}
+
+// ── AUTH ──────────────────────────────────────────────────────────────────────
+function doLogin() {
+  const p = gv('lp'), w = gv('lw');
+  if (!p || !w) { lerr('Fill both fields'); return; }
+  token = btoa(`${p}:${w}`);
+  fetch(`${API}/api/admin/players`, { headers: { Authorization: 'Bearer ' + token } })
+    .then(r => {
+      if (r.ok) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app').classList.add('on');
+        localStorage.setItem('nw_admin', token);
+        init();
+      } else { lerr('Invalid credentials.'); token = ''; }
+    }).catch(() => lerr('Network error.'));
+}
+function lerr(m) { const e = document.getElementById('lerr'); e.textContent = m; e.style.display = 'block'; }
+function signout() { token = ''; localStorage.removeItem('nw_admin'); location.reload(); }
+document.getElementById('lw').onkeydown = e => { if (e.key === 'Enter') doLogin(); };
+
+window.addEventListener('DOMContentLoaded', () => {
+  const t = localStorage.getItem('nw_admin');
+  if (!t) return;
+  token = t;
+  fetch(`${API}/api/admin/players`, { headers: { Authorization: 'Bearer ' + token } })
+    .then(r => {
+      if (r.ok) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app').classList.add('on');
+        init();
+      } else { localStorage.removeItem('nw_admin'); token = ''; }
+    }).catch(() => {});
+});
+
+function init() {
   loadDash();
   loadMatchesList();
-  document.getElementById('forms-url').textContent=`${API}/api/forms-submit`;
+  document.getElementById('forms-url').textContent = `${API}/api/forms-submit`;
 }
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
-const gv=id=>document.getElementById(id)?.value?.trim()||'';
-const sv=(id,v)=>{if(document.getElementById(id))document.getElementById(id).value=v||'';};
-function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+const gv = id => document.getElementById(id)?.value?.trim() || '';
+const sv = (id, v) => { if (document.getElementById(id)) document.getElementById(id).value = v || ''; };
+function esc(s) { return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
-function toast(msg,type='ok'){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.className='on '+type;
-  setTimeout(()=>t.className='',3200);
+function toast(msg, type = 'ok') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'on ' + type;
+  setTimeout(() => t.className = '', 3200);
 }
 
-async function api(path,method='GET',body=null){
-  const opts={headers:{'Content-Type':'application/json','Authorization':'Bearer '+token}};
-  if(method!=='GET'&&body){opts.method=method;opts.body=JSON.stringify(body);}
-  else opts.method=method;
-  const r=await fetch(API+path,opts);
-  if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.error||`HTTP ${r.status}`);}
+async function api(path, method = 'GET', body = null) {
+  const opts = { headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token } };
+  if (method !== 'GET' && body) { opts.method = method; opts.body = JSON.stringify(body); }
+  else opts.method = method;
+  const r = await fetch(API + path, opts);
+  if (!r.ok) { const d = await r.json().catch(() => ({})); throw new Error(d.error || `HTTP ${r.status}`); }
   return r.json();
 }
 
-function open(id){document.getElementById(id).classList.add('on');}
-function close(id){document.getElementById(id).classList.remove('on');}
-
 // ── NAV ───────────────────────────────────────────────────────────────────────
-function nav(id){
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const p=document.getElementById('p-'+id);
-  if(p)p.classList.add('on');
-  event.currentTarget.classList.add('active');
-  const loaders={results:loadResults,players:loadPlayers,emailmap:loadEmailMap,
-    leaderboard:loadAdminLB,insights:loadInsights,audit:loadAudit,
-    predictions:loadPredSel,variations:loadVariations,'bonus-points':loadBonus,
-    penalties:loadPenalties,'bulk-responses':loadBRRef};
-  if(loaders[id])loaders[id]();
+function nav(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const p = document.getElementById('p-' + id);
+  if (p) p.classList.add('on');
+  if (btn) btn.classList.add('active');
+  const loaders = {
+    results: loadResults, players: loadPlayers, emailmap: loadEmailMap,
+    leaderboard: loadAdminLB, insights: loadInsights, audit: loadAudit,
+    predictions: loadPredSel, variations: loadVariations, 'bonus-points': loadBonus,
+    penalties: loadPenalties, 'bulk-responses': loadBRRef, 'team-aliases': loadTeamAliases
+  };
+  if (loaders[id]) loaders[id]();
 }
 
 // ── DASHBOARD ─────────────────────────────────────────────────────────────────
-async function loadDash(){
-  try{
-    const[ms,pl,lb]=await Promise.all([api('/api/matches'),api('/api/admin/players'),api('/api/leaderboard')]);
-    const open=ms.filter(m=>m.status==='open').length;
-    const resulted=ms.filter(m=>m.status==='resulted').length;
-    document.getElementById('dash-stats').innerHTML=[
-      {v:ms.length,l:'Matches',c:''},
-      {v:pl.length,l:'Players',c:''},
-      {v:open,l:'Open now',c:open?'var(--green)':''},
-      {v:resulted,l:'Resulted',c:'var(--accent2)'},
-    ].map(s=>`<div class="stat">
-      <div class="stat-val" style="color:${s.c||'var(--text)'}">${s.v}</div>
+async function loadDash() {
+  try {
+    const [ms, pl, lb] = await Promise.all([api('/api/matches'), api('/api/admin/players'), api('/api/leaderboard')]);
+    const open = ms.filter(m => m.status === 'open').length;
+    const resulted = ms.filter(m => m.status === 'resulted').length;
+    document.getElementById('dash-stats').innerHTML = [
+      { v: ms.length, l: 'Matches', c: '' },
+      { v: pl.length, l: 'Players', c: '' },
+      { v: open, l: 'Open now', c: open ? 'var(--green)' : '' },
+      { v: resulted, l: 'Resulted', c: 'var(--accent2)' },
+    ].map(s => `<div class="stat">
+      <div class="stat-val" style="color:${s.c || 'var(--text)'}">${s.v}</div>
       <div class="stat-lbl">${s.l}</div>
     </div>`).join('');
 
-    document.getElementById('dash-lb').innerHTML=lb.length?
+    document.getElementById('dash-lb').innerHTML = lb.length ?
       `<table class="tbl">
         <thead><tr><th>#</th><th>Player</th><th class="num">Net pts</th><th class="num">Bonus</th><th class="num">Played</th></tr></thead>
-        <tbody>${lb.slice(0,10).map(p=>`<tr>
+        <tbody>${lb.slice(0, 10).map(p => `<tr>
           <td class="mono">${p.rank}</td>
           <td>${esc(p.display_name)}<br><span style="font-size:10px;color:var(--text3)">${esc(p.primary_email)}</span></td>
-          <td class="num mono" style="color:${p.net_points>=0?'var(--green)':'var(--red)'};font-weight:500">${p.net_points>=0?'+':''}${p.net_points}</td>
-          <td class="num mono" style="color:var(--purple)">${p.bonuses>0?'+':''}${p.bonuses}</td>
+          <td class="num mono" style="color:${p.net_points >= 0 ? 'var(--green)' : 'var(--red)'};font-weight:500">${p.net_points >= 0 ? '+' : ''}${p.net_points}</td>
+          <td class="num mono" style="color:var(--purple)">${p.bonuses > 0 ? '+' : ''}${p.bonuses}</td>
           <td class="num" style="color:var(--text3)">${p.matches_played}</td>
         </tr>`).join('')}</tbody>
-      </table>`:'<p style="color:var(--text3)">No results yet.</p>';
-  }catch(e){toast(e.message,'err');}
+      </table>` : '<p style="color:var(--text3)">No results yet.</p>';
+  } catch (e) { toast(e.message, 'err'); }
 }
 
 // ── MATCHES ───────────────────────────────────────────────────────────────────
-async function loadMatchesList(){
-  try{
-    matches=await api('/api/matches');
+async function loadMatchesList() {
+  try {
+    matches = await api('/api/matches');
     renderMatches();
-  }catch(e){toast(e.message,'err');}
+  } catch (e) { toast(e.message, 'err'); }
 }
 
-function renderMatches(){
-  const el=document.getElementById('matches-list');
-  if(!matches.length){el.innerHTML='<p style="color:var(--text3)">No matches yet.</p>';return;}
-  el.innerHTML=`<table class="tbl">
+function renderMatches() {
+  const el = document.getElementById('matches-list');
+  if (!matches.length) { el.innerHTML = '<p style="color:var(--text3)">No matches yet.</p>'; return; }
+  el.innerHTML = `<table class="tbl">
     <thead><tr><th>#</th><th>Title</th><th>Time (IST)</th><th>Status</th><th>Winner</th><th>Actions</th></tr></thead>
-    <tbody>${matches.map(m=>`<tr>
+    <tbody>${matches.map(m => `<tr>
       <td class="mono">M${m.match_number}</td>
       <td style="font-weight:500">${esc(m.title)}</td>
-      <td class="mono" style="font-size:11px">${fmtT(m.match_time)}</td>
+      <td class="mono" style="font-size:11px">${fmtTShort(m.match_time)}</td>
       <td><span class="badge b-${m.status}">${m.status}</span></td>
-      <td style="font-size:11px;color:var(--green)">${m.winner?'🏆 '+esc(m.winner):'—'}</td>
+      <td style="font-size:11px;color:var(--green)">${m.winner ? '🏆 ' + esc(m.winner) : '—'}</td>
       <td>
         <div class="btn-row">
-          ${m.status==='upcoming'?`<button class="btn btn-green btn-sm" onclick="matchAction(${m.id},'open')">Open</button>`:''}
-          ${m.status==='open'?`<button class="btn btn-amber btn-sm" onclick="matchAction(${m.id},'close')">Close</button>`:''}
-          ${m.status==='closed'?`<button class="btn btn-accent btn-sm" onclick="openResultModal(${m.id},false)">Result</button>`:''}
-          ${m.status!=='resulted'&&m.status!=='upcoming'?`<button class="btn btn-outline btn-sm" onclick="openResultModal(${m.id},true)" title="Force result — use for historical matches">⚡</button>`:''}
+          ${m.status === 'upcoming' ? `<button class="btn btn-green btn-sm" onclick="matchAction(${m.id},'open')">Open</button>` : ''}
+          ${m.status === 'open' ? `<button class="btn btn-amber btn-sm" onclick="matchAction(${m.id},'close')">Close</button>` : ''}
+          ${m.status === 'closed' ? `<button class="btn btn-accent btn-sm" onclick="openResultModal(${m.id},false)">Result</button>` : ''}
+          ${m.status !== 'resulted' && m.status !== 'upcoming' ? `<button class="btn btn-outline btn-sm" onclick="openResultModal(${m.id},true)" title="Force result">⚡</button>` : ''}
           <button class="btn btn-ghost btn-sm" onclick="openMatchEditModal(${m.id})" title="Edit">✎</button>
           <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delMatch(${m.id},'${esc(m.status)}')" title="Delete">✕</button>
         </div>
@@ -916,597 +931,679 @@ function renderMatches(){
   </table>`;
 }
 
-function fmtT(iso){
-  return new Date(iso).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Kolkata'})+' IST';
+function openMatchModal() {
+  sv('mm-id', ''); sv('mm-num', ''); sv('mm-title', ''); sv('mm-ta', ''); sv('mm-tb', ''); sv('mm-time', '');
+  document.getElementById('modal-match-h').textContent = 'Add match';
+  openModal('modal-match');
 }
 
-function openMatchModal(m){
-  sv('mm-id','');sv('mm-num','');sv('mm-title','');sv('mm-ta','');sv('mm-tb','');sv('mm-time','');
-  document.getElementById('modal-match-h').textContent='Add match';
-  open('modal-match');
-}
-
-async function saveMatch(){
-  const id=gv('mm-id'),num=gv('mm-num'),title=gv('mm-title'),ta=gv('mm-ta'),tb=gv('mm-tb'),time=gv('mm-time');
-  if(!num||!title||!ta||!tb||!time){toast('Fill all fields','err');return;}
-  const iso=new Date(time).toISOString();
-  try{
-    if(id){
-      await api(`/api/admin/matches/${id}`,'PATCH',{title,team_a:ta,team_b:tb,match_time:iso});
+async function saveMatch() {
+  const id = gv('mm-id'), num = gv('mm-num'), title = gv('mm-title'), ta = gv('mm-ta'), tb = gv('mm-tb'), time = gv('mm-time');
+  if (!num || !title || !ta || !tb || !time) { toast('Fill all fields', 'err'); return; }
+  const iso = new Date(time).toISOString();
+  try {
+    if (id) {
+      await api(`/api/admin/matches/${id}`, 'PATCH', { title, team_a: ta, team_b: tb, match_time: iso });
     } else {
-      await api('/api/admin/matches','POST',{match_number:+num,title,team_a:ta,team_b:tb,match_time:iso});
+      await api('/api/admin/matches', 'POST', { match_number: +num, title, team_a: ta, team_b: tb, match_time: iso });
     }
-    close('modal-match');toast('Match saved');await loadMatchesList();
-  }catch(e){toast(e.message,'err');}
+    closeModal('modal-match'); toast('Match saved'); await loadMatchesList();
+  } catch (e) { toast(e.message, 'err'); }
 }
 
-function openMatchEditModal(id){
-  const m=matches.find(x=>x.id===id);if(!m)return;
-  sv('me-id',id);sv('me-status','');sv('me-time','');sv('me-ta','');sv('me-tb','');sv('me-winner','');
-  open('modal-match-edit');
+function openMatchEditModal(id) {
+  const m = matches.find(x => x.id === id); if (!m) return;
+  sv('me-id', id); sv('me-status', ''); sv('me-time', ''); sv('me-ta', ''); sv('me-tb', ''); sv('me-winner', '');
+  openModal('modal-match-edit');
 }
 
-async function saveMatchEdit(){
-  const id=gv('me-id'),status=gv('me-status'),time=gv('me-time'),
-        ta=gv('me-ta'),tb=gv('me-tb'),winner=gv('me-winner');
-  const body={};
-  if(status)body.status=status;
-  if(time)body.match_time=new Date(time).toISOString();
-  if(ta)body.team_a=ta;
-  if(tb)body.team_b=tb;
-  if(winner)body.winner=winner;
-  if(!Object.keys(body).length){toast('Nothing changed','err');return;}
-  try{
-    await api(`/api/admin/matches/${id}`,'PATCH',body);
-    close('modal-match-edit');toast('Match updated');await loadMatchesList();
-  }catch(e){toast(e.message,'err');}
+async function saveMatchEdit() {
+  const id = gv('me-id'), status = gv('me-status'), time = gv('me-time'),
+    ta = gv('me-ta'), tb = gv('me-tb'), winner = gv('me-winner');
+  const body = {};
+  if (status) body.status = status;
+  if (time) body.match_time = new Date(time).toISOString();
+  if (ta) body.team_a = ta;
+  if (tb) body.team_b = tb;
+  if (winner) body.winner = winner;
+  if (!Object.keys(body).length) { toast('Nothing changed', 'err'); return; }
+  try {
+    await api(`/api/admin/matches/${id}`, 'PATCH', body);
+    closeModal('modal-match-edit'); toast('Match updated'); await loadMatchesList();
+  } catch (e) { toast(e.message, 'err'); }
 }
 
-async function matchAction(id,action){
-  try{
-    const d=await api(`/api/admin/matches/${id}/${action}`,'POST');
-    toast(action==='open'?'Match opened':'Match closed');
+async function matchAction(id, action) {
+  try {
+    await api(`/api/admin/matches/${id}/${action}`, 'POST');
+    toast(action === 'open' ? 'Match opened' : 'Match closed');
     await loadMatchesList();
-  }catch(e){toast(e.message,'err');}
+  } catch (e) { toast(e.message, 'err'); }
 }
 
-async function delMatch(id,status){
-  const msg=status==='upcoming'?
-    'Delete this upcoming match?':
-    `This match has data (votes/scores). Use force-delete to remove everything. Continue?`;
-  if(!confirm(msg))return;
-  try{
-    if(status==='upcoming'){await api(`/api/admin/matches/${id}`,'DELETE');}
-    else{await api(`/api/admin/matches/${id}/force-delete`,'DELETE');}
-    toast('Match deleted');await loadMatchesList();
-  }catch(e){toast(e.message,'err');}
+async function delMatch(id, status) {
+  const msg = status === 'upcoming' ?
+    'Delete this upcoming match?' :
+    'This match has data (votes/scores). Use force-delete to remove everything. Continue?';
+  if (!confirm(msg)) return;
+  try {
+    if (status === 'upcoming') { await api(`/api/admin/matches/${id}`, 'DELETE'); }
+    else { await api(`/api/admin/matches/${id}/force-delete`, 'DELETE'); }
+    toast('Match deleted'); await loadMatchesList();
+  } catch (e) { toast(e.message, 'err'); }
 }
 
 // ── BULK MATCHES ──────────────────────────────────────────────────────────────
-function previewBulkMatches(){
-  const raw=document.getElementById('bm-input').value.trim();
-  if(!raw){toast('Paste some matches first','err');return;}
-  const lines=raw.split('\n').map(l=>l.trim()).filter(Boolean);
-  bmParsed=[];
-  lines.forEach((line,i)=>{
-    const parts=line.includes('\t')?line.split('\t').map(s=>s.trim()):line.split(',').map(s=>s.trim());
-    if(parts.length<5){
-      bmParsed.push({ok:false,reason:'Need 5 columns',num:parts[0]||'',title:parts[1]||'',ta:parts[2]||'',tb:parts[3]||'',time:parts.slice(4).join(',')});return;
+function previewBulkMatches() {
+  const raw = document.getElementById('bm-input').value.trim();
+  if (!raw) { toast('Paste some matches first', 'err'); return; }
+  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+  bmParsed = [];
+  lines.forEach((line, i) => {
+    const parts = line.includes('\t') ? line.split('\t').map(s => s.trim()) : line.split(',').map(s => s.trim());
+    if (parts.length < 5) {
+      bmParsed.push({ ok: false, reason: 'Need 5 columns', num: parts[0] || '', title: parts[1] || '', ta: parts[2] || '', tb: parts[3] || '', time: parts.slice(4).join(',') }); return;
     }
-    const[numS,title,ta,tb,...tp]=parts;
-    const timeS=tp.join(',').trim();
-    const num=parseInt(numS);
-    if(isNaN(num)){bmParsed.push({ok:false,reason:'# must be number',num:numS,title,ta,tb,time:timeS});return;}
-    // Parse IST time
-    let utc=null;
-    try{
-      // Try direct parse first
-      let d=new Date(timeS);
-      if(isNaN(d.getTime())){
-        // Append IST offset
-        d=new Date(timeS+' +05:30');
-      }
-      if(!isNaN(d.getTime()))utc=new Date(d.getTime()).toISOString();
-    }catch{}
-    if(!utc){bmParsed.push({ok:false,reason:`Cannot parse: "${timeS}"`,num,title,ta,tb,time:timeS});return;}
-    bmParsed.push({ok:true,num,title,ta,tb,time:timeS,utc});
+    const [numS, title, ta, tb, ...tp] = parts;
+    const timeS = tp.join(',').trim();
+    const num = parseInt(numS);
+    if (isNaN(num)) { bmParsed.push({ ok: false, reason: '# must be number', num: numS, title, ta, tb, time: timeS }); return; }
+    let utc = null;
+    try {
+      let d = new Date(timeS);
+      if (isNaN(d.getTime())) { d = new Date(timeS + ' +05:30'); }
+      if (!isNaN(d.getTime())) utc = new Date(d.getTime()).toISOString();
+    } catch {}
+    if (!utc) { bmParsed.push({ ok: false, reason: `Cannot parse: "${timeS}"`, num, title, ta, tb, time: timeS }); return; }
+    bmParsed.push({ ok: true, num, title, ta, tb, time: timeS, utc });
   });
 
-  const ok=bmParsed.filter(r=>r.ok).length;
-  document.getElementById('bm-title').textContent=`Preview — ${ok} ready, ${bmParsed.length-ok} errors`;
-  document.getElementById('bm-import-btn').textContent=`Import ${ok} match${ok!==1?'es':''}`;
-  document.getElementById('bm-tbody').innerHTML=bmParsed.map(r=>`<tr style="${!r.ok?'background:var(--red-s)':''}">
+  const ok = bmParsed.filter(r => r.ok).length;
+  document.getElementById('bm-title').textContent = `Preview — ${ok} ready, ${bmParsed.length - ok} errors`;
+  document.getElementById('bm-import-btn').textContent = `Import ${ok} match${ok !== 1 ? 'es' : ''}`;
+  document.getElementById('bm-import-btn').disabled = false;
+  document.getElementById('bm-tbody').innerHTML = bmParsed.map(r => `<tr style="${!r.ok ? 'background:var(--red-s)' : ''}">
     <td class="mono">${r.num}</td><td>${esc(r.title)}</td><td>${esc(r.ta)}</td><td>${esc(r.tb)}</td>
     <td class="mono" style="font-size:10px">${esc(r.time)}</td>
-    <td>${r.ok?'<span style="color:var(--green)">✓</span>':'<span style="color:var(--red)">✗ '+esc(r.reason)+'</span>'}</td>
+    <td>${r.ok ? '<span style="color:var(--green)">✓</span>' : '<span style="color:var(--red)">✗ ' + esc(r.reason) + '</span>'}</td>
   </tr>`).join('');
-  document.getElementById('bm-preview').style.display='block';
+  document.getElementById('bm-preview').style.display = 'block';
 }
 
-async function importBulkMatches(){
-  const toImport=bmParsed.filter(r=>r.ok);
-  if(!toImport.length){toast('No valid matches','err');return;}
-  document.getElementById('bm-import-btn').disabled=true;
-  try{
-    const res=await api('/api/admin/matches/bulk','POST',{matches:toImport.map(r=>({match_number:r.num,title:r.title,team_a:r.ta,team_b:r.tb,match_time:r.utc}))});
+async function importBulkMatches() {
+  const toImport = bmParsed.filter(r => r.ok);
+  if (!toImport.length) { toast('No valid matches', 'err'); return; }
+  document.getElementById('bm-import-btn').disabled = true;
+  try {
+    const res = await api('/api/admin/matches/bulk', 'POST', { matches: toImport.map(r => ({ match_number: r.num, title: r.title, team_a: r.ta, team_b: r.tb, match_time: r.utc })) });
     toast(`✓ ${res.created} created, ${res.skipped} skipped`);
-    document.getElementById('bm-import-btn').textContent='Done';
+    document.getElementById('bm-import-btn').textContent = 'Done';
     await loadMatchesList();
-  }catch(e){toast(e.message,'err');document.getElementById('bm-import-btn').disabled=false;}
+  } catch (e) { toast(e.message, 'err'); document.getElementById('bm-import-btn').disabled = false; }
 }
 
 // ── RESULTS ───────────────────────────────────────────────────────────────────
-async function loadResults(){
-  try{
-    const ms=await api('/api/matches');
-    const pending=ms.filter(m=>m.status!=='resulted'&&m.status!=='upcoming');
-    const el=document.getElementById('results-list');
-    if(!pending.length){el.innerHTML='<p style="color:var(--text3)">No matches pending result.</p>';return;}
-    el.innerHTML=`<table class="tbl">
-      <thead><tr><th>#</th><th>Title</th><th>Time</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody>${pending.map(m=>`<tr>
+async function loadResults() {
+  try {
+    const ms = await api('/api/matches');
+    const pending = ms.filter(m => m.status !== 'resulted' && m.status !== 'upcoming');
+    const el = document.getElementById('results-list');
+    if (!pending.length) { el.innerHTML = '<p style="color:var(--text3)">No matches pending result.</p>'; return; }
+    el.innerHTML = `<table class="tbl">
+      <thead><tr><th>#</th><th>Title</th><th>Time (IST)</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>${pending.map(m => `<tr>
         <td class="mono">M${m.match_number}</td>
         <td style="font-weight:500">${esc(m.title)}</td>
-        <td class="mono" style="font-size:11px">${fmtT(m.match_time)}</td>
+        <td class="mono" style="font-size:11px">${fmtTShort(m.match_time)}</td>
         <td><span class="badge b-${m.status}">${m.status}</span></td>
         <td><div class="btn-row">
-          ${m.status==='closed'?`<button class="btn btn-accent btn-sm" onclick="openResultModal(${m.id},false)">Enter result</button>`:''}
+          ${m.status === 'closed' ? `<button class="btn btn-accent btn-sm" onclick="openResultModal(${m.id},false)">Enter result</button>` : ''}
           <button class="btn btn-outline btn-sm" onclick="openResultModal(${m.id},true)">⚡ Force result</button>
         </div></td>
       </tr>`).join('')}</tbody>
     </table>`;
-  }catch(e){toast(e.message,'err');}
+  } catch (e) { toast(e.message, 'err'); }
 }
 
-async function openResultModal(id,force){
-  const m=matches.find(x=>x.id===id)||(await api('/api/matches').then(ms=>ms.find(x=>x.id===id)));
-  resultTarget=m;resultForce=force;
-  document.getElementById('res-h').textContent=`Result — ${m.title}`;
-  document.getElementById('res-sub').textContent=force?'⚡ Force mode: closes and scores regardless of current status.':'';
-  document.getElementById('res-a').textContent=m.team_a;
-  document.getElementById('res-b').textContent=m.team_b;
-  try{
-    const o=await api(`/api/matches/${id}/odds`);
-    document.getElementById('res-odds').innerHTML=`<div class="odds-row">
-      <div class="odds-team"><div class="odds-name">${esc(m.team_a)}</div><div class="odds-votes">${o.team_a_votes??0} votes</div><div class="odds-val">${o.team_a_odds??'–'}x</div></div>
-      <div class="odds-team"><div class="odds-name">${esc(m.team_b)}</div><div class="odds-votes">${o.team_b_votes??0} votes</div><div class="odds-val">${o.team_b_odds??'–'}x</div></div>
+async function openResultModal(id, force) {
+  let m = matches.find(x => x.id === id);
+  if (!m) {
+    try { const ms = await api('/api/matches'); m = ms.find(x => x.id === id); } catch {}
+  }
+  if (!m) { toast('Match not found', 'err'); return; }
+  resultTarget = m; resultForce = force;
+  document.getElementById('res-h').textContent = `Result — ${m.title}`;
+  document.getElementById('res-sub').textContent = force ? '⚡ Force mode: closes and scores regardless of current status.' : '';
+  document.getElementById('res-a').textContent = m.team_a;
+  document.getElementById('res-b').textContent = m.team_b;
+  document.getElementById('res-odds').innerHTML = '';
+  try {
+    const o = await api(`/api/matches/${id}/odds`);
+    document.getElementById('res-odds').innerHTML = `<div class="odds-row">
+      <div class="odds-team"><div class="odds-name">${esc(m.team_a)}</div><div class="odds-votes">${o.team_a_votes ?? 0} votes</div><div class="odds-val">${o.team_a_odds ?? '–'}x</div></div>
+      <div class="odds-team"><div class="odds-name">${esc(m.team_b)}</div><div class="odds-votes">${o.team_b_votes ?? 0} votes</div><div class="odds-val">${o.team_b_odds ?? '–'}x</div></div>
     </div>`;
-  }catch{}
-  open('modal-result');
+  } catch {}
+  openModal('modal-result');
 }
 
-async function submitResult(side){
-  if(!resultTarget)return;
-  const winner=side==='a'?resultTarget.team_a:resultTarget.team_b;
-  const ep=resultForce?`/api/admin/matches/${resultTarget.id}/force-result`:`/api/admin/matches/${resultTarget.id}/result`;
-  try{
-    await api(ep,'POST',{winner});
-    close('modal-result');
+async function submitResult(side) {
+  if (!resultTarget) return;
+  const winner = side === 'a' ? resultTarget.team_a : resultTarget.team_b;
+  const ep = resultForce ? `/api/admin/matches/${resultTarget.id}/force-result` : `/api/admin/matches/${resultTarget.id}/result`;
+  try {
+    await api(ep, 'POST', { winner });
+    closeModal('modal-result');
     toast(`✓ ${winner} wins. Leaderboard updated.`);
-    await loadMatchesList();await loadDash();
-  }catch(e){toast(e.message,'err');}
+    await loadMatchesList(); await loadDash();
+  } catch (e) { toast(e.message, 'err'); }
 }
 
 // ── PLAYERS ───────────────────────────────────────────────────────────────────
-async function loadPlayers(){
-  const el=document.getElementById('players-list');
-  try{
-    const rows=await api('/api/admin/players');
-    el.innerHTML=rows.length?`<table class="tbl">
+async function loadPlayers() {
+  const el = document.getElementById('players-list');
+  try {
+    const rows = await api('/api/admin/players');
+    el.innerHTML = rows.length ? `<table class="tbl">
       <thead><tr><th>Name</th><th>Primary email</th><th>First match</th><th>Alias emails</th><th>Actions</th></tr></thead>
-      <tbody>${rows.map(p=>`<tr>
+      <tbody>${rows.map(p => `<tr>
         <td style="font-weight:500">${esc(p.display_name)}</td>
         <td class="mono">${esc(p.primary_email)}</td>
-        <td class="mono">${p.first_match_num??'—'}</td>
-        <td style="font-size:10px;color:var(--text3)">${esc(p.all_emails||p.primary_email)}</td>
+        <td class="mono">${p.first_match_num ?? '—'}</td>
+        <td style="font-size:10px;color:var(--text3)">${esc(p.all_emails || p.primary_email)}</td>
         <td><div class="btn-row">
-          <button class="btn btn-ghost btn-sm" onclick="editPlayer('${esc(p.primary_email)}','${esc(p.display_name)}',${p.first_match_num||''})">Edit</button>
+          <button class="btn btn-ghost btn-sm" onclick="editPlayer('${esc(p.primary_email)}','${esc(p.display_name)}',${p.first_match_num || ''})">Edit</button>
           <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delPlayer('${esc(p.primary_email)}')">Delete</button>
         </div></td>
       </tr>`).join('')}</tbody>
-    </table>`:'<p style="color:var(--text3)">No players yet.</p>';
-  }catch(e){toast(e.message,'err');}
+    </table>` : '<p style="color:var(--text3)">No players yet.</p>';
+  } catch (e) { toast(e.message, 'err'); }
 }
 
-function openPlayerModal(){
-  sv('mp-h','Add player');sv('mp-orig-email','');sv('mp-name','');sv('mp-email','');sv('mp-aliases','');sv('mp-first','');
-  document.getElementById('mp-email').disabled=false;
-  open('modal-player');
+function openPlayerModal() {
+  document.getElementById('mp-h').textContent = 'Add player';
+  sv('mp-orig-email', ''); sv('mp-name', ''); sv('mp-email', ''); sv('mp-aliases', ''); sv('mp-first', '');
+  document.getElementById('mp-email').disabled = false;
+  openModal('modal-player');
 }
 
-function editPlayer(email,name,first){
-  document.getElementById('mp-h').textContent='Edit player';
-  sv('mp-orig-email',email);sv('mp-name',name);sv('mp-email',email);sv('mp-aliases','');sv('mp-first',first||'');
-  document.getElementById('mp-email').disabled=true; // can't change primary email
-  open('modal-player');
+function editPlayer(email, name, first) {
+  document.getElementById('mp-h').textContent = 'Edit player';
+  sv('mp-orig-email', email); sv('mp-name', name); sv('mp-email', email); sv('mp-aliases', ''); sv('mp-first', first || '');
+  document.getElementById('mp-email').disabled = true;
+  openModal('modal-player');
 }
 
-async function savePlayer(){
-  const orig=gv('mp-orig-email'),name=gv('mp-name'),email=gv('mp-email').toLowerCase();
-  const aliases=gv('mp-aliases').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
-  const first=gv('mp-first');
-  if(!name||!email){toast('Name and email required','err');return;}
-  try{
-    if(orig){
-      await api(`/api/admin/players/${encodeURIComponent(orig)}`,'PATCH',{
-        display_name:name,
-        ...(first?{first_match_num:+first}:{})
+async function savePlayer() {
+  const orig = gv('mp-orig-email'), name = gv('mp-name'), email = gv('mp-email').toLowerCase();
+  const aliases = gv('mp-aliases').split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+  const first = gv('mp-first');
+  if (!name || !email) { toast('Name and email required', 'err'); return; }
+  try {
+    if (orig) {
+      await api(`/api/admin/players/${encodeURIComponent(orig)}`, 'PATCH', {
+        display_name: name,
+        ...(first ? { first_match_num: +first } : {})
       });
-      if(aliases.length)
-        for(const a of aliases)
-          await api('/api/admin/email-map','POST',{alias_email:a,primary_email:orig});
+      for (const a of aliases)
+        await api('/api/admin/email-map', 'POST', { alias_email: a, primary_email: orig });
     } else {
-      await api('/api/admin/players','POST',{display_name:name,primary_email:email,alias_emails:aliases,first_match_num:first?+first:null});
+      await api('/api/admin/players', 'POST', { display_name: name, primary_email: email, alias_emails: aliases, first_match_num: first ? +first : null });
     }
-    close('modal-player');toast('Player saved');loadPlayers();
-  }catch(e){toast(e.message,'err');}
+    closeModal('modal-player'); toast('Player saved'); loadPlayers();
+  } catch (e) { toast(e.message, 'err'); }
 }
 
-async function delPlayer(email){
-  if(!confirm(`Delete player ${email}? This removes their account but NOT their votes/scores.`))return;
-  try{await api(`/api/admin/players/${encodeURIComponent(email)}`,'DELETE');toast('Player deleted');loadPlayers();}
-  catch(e){toast(e.message,'err');}
+async function delPlayer(email) {
+  if (!confirm(`Delete player ${email}? This removes their account but NOT their votes/scores.`)) return;
+  try { await api(`/api/admin/players/${encodeURIComponent(email)}`, 'DELETE'); toast('Player deleted'); loadPlayers(); }
+  catch (e) { toast(e.message, 'err'); }
 }
 
-// ── BULK RESPONSES ────────────────────────────────────────────────────────────
-async function loadBRRef(){
-  try{
-    const ms=await api('/api/matches');
-    document.getElementById('br-match-ref').innerHTML=`<table class="tbl">
-      <thead><tr><th>DB ID</th><th>M#</th><th>Title</th><th>Teams</th><th>Status</th></tr></thead>
-      <tbody>${ms.map(m=>`<tr>
+// ── BULK RESPONSES — Google Sheets format: Timestamp, Email, Name, Team ───────
+async function loadBRRef() {
+  try {
+    const ms = await api('/api/matches');
+    document.getElementById('br-match-ref').innerHTML = `<table class="tbl">
+      <thead><tr><th>DB ID</th><th>M#</th><th>Title</th><th>Teams</th><th>Time (IST)</th><th>Status</th></tr></thead>
+      <tbody>${ms.map(m => `<tr>
         <td class="mono" style="color:var(--blue);font-weight:600">${m.id}</td>
         <td class="mono">M${m.match_number}</td>
         <td>${esc(m.title)}</td>
         <td style="font-size:11px;color:var(--text3)">${esc(m.team_a)} vs ${esc(m.team_b)}</td>
+        <td class="mono" style="font-size:10px">${fmtTShort(m.match_time)}</td>
         <td><span class="badge b-${m.status}">${m.status}</span></td>
       </tr>`).join('')}</tbody>
     </table>`;
-  }catch{}
+  } catch (e) { document.getElementById('br-match-ref').innerHTML = `<p style="color:var(--red)">Failed to load matches: ${esc(e.message)}</p>`; }
 }
 
-function previewBulkResponses(){
-  const raw=document.getElementById('br-input').value.trim();
-  if(!raw){toast('Paste responses first','err');return;}
-  const lines=raw.split('\n').map(l=>l.trim()).filter(l=>!l.toLowerCase().startsWith('email'));
-  brParsed=[];
-  lines.forEach((line,i)=>{
-    const parts=line.includes('\t')?line.split('\t').map(s=>s.trim()):line.split(',').map(s=>s.trim());
-    if(parts.length<3){brParsed.push({ok:false,reason:'Need Email, Match ID, Team',email:'',matchId:'',team:'',ts:''});return;}
-    const[email,matchIdS,team,...tp]=parts;
-    const ts=tp.join(',').trim();
-    const matchId=parseInt(matchIdS);
-    if(!email||!email.includes('@')){brParsed.push({ok:false,reason:'Invalid email',email,matchId:matchIdS,team,ts});return;}
-    if(isNaN(matchId)){brParsed.push({ok:false,reason:'Match ID must be number',email,matchId:matchIdS,team,ts});return;}
-    if(!team){brParsed.push({ok:false,reason:'Missing team',email,matchId,team,ts});return;}
-    brParsed.push({ok:true,email:email.toLowerCase(),matchId,team,ts});
+function previewBulkResponses() {
+  const raw = document.getElementById('br-input').value.trim();
+  const matchId = parseInt(gv('br-match-id'));
+  if (!raw) { toast('Paste responses first', 'err'); return; }
+  if (isNaN(matchId)) { toast('Enter a Match DB ID first', 'err'); return; }
+
+  // Split lines, skip header row if it contains non-email in col 2
+  const allLines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+  const lines = allLines.filter(l => {
+    const parts = l.includes('\t') ? l.split('\t') : l.split(',');
+    const col2 = (parts[1] || '').trim().toLowerCase();
+    return col2.includes('@'); // keep only lines where col2 looks like email
   });
-  const ok=brParsed.filter(r=>r.ok).length;
-  document.getElementById('br-title').textContent=`Preview — ${ok} ready`;
-  document.getElementById('br-import-btn').textContent=`Import ${ok}`;
-  document.getElementById('br-tbody').innerHTML=brParsed.map(r=>`<tr style="${!r.ok?'background:var(--red-s)':''}">
-    <td class="mono">${esc(r.email)}</td><td class="mono">${r.matchId}</td><td>${esc(r.team)}</td>
-    <td class="mono" style="font-size:10px">${esc(r.ts)||'—'}</td>
-    <td>${r.ok?'<span style="color:var(--green)">✓</span>':'<span style="color:var(--red)">✗ '+esc(r.reason)+'</span>'}</td>
+
+  brParsed = [];
+  lines.forEach((line) => {
+    // Support both tab (Google Sheets paste) and comma
+    const parts = line.includes('\t') ? line.split('\t').map(s => s.trim()) : line.split(',').map(s => s.trim());
+    // Format: Timestamp, Email, Name, Team
+    if (parts.length < 4) {
+      brParsed.push({ ok: false, reason: 'Need 4 columns: Timestamp, Email, Name, Team', ts: parts[0] || '', email: parts[1] || '', name: parts[2] || '', team: parts[3] || '' }); return;
+    }
+    const [tsRaw, email, name, team] = parts;
+    if (!email || !email.includes('@')) { brParsed.push({ ok: false, reason: 'Invalid email', ts: tsRaw, email, name, team }); return; }
+    if (!team) { brParsed.push({ ok: false, reason: 'Missing team', ts: tsRaw, email, name, team }); return; }
+
+    // Parse timestamp — handle M/D/YYYY H:MM:SS format from Google Forms
+    let tsISO = null;
+    if (tsRaw) {
+      try {
+        // Try direct
+        let d = new Date(tsRaw);
+        // Google Sheets often outputs "4/20/2026 19:30:00" — try adding IST
+        if (isNaN(d.getTime())) d = new Date(tsRaw + ' +05:30');
+        if (!isNaN(d.getTime())) tsISO = d.toISOString();
+      } catch {}
+    }
+
+    brParsed.push({ ok: true, ts: tsRaw, tsISO, email: email.toLowerCase(), name, team, matchId });
+  });
+
+  const ok = brParsed.filter(r => r.ok).length;
+  document.getElementById('br-title').textContent = `Preview — ${ok} ready, ${brParsed.length - ok} errors — Match DB ID: ${matchId}`;
+  document.getElementById('br-import-btn').textContent = `Import ${ok}`;
+  document.getElementById('br-import-btn').disabled = false;
+  document.getElementById('br-tbody').innerHTML = brParsed.map(r => `<tr style="${!r.ok ? 'background:var(--red-s)' : ''}">
+    <td class="mono" style="font-size:10px">${esc(r.ts) || '—'}</td>
+    <td class="mono">${esc(r.email)}</td>
+    <td>${esc(r.name)}</td>
+    <td>${esc(r.team)}</td>
+    <td>${r.ok ? '<span style="color:var(--green)">✓</span>' : '<span style="color:var(--red)">✗ ' + esc(r.reason) + '</span>'}</td>
   </tr>`).join('');
-  document.getElementById('br-preview').style.display='block';
+  document.getElementById('br-preview').style.display = 'block';
 }
 
-async function importBulkResponses(){
-  const toImport=brParsed.filter(r=>r.ok);
-  if(!toImport.length){toast('No valid responses','err');return;}
-  document.getElementById('br-import-btn').disabled=true;
-  const log=document.getElementById('br-log');
-  log.style.display='block';log.innerHTML='';
-  try{
-    const res=await api('/api/admin/predictions/bulk','POST',{predictions:toImport.map(r=>({email:r.email,match_id:r.matchId,predicted_team:r.team,submitted_at:r.ts?new Date(r.ts).toISOString():undefined}))});
-    log.innerHTML=`<div class="log-ok">✓ ${res.imported} imported</div>`
-      +(res.skipped?`<div class="log-skip">⚠ ${res.skipped} skipped (duplicates)</div>`:'')
-      +(res.errors||[]).map(e=>`<div class="log-err">✗ ${esc(e)}</div>`).join('');
+async function importBulkResponses() {
+  const toImport = brParsed.filter(r => r.ok);
+  if (!toImport.length) { toast('No valid responses', 'err'); return; }
+  document.getElementById('br-import-btn').disabled = true;
+  const log = document.getElementById('br-log');
+  log.style.display = 'block'; log.innerHTML = 'Importing…';
+  try {
+    const res = await api('/api/admin/predictions/bulk', 'POST', {
+      predictions: toImport.map(r => ({
+        email: r.email,
+        match_id: r.matchId,
+        name: r.name || undefined,
+        predicted_team: r.team,
+        submitted_at: r.tsISO || undefined
+      }))
+    });
+    log.innerHTML = `<div class="log-ok">✓ ${res.imported} imported</div>`
+      + (res.skipped ? `<div class="log-skip">⚠ ${res.skipped} skipped (duplicates or errors)</div>` : '')
+      + (res.errors || []).map(e => `<div class="log-err">✗ ${esc(e)}</div>`).join('');
     toast(`${res.imported} imported, ${res.skipped} skipped`);
-    document.getElementById('br-import-btn').textContent='Done';
-  }catch(e){toast(e.message,'err');document.getElementById('br-import-btn').disabled=false;}
+    document.getElementById('br-import-btn').textContent = 'Done';
+  } catch (e) {
+    log.innerHTML = `<div class="log-err">✗ Import failed: ${esc(e.message)}</div>`;
+    toast(e.message, 'err');
+    document.getElementById('br-import-btn').disabled = false;
+  }
 }
 
 // ── EMAIL MAP ─────────────────────────────────────────────────────────────────
-async function loadEmailMap(){
-  const el=document.getElementById('emailmap-list');
-  try{
-    const rows=await api('/api/admin/email-map');
-    el.innerHTML=rows.length?`<table class="tbl">
+async function loadEmailMap() {
+  const el = document.getElementById('emailmap-list');
+  try {
+    const rows = await api('/api/admin/email-map');
+    el.innerHTML = rows.length ? `<table class="tbl">
       <thead><tr><th>Alias email</th><th>→ Primary email</th><th></th></tr></thead>
-      <tbody>${rows.map(r=>`<tr>
+      <tbody>${rows.map(r => `<tr>
         <td class="mono">${esc(r.alias_email)}</td>
         <td class="mono">${esc(r.primary_email)}</td>
         <td><button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delAlias('${esc(r.alias_email)}')">Delete</button></td>
       </tr>`).join('')}</tbody>
-    </table>`:'<p style="color:var(--text3)">No mappings.</p>';
-  }catch(e){toast(e.message,'err');}
+    </table>` : '<p style="color:var(--text3)">No mappings.</p>';
+  } catch (e) { toast(e.message, 'err'); }
 }
-function openAliasModal(){sv('al-alias','');sv('al-primary','');open('modal-alias');}
-async function saveAlias(){
-  const alias=gv('al-alias').toLowerCase(),primary=gv('al-primary').toLowerCase();
-  if(!alias||!primary){toast('Fill both','err');return;}
-  try{await api('/api/admin/email-map','POST',{alias_email:alias,primary_email:primary});close('modal-alias');toast('Mapped');loadEmailMap();}
-  catch(e){toast(e.message,'err');}
+function openAliasModal() { sv('al-alias', ''); sv('al-primary', ''); openModal('modal-alias'); }
+async function saveAlias() {
+  const alias = gv('al-alias').toLowerCase(), primary = gv('al-primary').toLowerCase();
+  if (!alias || !primary) { toast('Fill both', 'err'); return; }
+  try { await api('/api/admin/email-map', 'POST', { alias_email: alias, primary_email: primary }); closeModal('modal-alias'); toast('Mapped'); loadEmailMap(); }
+  catch (e) { toast(e.message, 'err'); }
 }
-async function delAlias(alias){
-  if(!confirm('Remove this alias mapping?'))return;
-  try{await api(`/api/admin/email-map/${encodeURIComponent(alias)}`,'DELETE');toast('Removed');loadEmailMap();}
-  catch(e){toast(e.message,'err');}
+async function delAlias(alias) {
+  if (!confirm('Remove this alias mapping?')) return;
+  try { await api(`/api/admin/email-map/${encodeURIComponent(alias)}`, 'DELETE'); toast('Removed'); loadEmailMap(); }
+  catch (e) { toast(e.message, 'err'); }
+}
+
+// ── TEAM ALIASES ──────────────────────────────────────────────────────────────
+async function loadTeamAliases() {
+  const el = document.getElementById('team-aliases-list');
+  el.innerHTML = 'Loading…';
+  try {
+    const rows = await api('/api/admin/team-aliases');
+    if (!rows.length) {
+      el.innerHTML = '<p style="color:var(--text3)">No team aliases yet. Add some to handle alternate team name spellings.</p>';
+      return;
+    }
+    // Group by primary_name
+    const grouped = {};
+    rows.forEach(r => {
+      if (!grouped[r.primary_name]) grouped[r.primary_name] = [];
+      grouped[r.primary_name].push(r);
+    });
+    el.innerHTML = Object.entries(grouped).map(([primary, aliases]) => `
+      <div class="alias-group">
+        <div class="alias-primary">🏏 ${esc(primary)}</div>
+        <div class="alias-tags">
+          ${aliases.map(a => `
+            <span class="alias-tag">
+              ${esc(a.alias_name)}
+              <button class="alias-tag-del" onclick="delTeamAlias(${a.id})" title="Remove alias">✕</button>
+            </span>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  } catch (e) { el.innerHTML = `<p style="color:var(--red)">Failed: ${esc(e.message)}</p>`; }
+}
+
+function openTeamAliasModal() {
+  sv('ta-alias', ''); sv('ta-primary', '');
+  openModal('modal-team-alias');
+}
+
+async function saveTeamAlias() {
+  const alias = gv('ta-alias'), primary = gv('ta-primary');
+  if (!alias || !primary) { toast('Both fields required', 'err'); return; }
+  try {
+    await api('/api/admin/team-aliases', 'POST', { alias_name: alias, primary_name: primary });
+    closeModal('modal-team-alias'); toast('Alias saved'); loadTeamAliases();
+  } catch (e) { toast(e.message, 'err'); }
+}
+
+async function delTeamAlias(id) {
+  if (!confirm('Remove this team alias?')) return;
+  try { await api(`/api/admin/team-aliases/${id}`, 'DELETE'); toast('Removed'); loadTeamAliases(); }
+  catch (e) { toast(e.message, 'err'); }
 }
 
 // ── PREDICTIONS ───────────────────────────────────────────────────────────────
-function loadPredSel(){
-  const sel=document.getElementById('pred-sel');
-  sel.innerHTML=matches.map(m=>`<option value="${m.id}">M${m.match_number} — ${esc(m.title)} (${m.status})</option>`).join('');
+async function loadPredSel() {
+  try {
+    const ms = matches.length ? matches : await api('/api/matches');
+    const sel = document.getElementById('pred-sel');
+    sel.innerHTML = ms.map(m => `<option value="${m.id}">M${m.match_number} — ${esc(m.title)} (${m.status})</option>`).join('');
+    if (!ms.length) {
+      document.getElementById('pred-list').innerHTML = '<p style="color:var(--text3)">No matches found.</p>';
+    }
+  } catch (e) { toast('Failed to load matches: ' + e.message, 'err'); }
 }
-async function loadPreds(){
-  const id=document.getElementById('pred-sel').value;
-  const el=document.getElementById('pred-list');
-  el.innerHTML='<p style="color:var(--text3)">Loading…</p>';
-  try{
-    const[preds,odds]=await Promise.all([api(`/api/admin/matches/${id}/predictions`),api(`/api/matches/${id}/odds`)]);
-    const m=matches.find(x=>x.id==id);
-    document.getElementById('pred-odds').innerHTML=m?`<div class="odds-row" style="margin-bottom:14px">
-      <div class="odds-team"><div class="odds-name">${esc(m.team_a)}</div><div class="odds-votes">${odds.team_a_votes??0} votes</div><div class="odds-val">${odds.team_a_odds??'–'}x</div></div>
-      <div class="odds-team"><div class="odds-name">${esc(m.team_b)}</div><div class="odds-votes">${odds.team_b_votes??0} votes</div><div class="odds-val">${odds.team_b_odds??'–'}x</div></div>
-    </div>`:'';
-    const valid=preds.filter(p=>p.is_valid==1).length,dupes=preds.filter(p=>p.is_valid==0).length;
-    el.innerHTML=`<p style="font-size:11px;color:var(--text3);margin-bottom:10px">${valid} valid · ${dupes} blocked</p>
+
+async function loadPreds() {
+  const id = document.getElementById('pred-sel').value;
+  if (!id) { toast('Select a match first', 'err'); return; }
+  const el = document.getElementById('pred-list');
+  el.innerHTML = '<p style="color:var(--text3)">Loading…</p>';
+  document.getElementById('pred-odds').innerHTML = '';
+  try {
+    const [preds, odds] = await Promise.all([
+      api(`/api/admin/matches/${id}/predictions`),
+      api(`/api/matches/${id}/odds`).catch(() => null)
+    ]);
+    const m = matches.find(x => x.id == id);
+    if (m && odds) {
+      document.getElementById('pred-odds').innerHTML = `<div class="odds-row" style="margin-bottom:14px">
+        <div class="odds-team"><div class="odds-name">${esc(m.team_a)}</div><div class="odds-votes">${odds.team_a_votes ?? 0} votes</div><div class="odds-val">${odds.team_a_odds ?? '–'}x</div></div>
+        <div class="odds-team"><div class="odds-name">${esc(m.team_b)}</div><div class="odds-votes">${odds.team_b_votes ?? 0} votes</div><div class="odds-val">${odds.team_b_odds ?? '–'}x</div></div>
+      </div>`;
+    }
+    if (!preds || !preds.length) {
+      el.innerHTML = '<p style="color:var(--text3)">No predictions for this match yet.</p>'; return;
+    }
+    const valid = preds.filter(p => p.is_valid == 1).length, dupes = preds.filter(p => p.is_valid == 0).length;
+    el.innerHTML = `<p style="font-size:11px;color:var(--text3);margin-bottom:10px">${valid} valid · ${dupes} blocked</p>
     <table class="tbl">
       <thead><tr><th>Player</th><th>Email</th><th>Prediction</th><th>Submitted (IST)</th><th>Valid</th></tr></thead>
-      <tbody>${preds.map(p=>`<tr>
-        <td>${esc(p.display_name||'—')}</td>
+      <tbody>${preds.map(p => `<tr>
+        <td>${esc(p.display_name || '—')}</td>
         <td class="mono">${esc(p.raw_email)}</td>
-        <td style="font-weight:${p.is_valid?600:400}">${esc(p.predicted_team)}</td>
-        <td class="mono" style="font-size:10px">${new Date(p.submitted_at).toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})}</td>
-        <td style="color:${p.is_valid?'var(--green)':'var(--red)'}">${p.is_valid?'✓':'✗ '+(p.invalid_reason||'')}</td>
+        <td style="font-weight:${p.is_valid ? 600 : 400}">${esc(p.predicted_team)}</td>
+        <td class="mono" style="font-size:10px">${fmtT(p.submitted_at)}</td>
+        <td style="color:${p.is_valid ? 'var(--green)' : 'var(--red)'}">${p.is_valid ? '✓' : '✗ ' + esc(p.invalid_reason || '')}</td>
       </tr>`).join('')}</tbody>
     </table>`;
-  }catch(e){toast(e.message,'err');}
+  } catch (e) {
+    el.innerHTML = `<p style="color:var(--red)">Failed to load predictions: ${esc(e.message)}</p>`;
+    toast(e.message, 'err');
+  }
 }
 
 // ── PENALTIES ─────────────────────────────────────────────────────────────────
-async function loadPenalties(){
-  const el=document.getElementById('penalties-list');
-  try{
-    const rows=await api('/api/admin/bonus-points').then(()=>null).catch(()=>null); // placeholder
-    // Fetch from penalties directly via export
-    const data=await api('/api/admin/export');
-    const pens=data.penalties||[];
-    const ps=data.players||[];
-    const ms=data.matches||[];
-    const nameMap=Object.fromEntries(ps.map(p=>[p.primary_email,p.display_name]));
-    const matchMap=Object.fromEntries(ms.map(m=>[m.id,'M'+m.match_number+' '+m.title]));
-    el.innerHTML=pens.length?`<table class="tbl">
+async function loadPenalties() {
+  const el = document.getElementById('penalties-list');
+  try {
+    const data = await api('/api/admin/export');
+    const pens = data.penalties || [];
+    const ps = data.players || [];
+    const ms = data.matches || [];
+    const nameMap = Object.fromEntries(ps.map(p => [p.primary_email, p.display_name]));
+    const matchMap = Object.fromEntries(ms.map(m => [m.id, 'M' + m.match_number + ' ' + m.title]));
+    el.innerHTML = pens.length ? `<table class="tbl">
       <thead><tr><th>Player</th><th>Match</th><th class="num">Penalty</th><th>Reason</th><th></th></tr></thead>
-      <tbody>${pens.map(p=>`<tr>
-        <td>${esc(nameMap[p.primary_email]||p.primary_email)}</td>
-        <td class="mono" style="font-size:11px">${esc(matchMap[p.match_id]||p.match_id)}</td>
+      <tbody>${pens.map(p => `<tr>
+        <td>${esc(nameMap[p.primary_email] || p.primary_email)}</td>
+        <td class="mono" style="font-size:11px">${esc(matchMap[p.match_id] || p.match_id)}</td>
         <td class="num mono" style="color:var(--red)">${p.penalty_pts}</td>
         <td class="mono" style="font-size:11px">${esc(p.reason)}</td>
         <td><button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delPenalty(${p.id})">Delete</button></td>
       </tr>`).join('')}</tbody>
-    </table>`:'<p style="color:var(--text3)">No penalties.</p>';
-  }catch(e){toast(e.message,'err');}
+    </table>` : '<p style="color:var(--text3)">No penalties.</p>';
+  } catch (e) { toast(e.message, 'err'); }
 }
-async function delPenalty(id){
-  if(!confirm('Remove this penalty?'))return;
-  try{await api(`/api/admin/penalties/${id}`,'DELETE');toast('Penalty removed');loadPenalties();}
-  catch(e){toast(e.message,'err');}
+async function delPenalty(id) {
+  if (!confirm('Remove this penalty?')) return;
+  try { await api(`/api/admin/penalties/${id}`, 'DELETE'); toast('Penalty removed'); loadPenalties(); }
+  catch (e) { toast(e.message, 'err'); }
 }
 
 // ── LEADERBOARD ───────────────────────────────────────────────────────────────
-async function loadAdminLB(){
-  const asOf=gv('lb-asof');
-  const el=document.getElementById('admin-lb');
-  try{
-    const lb=await api(`/api/admin/leaderboard${asOf?'?asOf='+asOf:''}`);
-    el.innerHTML=lb.length?`<table class="tbl">
+async function loadAdminLB() {
+  const asOf = gv('lb-asof');
+  const el = document.getElementById('admin-lb');
+  el.innerHTML = 'Loading…';
+  try {
+    const lb = await api(`/api/admin/leaderboard${asOf ? '?asOf=' + asOf : ''}`);
+    el.innerHTML = lb.length ? `<table class="tbl">
       <thead><tr><th>#</th><th>Player</th><th class="num">Gross</th><th class="num">Penalties</th><th class="num">Bonuses</th><th class="num">Net</th><th class="num">Played</th><th class="num">Correct</th></tr></thead>
-      <tbody>${lb.map(p=>`<tr>
+      <tbody>${lb.map(p => `<tr>
         <td class="mono">${p.rank}</td>
         <td>${esc(p.display_name)}<br><span style="font-size:10px;color:var(--text3)">${esc(p.primary_email)}</span></td>
         <td class="num mono">${p.gross_points}</td>
-        <td class="num mono" style="color:${p.penalties<0?'var(--red)':'var(--text3)'}">${p.penalties}</td>
-        <td class="num mono" style="color:var(--purple)">${p.bonuses>0?'+':''}${p.bonuses}</td>
-        <td class="num mono" style="font-weight:600;color:${p.net_points>=0?'var(--green)':'var(--red)'}">${p.net_points>=0?'+':''}${p.net_points}</td>
+        <td class="num mono" style="color:${p.penalties < 0 ? 'var(--red)' : 'var(--text3)'}">${p.penalties}</td>
+        <td class="num mono" style="color:var(--purple)">${p.bonuses > 0 ? '+' : ''}${p.bonuses}</td>
+        <td class="num mono" style="font-weight:600;color:${p.net_points >= 0 ? 'var(--green)' : 'var(--red)'}">${p.net_points >= 0 ? '+' : ''}${p.net_points}</td>
         <td class="num" style="color:var(--text3)">${p.matches_played}</td>
         <td class="num" style="color:var(--text3)">${p.correct_predictions}</td>
       </tr>`).join('')}</tbody>
-    </table>`:'<p style="color:var(--text3)">No data yet.</p>';
-  }catch(e){toast(e.message,'err');}
+    </table>` : '<p style="color:var(--text3)">No data yet.</p>';
+  } catch (e) { toast(e.message, 'err'); }
 }
 
 // ── INSIGHTS ──────────────────────────────────────────────────────────────────
-async function loadInsights(){
-  const el=document.getElementById('insights-container');
-  el.innerHTML='<div style="color:var(--text3);padding:40px;text-align:center">Loading insights…</div>';
-  try{
-    const d=await api('/api/insights');
+async function loadInsights() {
+  const el = document.getElementById('insights-container');
+  el.innerHTML = '<div style="color:var(--text3);padding:40px;text-align:center">Loading insights…</div>';
+  try {
+    const d = await api('/api/insights');
+    const streakHTML = d.streaks.length ? d.streaks.map(s => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);">
+        <div style="font-size:12px;font-weight:500">${esc(s.name)}</div>
+        <div style="font-family:var(--mono);font-size:14px;color:var(--amber);font-weight:500">${s.streak} 🔥</div>
+      </div>`).join('') : '<p style="color:var(--text3);font-size:12px">No active streaks</p>';
 
-    // Streaks
-    const streakHTML=d.streaks.length?d.streaks.map(s=>`
-      <div class="streak-row">
-        <div class="streak-name">${esc(s.name)}</div>
-        <div class="streak-val">${s.streak} 🔥</div>
-      </div>`).join(''):'<p style="color:var(--text3);font-size:12px">No active streaks</p>';
-
-    // Hardest matches
-    const hardHTML=d.hardest.map(m=>`
-      <div class="upset-row">
-        <div class="upset-match">M${m.match_number} · ${esc(m.winner)} won</div>
-        <div class="upset-pct">Only ${m.correct_pct}% got it right (${m.correct_count}/${m.total_count})</div>
+    const hardHTML = d.hardest.map(m => `
+      <div style="padding:6px 0;border-bottom:1px solid var(--border);">
+        <div style="font-size:12px;font-weight:500">M${m.match_number} · ${esc(m.winner)} won</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--red)">Only ${m.correct_pct}% got it right (${m.correct_count}/${m.total_count})</div>
       </div>`).join('');
 
-    // Top vs Bottom
-    const compareHTML=d.matchComparison.slice(0,8).map(m=>{
-      const topA=(m.top5_picks.find(p=>p.predicted_team===m.team_a)||{}).c||0;
-      const topB=(m.top5_picks.find(p=>p.predicted_team===m.team_b)||{}).c||0;
-      const botA=(m.bot5_picks.find(p=>p.predicted_team===m.team_a)||{}).c||0;
-      const botB=(m.bot5_picks.find(p=>p.predicted_team===m.team_b)||{}).c||0;
-      const topTot=topA+topB||1,botTot=botA+botB||1;
-      const topAp=Math.round(topA/topTot*100),botAp=Math.round(botA/botTot*100);
-      return `<div class="compare-row">
-        <div class="compare-match">M${m.match_number}</div>
-        <div style="flex:1">
-          <div style="font-size:10px;color:var(--text3);margin-bottom:3px">Top 5: ${m.team_a} ${topAp}% · ${m.team_b} ${100-topAp}%</div>
-          <div style="font-size:10px;color:var(--text3)">Bot 5: ${m.team_a} ${botAp}% · ${m.team_b} ${100-botAp}%</div>
-        </div>
-        <div class="compare-winner">${m.winner||'—'} won</div>
+    el.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
+        <div class="card"><div class="card-hdr"><div class="card-title">Hot streaks</div></div><div class="card-body">${streakHTML}</div></div>
+        <div class="card"><div class="card-hdr"><div class="card-title">Biggest upsets</div></div><div class="card-body">${hardHTML || '<p style="color:var(--text3);font-size:12px">No data yet</p>'}</div></div>
       </div>`;
-    }).join('');
-
-    el.innerHTML=`
-      <div class="insight-grid">
-        <div class="insight-card">
-          <div class="insight-title">Current hot streaks</div>
-          ${streakHTML}
-        </div>
-        <div class="insight-card">
-          <div class="insight-title">Biggest upsets (hardest to predict)</div>
-          ${hardHTML||'<p style="color:var(--text3);font-size:12px">No data yet</p>'}
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-hdr"><div class="card-title">Top 5 vs Bottom 5 — who picked what</div></div>
-        <div class="card-body">${compareHTML||'<p style="color:var(--text3)">No data yet</p>'}</div>
-      </div>`;
-  }catch(e){el.innerHTML=`<div style="color:var(--red);padding:20px">${esc(e.message)}</div>`;}
+  } catch (e) { el.innerHTML = `<div style="color:var(--red);padding:20px">${esc(e.message)}</div>`; }
 }
 
 // ── VARIATIONS ────────────────────────────────────────────────────────────────
-async function loadVariations(){
-  const el=document.getElementById('variations-list');
-  try{
-    const rows=await api('/api/admin/variations');
-    const builtIn=`<div class="var-card">
+async function loadVariations() {
+  const el = document.getElementById('variations-list');
+  try {
+    const rows = await api('/api/admin/variations');
+    const builtIn = `<div class="var-card">
       <div class="var-dot on"></div>
       <div class="var-info">
         <div class="var-name">Double Header Bonus <span class="var-type-pill">built-in</span></div>
-        <div class="var-desc">+50 pts when a player correctly predicts BOTH matches on a 2-match day. Auto-calculated every time a result is entered.</div>
+        <div class="var-desc">+50 pts when a player correctly predicts BOTH matches on a 2-match day.</div>
       </div>
       <div style="font-size:11px;color:var(--green);font-weight:500">Always ON</div>
     </div>`;
-    const custom=rows.map(v=>`<div class="var-card">
-      <div class="var-dot ${v.is_active?'on':'off'}"></div>
+    const custom = rows.map(v => `<div class="var-card">
+      <div class="var-dot ${v.is_active ? 'on' : 'off'}"></div>
       <div class="var-info">
         <div class="var-name">${esc(v.name)} <span class="var-type-pill">${esc(v.type)}</span></div>
-        <div class="var-desc">${esc(v.description||'')}${v.details?` · <code style="font-size:10px">${esc(v.details)}</code>`:''}</div>
-        ${v.applies_to_match_id?`<div style="font-size:10px;color:var(--text3);margin-top:3px">Match ID: ${v.applies_to_match_id}</div>`:''}
+        <div class="var-desc">${esc(v.description || '')}${v.details ? ` · <code style="font-size:10px">${esc(v.details)}</code>` : ''}</div>
+        ${v.applies_to_match_id ? `<div style="font-size:10px;color:var(--text3);margin-top:3px">Match ID: ${v.applies_to_match_id}</div>` : ''}
       </div>
       <div class="btn-row">
-        <button class="btn btn-outline btn-sm" onclick="toggleVar(${v.id},${v.is_active})">${v.is_active?'Disable':'Enable'}</button>
+        <button class="btn btn-outline btn-sm" onclick="toggleVar(${v.id},${v.is_active})">${v.is_active ? 'Disable' : 'Enable'}</button>
         <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delVar(${v.id})">✕</button>
       </div>
     </div>`).join('');
-    el.innerHTML=builtIn+custom+(rows.length?'':'<p style="color:var(--text3);font-size:12px;padding:6px 0">No custom variations yet.</p>');
-  }catch(e){toast(e.message,'err');}
+    el.innerHTML = builtIn + custom + (rows.length ? '' : '<p style="color:var(--text3);font-size:12px;padding:6px 0">No custom variations yet.</p>');
+  } catch (e) { toast(e.message, 'err'); }
 }
-function openVarModal(){['vr-name','vr-desc','vr-match','vr-details'].forEach(id=>sv(id,''));sv('vr-type','manual_bonus');open('modal-variation');}
-async function saveVariation(){
-  const name=gv('vr-name'),type=gv('vr-type'),desc=gv('vr-desc'),matchId=gv('vr-match'),detRaw=gv('vr-details');
-  if(!name){toast('Name required','err');return;}
-  let details=null;
-  if(detRaw){try{details=JSON.parse(detRaw);}catch{toast('Details must be valid JSON','err');return;}}
-  try{
-    await api('/api/admin/variations','POST',{name,type,description:desc,applies_to_match_id:matchId?+matchId:null,details});
-    close('modal-variation');toast('Variation saved');loadVariations();
-  }catch(e){toast(e.message,'err');}
+function openVarModal() { ['vr-name', 'vr-desc', 'vr-match', 'vr-details'].forEach(id => sv(id, '')); sv('vr-type', 'manual_bonus'); openModal('modal-variation'); }
+async function saveVariation() {
+  const name = gv('vr-name'), type = gv('vr-type'), desc = gv('vr-desc'), matchId = gv('vr-match'), detRaw = gv('vr-details');
+  if (!name) { toast('Name required', 'err'); return; }
+  let details = null;
+  if (detRaw) { try { details = JSON.parse(detRaw); } catch { toast('Details must be valid JSON', 'err'); return; } }
+  try {
+    await api('/api/admin/variations', 'POST', { name, type, description: desc, applies_to_match_id: matchId ? +matchId : null, details });
+    closeModal('modal-variation'); toast('Variation saved'); loadVariations();
+  } catch (e) { toast(e.message, 'err'); }
 }
-async function toggleVar(id,active){
-  try{await api(`/api/admin/variations/${id}`,'PATCH',{is_active:active?0:1});loadVariations();}
-  catch(e){toast(e.message,'err');}
+async function toggleVar(id, active) {
+  try { await api(`/api/admin/variations/${id}`, 'PATCH', { is_active: active ? 0 : 1 }); loadVariations(); }
+  catch (e) { toast(e.message, 'err'); }
 }
-async function delVar(id){
-  if(!confirm('Delete this variation?'))return;
-  try{await api(`/api/admin/variations/${id}`,'DELETE');toast('Deleted');loadVariations();}
-  catch(e){toast(e.message,'err');}
+async function delVar(id) {
+  if (!confirm('Delete this variation?')) return;
+  try { await api(`/api/admin/variations/${id}`, 'DELETE'); toast('Deleted'); loadVariations(); }
+  catch (e) { toast(e.message, 'err'); }
 }
 
 // ── BONUS POINTS ──────────────────────────────────────────────────────────────
-async function loadBonus(){
-  const el=document.getElementById('bonus-list');
-  try{
-    const rows=await api('/api/admin/bonus-points');
-    el.innerHTML=rows.length?`<table class="tbl">
+async function loadBonus() {
+  const el = document.getElementById('bonus-list');
+  try {
+    const rows = await api('/api/admin/bonus-points');
+    el.innerHTML = rows.length ? `<table class="tbl">
       <thead><tr><th>Player</th><th>Match</th><th class="num">Points</th><th>Reason</th><th>Details</th><th></th></tr></thead>
-      <tbody>${rows.map(r=>`<tr>
-        <td>${esc(r.display_name||r.primary_email)}</td>
-        <td class="mono">${r.match_number?'M'+r.match_number:'—'}</td>
-        <td class="num mono" style="font-weight:500;color:${r.bonus_pts>=0?'var(--green)':'var(--red)'}">${r.bonus_pts>=0?'+':''}${r.bonus_pts}</td>
+      <tbody>${rows.map(r => `<tr>
+        <td>${esc(r.display_name || r.primary_email)}</td>
+        <td class="mono">${r.match_number ? 'M' + r.match_number : '—'}</td>
+        <td class="num mono" style="font-weight:500;color:${r.bonus_pts >= 0 ? 'var(--green)' : 'var(--red)'}">${r.bonus_pts >= 0 ? '+' : ''}${r.bonus_pts}</td>
         <td class="mono" style="font-size:11px">${esc(r.reason)}</td>
-        <td style="font-size:11px;color:var(--text3)">${esc(r.details||'')}</td>
+        <td style="font-size:11px;color:var(--text3)">${esc(r.details || '')}</td>
         <td><button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delBonus(${r.id})">✕</button></td>
       </tr>`).join('')}</tbody>
-    </table>`:'<p style="color:var(--text3)">No bonus points yet.</p>';
-  }catch(e){toast(e.message,'err');}
+    </table>` : '<p style="color:var(--text3)">No bonus points yet.</p>';
+  } catch (e) { toast(e.message, 'err'); }
 }
-function openBonusModal(){['bp-email','bp-pts','bp-reason','bp-match','bp-notes'].forEach(id=>sv(id,''));open('modal-bonus');}
-async function saveBonus(){
-  const email=gv('bp-email').toLowerCase(),pts=parseFloat(gv('bp-pts')),
-        reason=gv('bp-reason')||'manual',matchId=gv('bp-match'),details=gv('bp-notes');
-  if(!email||isNaN(pts)){toast('Email and points required','err');return;}
-  try{
-    await api('/api/admin/bonus-points','POST',{primary_email:email,bonus_pts:pts,reason,match_id:matchId?+matchId:null,details});
-    close('modal-bonus');toast('Bonus awarded');loadBonus();
-  }catch(e){toast(e.message,'err');}
+function openBonusModal() { ['bp-email', 'bp-pts', 'bp-reason', 'bp-match', 'bp-notes'].forEach(id => sv(id, '')); openModal('modal-bonus'); }
+async function saveBonus() {
+  const email = gv('bp-email').toLowerCase(), pts = parseFloat(gv('bp-pts')),
+    reason = gv('bp-reason') || 'manual', matchId = gv('bp-match'), details = gv('bp-notes');
+  if (!email || isNaN(pts)) { toast('Email and points required', 'err'); return; }
+  try {
+    await api('/api/admin/bonus-points', 'POST', { primary_email: email, bonus_pts: pts, reason, match_id: matchId ? +matchId : null, details });
+    closeModal('modal-bonus'); toast('Bonus awarded'); loadBonus();
+  } catch (e) { toast(e.message, 'err'); }
 }
-async function delBonus(id){
-  if(!confirm('Remove this bonus?'))return;
-  try{await api(`/api/admin/bonus-points/${id}`,'DELETE');toast('Removed');loadBonus();}
-  catch(e){toast(e.message,'err');}
+async function delBonus(id) {
+  if (!confirm('Remove this bonus?')) return;
+  try { await api(`/api/admin/bonus-points/${id}`, 'DELETE'); toast('Removed'); loadBonus(); }
+  catch (e) { toast(e.message, 'err'); }
 }
 
-// ── AUDIT ─────────────────────────────────────────────────────────────────────
-async function loadAudit(){
-  const el=document.getElementById('audit-list');
-  try{
-    const rows=await api('/api/admin/audit');
-    el.innerHTML=rows.length?`<table class="tbl">
+// ── AUDIT (FIXED — always fetches fresh) ─────────────────────────────────────
+async function loadAudit() {
+  const el = document.getElementById('audit-list');
+  el.innerHTML = 'Loading…';
+  try {
+    const rows = await api('/api/admin/audit');
+    el.innerHTML = rows.length ? `<table class="tbl">
       <thead><tr><th>Time (IST)</th><th>Action</th><th>Actor</th><th>Entity</th><th>Details</th></tr></thead>
-      <tbody>${rows.map(r=>`<tr>
-        <td class="mono" style="font-size:10px">${new Date(r.created_at).toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})}</td>
+      <tbody>${rows.map(r => `<tr>
+        <td class="mono" style="font-size:10px">${fmtT(r.created_at)}</td>
         <td class="mono">${esc(r.action)}</td>
         <td class="mono">${esc(r.actor)}</td>
-        <td class="mono" style="font-size:11px">${esc(r.entity||'')} ${esc(r.entity_id||'')}</td>
-        <td style="font-size:11px;color:var(--text3)">${esc(r.details||'')}</td>
+        <td class="mono" style="font-size:11px">${esc(r.entity || '')} ${esc(r.entity_id || '')}</td>
+        <td style="font-size:11px;color:var(--text3)">${esc(r.details || '')}</td>
       </tr>`).join('')}</tbody>
-    </table>`:'<p style="color:var(--text3)">No entries.</p>';
-  }catch(e){toast(e.message,'err');}
+    </table>` : '<p style="color:var(--text3)">No entries.</p>';
+  } catch (e) {
+    el.innerHTML = `<p style="color:var(--red)">Failed to load audit log: ${esc(e.message)}</p>`;
+    toast(e.message, 'err');
+  }
 }
 
 // ── EXPORT ────────────────────────────────────────────────────────────────────
-async function dlExport(){
-  try{
-    const d=await api('/api/admin/export');
-    const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-    a.download=`predictor-export-${new Date().toISOString().slice(0,10)}.json`;a.click();
+async function dlExport() {
+  try {
+    const d = await api('/api/admin/export');
+    const blob = new Blob([JSON.stringify(d, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = `predictor-export-${new Date().toISOString().slice(0, 10)}.json`; a.click();
     toast('Downloaded');
-  }catch(e){toast(e.message,'err');}
+  } catch (e) { toast(e.message, 'err'); }
 }
-async function dlCSV(){
-  try{
-    const lb=await api('/api/leaderboard');
-    const h=['Rank','Name','Email','Gross','Penalties','Bonuses','Net','Played','Correct'];
-    const rows=lb.map(p=>[p.rank,p.display_name,p.primary_email,p.gross_points,p.penalties,p.bonuses,p.net_points,p.matches_played,p.correct_predictions]);
-    const csv=[h,...rows].map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
-    const blob=new Blob([csv],{type:'text/csv'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-    a.download=`leaderboard-${new Date().toISOString().slice(0,10)}.csv`;a.click();
+async function dlCSV() {
+  try {
+    const lb = await api('/api/leaderboard');
+    const h = ['Rank', 'Name', 'Email', 'Gross', 'Penalties', 'Bonuses', 'Net', 'Played', 'Correct'];
+    const rows = lb.map(p => [p.rank, p.display_name, p.primary_email, p.gross_points, p.penalties, p.bonuses, p.net_points, p.matches_played, p.correct_predictions]);
+    const csv = [h, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = `leaderboard-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
     toast('Downloaded');
-  }catch(e){toast(e.message,'err');}
+  } catch (e) { toast(e.message, 'err'); }
 }
-async function pushSheets(){
-  const url=gv('sheets-url');
-  if(!url){toast('Enter webhook URL','err');return;}
-  try{
-    const d=await api('/api/admin/export');
-    await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});
+async function pushSheets() {
+  const url = gv('sheets-url');
+  if (!url) { toast('Enter webhook URL', 'err'); return; }
+  try {
+    const d = await api('/api/admin/export');
+    await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(d) });
     toast('Pushed to Sheets');
-  }catch(e){toast('Push failed: '+e.message,'err');}
+  } catch (e) { toast('Push failed: ' + e.message, 'err'); }
 }
 </script>
 </body>
