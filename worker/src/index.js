@@ -169,9 +169,14 @@ const key =
     if (ms.length < 2) continue;
 
 // sort by time (afternoon first, evening second)
-const [m1, m2] = ms.sort(
-  (a, b) => new Date(a.match_time) - new Date(b.match_time)
-);
+const sorted = ms.sort((a,b)=>new Date(a.match_time)-new Date(b.match_time));
+
+for (let i = 0; i < sorted.length - 1; i++) {
+  const m1 = sorted[i];
+  const m2 = sorted[i+1];
+
+  // same logic
+};
     const c1 = await db.prepare(`SELECT primary_email FROM scores WHERE match_id=? AND predicted_team=?`)
       .bind(m1.id, m1.winner).all();
     const c2 = await db.prepare(`SELECT primary_email FROM scores WHERE match_id=? AND predicted_team=?`)
@@ -198,29 +203,52 @@ async function buildLB(db, asOf) {
   const ids = matchIds.results.map(m => m.id).join(',');
   if (!ids) return [];
 
-  const players = await db.prepare(
-    `SELECT p.primary_email, p.display_name, p.first_match_num,
-            COALESCE(SUM(CASE WHEN s.match_id IN (${ids}) THEN s.points_earned ELSE 0 END),0) gross,
-            COALESCE(SUM(CASE WHEN pen.match_id IN (${ids}) THEN pen.penalty_pts ELSE 0 END),0) pen,
-            COALESCE(SUM(CASE WHEN bp.match_id IN (${ids}) THEN bp.bonus_pts ELSE 0 END),0) bonus,
-            COUNT(DISTINCT CASE WHEN s.match_id IN (${ids}) THEN s.match_id END) played,
-            COUNT(DISTINCT CASE WHEN s.match_id IN (${ids}) AND s.points_earned>0 THEN s.match_id END) correct
-     FROM players p
-     LEFT JOIN scores s ON s.primary_email=p.primary_email
-     LEFT JOIN penalties pen 
-  ON pen.primary_email = p.primary_email 
-  AND pen.match_id IN (${ids})
+  const players = await db.prepare(`
+  SELECT 
+    p.primary_email,
+    p.display_name,
+    p.first_match_num,
 
-LEFT JOIN bonus_points bp 
-  ON bp.primary_email = p.primary_email 
-  AND bp.match_id IN (${ids})
-     WHERE p.first_match_num IS NOT NULL
-     GROUP BY p.primary_email
-     ORDER BY (COALESCE(SUM(CASE WHEN s.match_id IN (${ids}) THEN s.points_earned ELSE 0 END),0)+
-               COALESCE(SUM(CASE WHEN pen.match_id IN (${ids}) THEN pen.penalty_pts ELSE 0 END),0)+
-               COALESCE(SUM(CASE WHEN bp.match_id IN (${ids}) THEN bp.bonus_pts ELSE 0 END),0)) DESC`
-  ).all();
+    COALESCE(s.gross, 0)  AS gross,
+    COALESCE(pen.pen, 0)  AS pen,
+    COALESCE(bp.bonus, 0) AS bonus,
 
+    COUNT(DISTINCT s2.match_id) AS played,
+    COUNT(DISTINCT CASE WHEN s2.points_earned > 0 THEN s2.match_id END) AS correct
+
+  FROM players p
+
+  LEFT JOIN (
+    SELECT primary_email, SUM(points_earned) AS gross
+    FROM scores
+    WHERE match_id IN (${ids})
+    GROUP BY primary_email
+  ) s ON s.primary_email = p.primary_email
+
+  LEFT JOIN (
+    SELECT primary_email, SUM(penalty_pts) AS pen
+    FROM penalties
+    WHERE match_id IN (${ids})
+    GROUP BY primary_email
+  ) pen ON pen.primary_email = p.primary_email
+
+  LEFT JOIN (
+    SELECT primary_email, SUM(bonus_pts) AS bonus
+    FROM bonus_points
+    WHERE match_id IN (${ids})
+    GROUP BY primary_email
+  ) bp ON bp.primary_email = p.primary_email
+
+  -- for matches played / correct (separate join to avoid duplication)
+  LEFT JOIN scores s2 ON s2.primary_email = p.primary_email AND s2.match_id IN (${ids})
+
+  WHERE p.first_match_num IS NOT NULL
+
+  GROUP BY p.primary_email
+
+  ORDER BY (COALESCE(s.gross,0) + COALESCE(pen.pen,0) + COALESCE(bp.bonus,0)) DESC
+`).all();
+  
   return players.results.map((p, i) => ({
     rank: i + 1,
     display_name: p.display_name,
