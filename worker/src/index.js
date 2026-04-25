@@ -127,11 +127,17 @@ async function recalcPenalties(db) {
   ).all();
   await db.prepare(`DELETE FROM penalties WHERE reason='missed_vote'`).run();
   for (const pl of players.results) {
-    const obligated = resulted.results.filter(m => m.match_number >= pl.first_match_num);
+    const obligated = resulted.results.filter(
+  m => m.match_number >= pl.first_match_num
+);
     const voted = await db.prepare(
-      `SELECT m.match_number FROM predictions p JOIN matches m ON m.id=p.match_id
-       WHERE p.primary_email=? AND p.is_valid=1`
-    ).bind(pl.primary_email).all();
+  `SELECT m.match_number
+   FROM predictions p
+   JOIN matches m ON m.id = p.match_id
+   WHERE p.primary_email = ?
+     AND p.is_valid = 1
+     AND m.status = 'resulted'`
+).bind(pl.primary_email).all();
     const votedNums = new Set(voted.results.map(r => r.match_number));
     for (const m of obligated) {
       if (!votedNums.has(m.match_number)) {
@@ -150,15 +156,22 @@ async function applyDoubleHeaderBonus(db) {
   ).all();
   const byDate = {};
   for (const m of resulted.results) {
-    const ist = new Date(new Date(m.match_time).getTime() + 5.5 * 3600000);
-    const key = ist.toISOString().slice(0, 10);
+    const d = new Date(m.match_time);
+const key =
+  d.getFullYear() + '-' +
+  String(d.getMonth() + 1).padStart(2, '0') + '-' +
+  String(d.getDate()).padStart(2, '0');
     if (!byDate[key]) byDate[key] = [];
     byDate[key].push(m);
   }
   await db.prepare(`DELETE FROM bonus_points WHERE reason='double_header'`).run();
   for (const ms of Object.values(byDate)) {
-    if (ms.length !== 2) continue;
-    const [m1, m2] = ms;
+    if (ms.length < 2) continue;
+
+// sort by time (afternoon first, evening second)
+const [m1, m2] = ms.sort(
+  (a, b) => new Date(a.match_time) - new Date(b.match_time)
+);
     const c1 = await db.prepare(`SELECT primary_email FROM scores WHERE match_id=? AND predicted_team=?`)
       .bind(m1.id, m1.winner).all();
     const c2 = await db.prepare(`SELECT primary_email FROM scores WHERE match_id=? AND predicted_team=?`)
@@ -194,8 +207,13 @@ async function buildLB(db, asOf) {
             COUNT(DISTINCT CASE WHEN s.match_id IN (${ids}) AND s.points_earned>0 THEN s.match_id END) correct
      FROM players p
      LEFT JOIN scores s ON s.primary_email=p.primary_email
-     LEFT JOIN penalties pen ON pen.primary_email=p.primary_email
-     LEFT JOIN bonus_points bp ON bp.primary_email=p.primary_email
+     LEFT JOIN penalties pen 
+  ON pen.primary_email = p.primary_email 
+  AND pen.match_id IN (${ids})
+
+LEFT JOIN bonus_points bp 
+  ON bp.primary_email = p.primary_email 
+  AND bp.match_id IN (${ids})
      WHERE p.first_match_num IS NOT NULL
      GROUP BY p.primary_email
      ORDER BY (COALESCE(SUM(CASE WHEN s.match_id IN (${ids}) THEN s.points_earned ELSE 0 END),0)+
@@ -300,7 +318,8 @@ export default {
         `INSERT OR REPLACE INTO odds_snapshots (match_id,team_a_votes,team_b_votes,total_votes,team_a_odds,team_b_odds,is_final)
          VALUES (?,?,?,?,?,?,1)`
       ).bind(m.id, o.team_a_votes, o.team_b_votes, o.total_votes, o.team_a_odds, o.team_b_odds).run();
-      await db.prepare(`UPDATE matches SET status='closed',updated_at=datetime('now') WHERE id=?`).bind(m.id).run();
+      await recalcPenalties(db);
+await applyDoubleHeaderBonus(db);
     }
   },
 
