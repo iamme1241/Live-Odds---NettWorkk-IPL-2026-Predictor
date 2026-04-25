@@ -262,9 +262,6 @@ input  { font-family: 'Outfit', sans-serif; }
   -webkit-overflow-scrolling: touch;
   margin-bottom: 8px;
 }
-  .lb-head, .lb-row {
-  min-width: 700px;
-}
 .lb-head {
   display: grid;
   grid-template-columns: 56px 1fr 58px 90px 76px 70px 70px;
@@ -577,15 +574,22 @@ input  { font-family: 'Outfit', sans-serif; }
 
 /* ── MOBILE ───────────────────────────────────────────── */
 @media (max-width: 580px) {
-  .lb-head, .lb-row { grid-template-columns: 46px 1fr 56px 84px; }
-}
+
   .lb-head, .lb-row {
-  min-width: 650px;
+    grid-template-columns: 56px 1fr 58px 90px 76px 70px 70px;
+    min-width: 700px;
   }
+
+  .lb-card {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .c-row { grid-template-columns: 1fr; }
   .topbar-name { font-size: 14px; }
   .tab-btn { padding: 13px 14px; font-size: 13px; }
   .lb-headline { font-size: 23px; }
+
   .pod.p1{ transform: scale(1.05); }
   .pod.p2{ transform: scale(0.98); }
   .pod.p3{ transform: scale(0.95); }
