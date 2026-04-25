@@ -1172,7 +1172,7 @@ async function openResultModal(id, force) {
 
 async function submitResult(side) {
   
-  if (type === 'abandoned' || type === 'cancelled') {
+  if (side === 'abandoned' || side === 'cancelled') {
   api(`/api/admin/matches/${resultTarget.id}/${resultForce ? 'force-result' : 'result'}`, 'POST', {
     winner: type
   })
