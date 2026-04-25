@@ -112,32 +112,89 @@ async function scoreMatch(db, matchId, winner) {
   const match = await db.prepare('SELECT * FROM matches WHERE id=?').bind(matchId).first();
   if (!match) return;
 
-  // Snapshot odds if not already done
-  let snap = await db.prepare(`SELECT * FROM odds_snapshots WHERE match_id=? AND is_final=1`).bind(matchId).first();
+  // ─── CANCELLED ─────────────────────────────
+  if (winner === 'cancelled') {
+    await db.prepare(`DELETE FROM scores WHERE match_id=?`).bind(matchId).run();
+
+    await db.prepare(
+      `UPDATE matches SET status='cancelled', winner=NULL, updated_at=datetime('now') WHERE id=?`
+    ).bind(matchId).run();
+
+    return;
+  }
+
+  // Snapshot odds (existing logic)
+  let snap = await db.prepare(
+    `SELECT * FROM odds_snapshots WHERE match_id=? AND is_final=1`
+  ).bind(matchId).first();
+
   if (!snap) {
     const o = await getOdds(db, matchId);
     await db.prepare(
-      `INSERT OR REPLACE INTO odds_snapshots (match_id,team_a_votes,team_b_votes,total_votes,team_a_odds,team_b_odds,is_final)
+      `INSERT OR REPLACE INTO odds_snapshots 
+       (match_id,team_a_votes,team_b_votes,total_votes,team_a_odds,team_b_odds,is_final)
        VALUES (?,?,?,?,?,?,1)`
     ).bind(matchId, o.team_a_votes, o.team_b_votes, o.total_votes, o.team_a_odds, o.team_b_odds).run();
-    snap = { team_a_odds: o.team_a_odds, team_b_odds: o.team_b_odds };
+
+    snap = o;
   }
 
-  // Delete existing scores for this match first (idempotent)
+  // Clear old scores
   await db.prepare(`DELETE FROM scores WHERE match_id=?`).bind(matchId).run();
 
-  const preds = await db.prepare(`SELECT * FROM predictions WHERE match_id=? AND is_valid=1`).bind(matchId).all();
-  for (const p of preds.results) {
-    const oddsUsed = p.predicted_team === match.team_a ? snap.team_a_odds : snap.team_b_odds;
-    const pts = p.predicted_team === winner ? parseFloat((100 * (oddsUsed || 1)).toFixed(2)) : 0;
+  const preds = await db.prepare(
+    `SELECT * FROM predictions WHERE match_id=? AND is_valid=1`
+  ).bind(matchId).all();
+
+  // ─── ABANDONED ─────────────────────────────
+  if (winner === 'abandoned') {
+    const totalVotes = preds.results.length;
+    if (totalVotes === 0) return;
+
+    const pool = 100 * totalVotes;
+    const share = parseFloat((pool / totalVotes).toFixed(2));
+
+    for (const p of preds.results) {
+      await db.prepare(
+        `INSERT INTO scores 
+        (match_id,primary_email,predicted_team,winner,odds_at_close,base_points,points_earned)
+        VALUES (?,?,?,?,?,?,?)`
+      ).bind(
+        matchId,
+        p.primary_email,
+        p.predicted_team,
+        'abandoned',
+        1,
+        100,
+        share
+      ).run();
+    }
+
     await db.prepare(
-      `INSERT INTO scores (match_id,primary_email,predicted_team,winner,odds_at_close,base_points,points_earned)
-       VALUES (?,?,?,?,?,100,?)`
-    ).bind(matchId, p.primary_email, p.predicted_team, winner, oddsUsed || 1, pts).run();
+      `UPDATE matches SET status='abandoned', winner='abandoned', updated_at=datetime('now') WHERE id=?`
+    ).bind(matchId).run();
+
+    return;
   }
 
-  await db.prepare(`UPDATE matches SET status='resulted',winner=?,updated_at=datetime('now') WHERE id=?`)
-    .bind(winner, matchId).run();
+  // ─── NORMAL MATCH ──────────────────────────
+  for (const p of preds.results) {
+    const oddsUsed = p.predicted_team === match.team_a ? snap.team_a_odds : snap.team_b_odds;
+
+    const pts = p.predicted_team === winner
+      ? parseFloat((100 * (oddsUsed || 1)).toFixed(2))
+      : 0;
+
+    await db.prepare(
+      `INSERT INTO scores 
+      (match_id,primary_email,predicted_team,winner,odds_at_close,base_points,points_earned)
+      VALUES (?,?,?,?,?,?,?)`
+    ).bind(matchId, p.primary_email, p.predicted_team, winner, oddsUsed || 1, 100, pts).run();
+  }
+
+  await db.prepare(
+    `UPDATE matches SET status='resulted', winner=?, updated_at=datetime('now') WHERE id=?`
+  ).bind(winner, matchId).run();
 }
 
 // ─── PENALTY ENGINE ───────────────────────────────────────────────────────────
@@ -146,7 +203,7 @@ async function scoreMatch(db, matchId, winner) {
 // row for that (primary_email, match_id) combo. recalcPenalties skips those combos.
 async function recalcPenalties(db) {
   const resulted = await db.prepare(
-    `SELECT id, match_number FROM matches WHERE status='resulted' ORDER BY match_number`
+    SELECT id, match_number FROM matches WHERE status IN ('resulted','abandoned') ORDER BY match_number`
   ).all();
   if (!resulted.results.length) return;
 
@@ -329,7 +386,7 @@ async function relinkAllPredictions(db) {
 
 // ─── LEADERBOARD ─────────────────────────────────────────────────────────────
 async function buildLB(db, asOf) {
-  let matchCond = `status='resulted'`;
+  let matchCond = `status IN ('resulted','abandoned')`;
   if (asOf) matchCond += ` AND updated_at <= '${asOf}T23:59:59'`;
 
   const matchIds = await db.prepare(`SELECT id FROM matches WHERE ${matchCond}`).all();
