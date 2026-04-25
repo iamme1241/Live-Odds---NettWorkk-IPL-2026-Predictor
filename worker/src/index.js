@@ -318,6 +318,8 @@ export default {
         `INSERT OR REPLACE INTO odds_snapshots (match_id,team_a_votes,team_b_votes,total_votes,team_a_odds,team_b_odds,is_final)
          VALUES (?,?,?,?,?,?,1)`
       ).bind(m.id, o.team_a_votes, o.team_b_votes, o.total_votes, o.team_a_odds, o.team_b_odds).run();
+      await db.prepare(`UPDATE matches SET status='closed',updated_at=datetime('now') WHERE id=?`)
+  .bind(m.id).run();
       await recalcPenalties(db);
 await applyDoubleHeaderBonus(db);
     }
@@ -507,6 +509,33 @@ await applyDoubleHeaderBonus(db);
     // ── ADMIN AUTH CHECK ──────────────────────────────────────────────────────
     if (!isAdmin(req, env)) return E('Unauthorized', 401);
 
+    // FORCE OPEN MATCH
+if (path === '/api/admin/match/force-open' && method === 'POST') {
+  const { match_id } = await req.json();
+
+  await db.prepare(`
+    UPDATE matches
+    SET status = 'open'
+    WHERE id = ?
+  `).bind(match_id).run();
+
+  return R({ success: true });
+}
+
+// RE-CALCULATE MATCH
+if (path === '/api/admin/match/recalculate' && method === 'POST') {
+  const { match_id, winner } = await req.json();
+
+  await db.prepare(`DELETE FROM scores WHERE match_id=?`)
+    .bind(match_id).run();
+
+  await scoreMatch(db, match_id, winner);
+  await recalcPenalties(db);
+  await applyDoubleHeaderBonus(db);
+
+  return R({ success: true });
+}
+    
     // ── MATCH CRUD ────────────────────────────────────────────────────────────
 
     if (path === '/api/admin/matches' && method === 'POST') {
@@ -649,6 +678,15 @@ await applyDoubleHeaderBonus(db);
           errors.push(`Missing fields for ${email||'?'}`); skipped++; continue;
         }
         const match = await db.prepare('SELECT * FROM matches WHERE id=?').bind(+match_id).first();
+        if (
+        submitted_at &&
+        submitted_at.toLowerCase() !== 'manual' &&
+        new Date(submitted_at) > new Date(match.match_time)
+        ) {
+        errors.push(`${email}: after deadline`);
+        skipped++;
+        continue;
+        }
         if (!match) { errors.push(`Match ${match_id} not found`); skipped++; continue; }
 
         // Normalize team name
@@ -664,9 +702,18 @@ await applyDoubleHeaderBonus(db);
         ).bind(+match_id, primary).first();
         if (existing) { errors.push(`${rawEmail} already voted M${match.match_number}`); skipped++; continue; }
         await ensurePlayer(db, primary, rawEmail, match.match_number, name);
-        await db.prepare(
-          `INSERT INTO predictions (match_id,primary_email,raw_email,predicted_team,submitted_at,is_valid) VALUES (?,?,?,?,?,1)`
-        ).bind(+match_id, primary, rawEmail, predicted_team, submitted_at || new Date().toISOString()).run();
+        let finalSubmittedAt;
+
+        if (submitted_at && submitted_at.toLowerCase() === 'manual') {
+          finalSubmittedAt = new Date().toISOString();
+        } else {
+          finalSubmittedAt = submitted_at || new Date().toISOString();
+        }
+
+await db.prepare(
+  `INSERT INTO predictions (match_id,primary_email,raw_email,predicted_team,submitted_at,is_valid)
+   VALUES (?,?,?,?,?,1)`
+).bind(+match_id, primary, rawEmail, predicted_team, finalSubmittedAt).run();
         imported++;
       }
       return R({ imported, skipped, errors });
