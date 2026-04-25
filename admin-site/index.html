@@ -168,12 +168,6 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
 .var-desc{font-size:11px;color:var(--text3);}
 .var-type-pill{font-family:var(--mono);font-size:9px;background:var(--surface3);border:1px solid var(--border);border-radius:4px;padding:1px 5px;margin-left:6px;color:var(--text3);}
 
-/* PROGRESS */
-.prog-wrap{margin-top:12px;}
-.prog-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:6px;}
-.prog-fill{height:100%;background:var(--green);border-radius:2px;transition:width .3s;}
-.prog-txt{font-size:11px;color:var(--text3);font-family:var(--mono);}
-
 /* LOG */
 .log{margin-top:10px;max-height:180px;overflow-y:auto;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;font-family:var(--mono);font-size:11px;line-height:1.8;display:none;}
 .log::-webkit-scrollbar{width:3px;}
@@ -196,10 +190,9 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
 .bulk-bar.on{display:flex;}
 .bulk-count{font-size:12px;color:var(--accent2);font-weight:500;}
 
-/* INLINE EDIT */
-.inline-edit{display:none;}
-.inline-edit.on{display:inline-flex;}
-.edit-input{padding:3px 7px;background:var(--surface2);border:1px solid var(--accent);border-radius:4px;color:var(--text);font-family:var(--mono);font-size:11px;outline:none;width:140px;}
+/* RELINK DIFF */
+.diff-row-changed td{background:rgba(99,102,241,.06)!important;}
+.diff-arrow{color:var(--amber);font-size:10px;}
 </style>
 </head>
 <body>
@@ -241,6 +234,7 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
       <button class="nav-btn" onclick="nav('bulk-players',this)"><span class="nav-icon">↑</span>Bulk Import Players</button>
       <button class="nav-btn" onclick="nav('bulk-responses',this)"><span class="nav-icon">📋</span>Bulk Import Responses</button>
       <button class="nav-btn" onclick="nav('emailmap',this)"><span class="nav-icon">⊡</span>Email Mapping</button>
+      <button class="nav-btn" onclick="nav('relink',this)"><span class="nav-icon">⟳</span>Re-link Emails</button>
       <button class="nav-btn" onclick="nav('predictions',this)"><span class="nav-icon">⊹</span>View &amp; Edit Predictions</button>
       <button class="nav-btn" onclick="nav('penalties',this)"><span class="nav-icon">⚠</span>Penalties</button>
 
@@ -422,6 +416,24 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
         </div>
       </div>
 
+      <!-- RE-LINK EMAILS -->
+      <div class="panel" id="p-relink">
+        <div class="page-hdr">
+          <div class="page-title">Re-link Emails</div>
+        </div>
+        <div class="info">
+          Use this when you discover that old predictions were stored under an alias email instead of the correct primary email. This scans all predictions and re-resolves them against the current Email Mapping table.<br><br>
+          <b>Step 1:</b> Preview to see what will change. <b>Step 2:</b> Commit if it looks correct. Scores, penalties, and bonuses are recalculated automatically after commit.
+        </div>
+        <div class="btn-row" style="margin-bottom:16px">
+          <button class="btn btn-accent" onclick="previewRelink()">1. Preview changes</button>
+          <button class="btn btn-green" id="relink-commit-btn" onclick="commitRelink()" disabled>2. Commit re-link</button>
+        </div>
+        <div id="relink-results">
+          <div style="color:var(--text3);font-size:12px">Click "Preview changes" to scan predictions.</div>
+        </div>
+      </div>
+
       <!-- PREDICTIONS (VIEW + EDIT + DELETE) -->
       <div class="panel" id="p-predictions">
         <div class="page-hdr"><div class="page-title">View &amp; Edit Predictions</div></div>
@@ -450,7 +462,7 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
             <button class="btn btn-outline btn-sm" onclick="api('/api/admin/penalties/recalc','POST').then(()=>{toast('Recalculated');loadPenalties();}).catch(e=>toast(e.message,'err'))">↺ Recalculate</button>
           </div>
         </div>
-        <div class="info">Penalties are auto-calculated when results are entered. Delete a row to manually remove one — it won't be re-added unless you recalculate.</div>
+        <div class="info">Penalties are auto-calculated when results are entered. <b>Deleting a penalty row permanently exempts that player from that match's missed-vote penalty</b> — it won't be re-added on recalculate. Use "↺ Recalculate" to re-add penalties for non-exempt players.</div>
         <div class="card">
           <div class="card-body scroll-x" id="penalties-list">Loading…</div>
         </div>
@@ -608,7 +620,7 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
 <div class="overlay" id="modal-match-edit">
   <div class="modal">
     <h3>Edit Match</h3>
-    <div class="modal-sub">Override status, time, teams, or winner</div>
+    <div class="modal-sub" id="me-sub">Override status, time, teams, or winner</div>
     <input type="hidden" id="me-id">
     <div class="form-grid">
       <div class="fg"><label>Force status</label>
@@ -655,7 +667,7 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
     <div class="form-grid w1">
       <div class="fg"><label>Display name</label><input type="text" id="mp-name" placeholder="Rahul Sharma"></div>
       <div class="fg"><label>Primary email</label><input type="email" id="mp-email" placeholder="rahul@gmail.com"></div>
-      <div class="fg"><label>Alias emails (comma-separated)</label><input type="text" id="mp-aliases" placeholder="rahul.old@gmail.com, r.sharma@work.com"></div>
+      <div class="fg"><label>Alias emails (comma-separated, optional)</label><input type="text" id="mp-aliases" placeholder="rahul.old@gmail.com, r.sharma@work.com"></div>
       <div class="fg"><label>First match number (optional)</label><input type="number" id="mp-first" placeholder="e.g. 3"></div>
     </div>
     <div class="modal-footer">
@@ -701,10 +713,13 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
       <div class="fg"><label>Invalid reason (if invalid)</label>
         <input type="text" id="ep-reason" placeholder="e.g. duplicate_vote">
       </div>
-      <div class="fg"><label>Submitted at (ISO, optional)</label>
+      <div class="fg"><label>Submitted at (ISO timestamp, optional)</label>
         <input type="text" id="ep-subat" placeholder="2026-04-20T19:30:00.000Z">
       </div>
-      <div class="fg"><label>Primary email (re-assign to player)</label>
+      <div class="fg"><label>Player display name</label>
+        <input type="text" id="ep-display-name" placeholder="e.g. Rahul Sharma">
+      </div>
+      <div class="fg"><label>Re-assign to player (primary email)</label>
         <input type="email" id="ep-email" placeholder="player@gmail.com">
       </div>
     </div>
@@ -780,6 +795,7 @@ const API = 'https://predictor-league-api.iamme1241.workers.dev';
 let token = '', matches = [], resultTarget = null, resultForce = false;
 let bmParsed = [], brParsed = [], bpParsed = [];
 let currentPredMatchId = null;
+let relinkPreviewData = null;
 
 // ── MODAL HELPERS ─────────────────────────────────────────────────────────────
 function openModal(id) { document.getElementById(id).classList.add('on'); }
@@ -792,16 +808,38 @@ document.addEventListener('click', e => {
 // ── TIME FORMAT ───────────────────────────────────────────────────────────────
 function fmtT(iso) {
   if (!iso) return '—';
-  return new Date(iso).toLocaleString('en-IN', {
-    day:'numeric',month:'short',year:'numeric',
-    hour:'numeric',minute:'2-digit',hour12:true,timeZone:'Asia/Kolkata'
-  }) + ' IST';
+  try {
+    return new Date(iso).toLocaleString('en-IN', {
+      day:'numeric', month:'short', year:'numeric',
+      hour:'numeric', minute:'2-digit', hour12:true, timeZone:'Asia/Kolkata'
+    }) + ' IST';
+  } catch { return iso; }
 }
 function fmtTShort(iso) {
   if (!iso) return '—';
-  return new Date(iso).toLocaleString('en-IN', {
-    day:'numeric',month:'short',hour:'numeric',minute:'2-digit',hour12:true,timeZone:'Asia/Kolkata'
-  }) + ' IST';
+  try {
+    return new Date(iso).toLocaleString('en-IN', {
+      day:'numeric', month:'short',
+      hour:'numeric', minute:'2-digit', hour12:true, timeZone:'Asia/Kolkata'
+    }) + ' IST';
+  } catch { return iso; }
+}
+
+// Converts a datetime-local string to an ISO string, treating the local input as IST
+function localInputToISO(val) {
+  if (!val) return null;
+  // datetime-local gives "YYYY-MM-DDTHH:MM" — treat it as IST (UTC+5:30)
+  const d = new Date(val + ':00+05:30');
+  return isNaN(d.getTime()) ? null : d.toISOString();
+}
+
+// Converts an ISO UTC string to datetime-local format in IST (for pre-filling inputs)
+function isoToLocalInput(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  // Offset by +5:30
+  const ist = new Date(d.getTime() + (5.5 * 60 * 60 * 1000));
+  return ist.toISOString().slice(0, 16);
 }
 
 // ── AUTH ──────────────────────────────────────────────────────────────────────
@@ -840,7 +878,6 @@ window.addEventListener('DOMContentLoaded', () => {
 function init() {
   loadDash();
   loadMatchesList();
-  // Build cred steps
   const steps = ['Go to <b>dash.cloudflare.com</b>','Click <b>Workers &amp; Pages</b>','Click on <b>predictor-league-api</b>','Click the <b>Settings</b> tab','Click <b>Variables and Secrets</b>','Edit <b>ADMIN_SECRET_PATH</b> or <b>ADMIN_PASSWORD</b>','Click <b>Save and deploy</b>','Wait 30 seconds — done'];
   document.getElementById('cred-steps').innerHTML = steps.map((s,i)=>`<div style="display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;"><div style="background:var(--accent);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;">${i+1}</div><div style="font-size:13px;padding-top:2px;">${s}</div></div>`).join('');
   document.getElementById('forms-url').textContent = `${API}/api/forms-submit`;
@@ -881,7 +918,8 @@ function nav(id, btn) {
     results: loadResults, players: loadPlayers, emailmap: loadEmailMap,
     leaderboard: loadAdminLB, insights: loadInsights, audit: loadAudit,
     predictions: loadPredSel, variations: loadVariations, 'bonus-points': loadBonus,
-    penalties: loadPenalties, 'bulk-responses': loadBRRef, 'team-aliases': loadTeamAliases
+    penalties: loadPenalties, 'bulk-responses': loadBRRef, 'team-aliases': loadTeamAliases,
+    relink: () => { relinkPreviewData = null; document.getElementById('relink-commit-btn').disabled = true; document.getElementById('relink-results').innerHTML = '<div style="color:var(--text3);font-size:12px">Click "Preview changes" to scan predictions.</div>'; }
   };
   if (loaders[id]) loaders[id]();
 }
@@ -934,7 +972,7 @@ function renderMatches() {
         ${m.status==='upcoming'?`<button class="btn btn-green btn-sm" onclick="matchAction(${m.id},'open')">Open</button>`:''}
         ${m.status==='open'?`<button class="btn btn-amber btn-sm" onclick="matchAction(${m.id},'close')">Close</button>`:''}
         ${m.status==='closed'?`<button class="btn btn-accent btn-sm" onclick="openResultModal(${m.id},false)">Result</button>`:''}
-        ${m.status!=='upcoming'?`<button class="btn btn-outline btn-sm" onclick="openResultModal(${m.id},true)" title="Force result (works for any status)">⚡ Force</button>`:''}
+        ${m.status!=='upcoming'?`<button class="btn btn-outline btn-sm" onclick="openResultModal(${m.id},true)" title="Force result">⚡ Force</button>`:''}
         <button class="btn btn-ghost btn-sm" onclick="openMatchEditModal(${m.id})" title="Edit">✎</button>
         <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delMatch(${m.id},'${esc(m.status)}')" title="Delete">✕</button>
       </div></td>
@@ -949,9 +987,10 @@ function openMatchModal() {
 }
 
 async function saveMatch() {
-  const id=gv('mm-id'), num=gv('mm-num'), title=gv('mm-title'), ta=gv('mm-ta'), tb=gv('mm-tb'), time=gv('mm-time');
-  if (!num||!title||!ta||!tb||!time) { toast('Fill all fields','err'); return; }
-  const iso = new Date(time).toISOString();
+  const id=gv('mm-id'), num=gv('mm-num'), title=gv('mm-title'), ta=gv('mm-ta'), tb=gv('mm-tb'), timeVal=gv('mm-time');
+  if (!num||!title||!ta||!tb||!timeVal) { toast('Fill all fields','err'); return; }
+  const iso = localInputToISO(timeVal);
+  if (!iso) { toast('Invalid date/time','err'); return; }
   try {
     if (id) await api(`/api/admin/matches/${id}`,'PATCH',{title,team_a:ta,team_b:tb,match_time:iso});
     else     await api('/api/admin/matches','POST',{match_number:+num,title,team_a:ta,team_b:tb,match_time:iso});
@@ -959,17 +998,28 @@ async function saveMatch() {
   } catch(e) { toast(e.message,'err'); }
 }
 
+// FIX: pre-populate current match values into the edit modal
 function openMatchEditModal(id) {
   const m = matches.find(x=>x.id===id); if (!m) return;
-  sv('me-id',id); sv('me-status',''); sv('me-time',''); sv('me-ta',''); sv('me-tb',''); sv('me-winner','');
+  sv('me-id', id);
+  sv('me-status', '');
+  sv('me-time', isoToLocalInput(m.match_time));
+  sv('me-ta', m.team_a);
+  sv('me-tb', m.team_b);
+  sv('me-winner', m.winner || '');
+  document.getElementById('me-sub').textContent = `Editing: ${m.title} (${m.status})`;
   openModal('modal-match-edit');
 }
 
 async function saveMatchEdit() {
-  const id=gv('me-id'), status=gv('me-status'), time=gv('me-time'), ta=gv('me-ta'), tb=gv('me-tb'), winner=gv('me-winner');
+  const id=gv('me-id'), status=gv('me-status'), timeVal=gv('me-time'), ta=gv('me-ta'), tb=gv('me-tb'), winner=gv('me-winner');
   const body = {};
-  if (status) body.status = status;
-  if (time)   body.match_time = new Date(time).toISOString();
+  if (status)  body.status = status;
+  if (timeVal) {
+    const iso = localInputToISO(timeVal);
+    if (!iso) { toast('Invalid date/time','err'); return; }
+    body.match_time = iso;
+  }
   if (ta)     body.team_a = ta;
   if (tb)     body.team_b = tb;
   if (winner) body.winner = winner;
@@ -1001,6 +1051,21 @@ async function delMatch(id, status) {
 }
 
 // ── BULK MATCHES ──────────────────────────────────────────────────────────────
+function parseIST(s) {
+  // Try native parse first
+  let d = new Date(s);
+  if (!isNaN(d.getTime())) return d.toISOString();
+  // Try adding IST offset explicitly
+  const d2 = new Date(s.replace(/(\d{1,2})\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{4})\s+(\d{1,2}:\d{2})\s*(AM|PM)?/i, (_, day, mon, yr, time, ampm) => {
+    return `${day} ${mon} ${yr} ${time}${ampm?' '+ampm:''} GMT+0530`;
+  }));
+  if (!isNaN(d2.getTime())) return d2.toISOString();
+  // Last resort: append IST offset
+  const d3 = new Date(s + ' GMT+0530');
+  if (!isNaN(d3.getTime())) return d3.toISOString();
+  return null;
+}
+
 function previewBulkMatches() {
   const raw = document.getElementById('bm-input').value.trim();
   if (!raw) { toast('Paste some matches first','err'); return; }
@@ -1008,24 +1073,19 @@ function previewBulkMatches() {
   bmParsed = [];
   lines.forEach(line => {
     const parts = line.includes('\t') ? line.split('\t').map(s=>s.trim()) : line.split(',').map(s=>s.trim());
-    if (parts.length < 5) { bmParsed.push({ok:false,reason:'Need 5 columns',num:parts[0]||'',title:parts[1]||'',ta:parts[2]||'',tb:parts[3]||'',time:parts.slice(4).join(',')}); return; }
+    if (parts.length < 5) { bmParsed.push({ok:false,reason:'Need 5 columns',num:parts[0]||'',title:parts[1]||'',ta:parts[2]||'',tb:parts[3]||'',time:''}); return; }
     const [numS,title,ta,tb,...tp] = parts;
     const timeS = tp.join(',').trim();
     const num = parseInt(numS);
     if (isNaN(num)) { bmParsed.push({ok:false,reason:'# must be a number',num:numS,title,ta,tb,time:timeS}); return; }
-    let utc = null;
-    try {
-      let d = new Date(timeS);
-      if (isNaN(d.getTime())) d = new Date(timeS + ' +05:30');
-      if (!isNaN(d.getTime())) utc = d.toISOString();
-    } catch {}
+    const utc = parseIST(timeS);
     if (!utc) { bmParsed.push({ok:false,reason:`Cannot parse: "${timeS}"`,num,title,ta,tb,time:timeS}); return; }
     bmParsed.push({ok:true,num,title,ta,tb,time:timeS,utc});
   });
   const ok = bmParsed.filter(r=>r.ok).length;
   document.getElementById('bm-title').textContent = `Preview — ${ok} ready, ${bmParsed.length-ok} errors`;
   document.getElementById('bm-import-btn').textContent = `Import ${ok} match${ok!==1?'es':''}`;
-  document.getElementById('bm-import-btn').disabled = false;
+  document.getElementById('bm-import-btn').disabled = !ok;
   document.getElementById('bm-tbody').innerHTML = bmParsed.map(r=>`<tr style="${!r.ok?'background:var(--red-s)':''}">
     <td class="mono">${r.num}</td><td>${esc(r.title)}</td><td>${esc(r.ta)}</td><td>${esc(r.tb)}</td>
     <td class="mono" style="font-size:10px">${esc(r.time)}</td>
@@ -1050,7 +1110,7 @@ async function importBulkMatches() {
 async function loadResults() {
   try {
     const ms = await api('/api/matches');
-    // Show all non-upcoming, non-resulted matches, PLUS already-resulted for re-force
+    matches = ms;
     const pending = ms.filter(m => m.status!=='upcoming');
     const el = document.getElementById('results-list');
     if (!pending.length) { el.innerHTML='<p style="color:var(--text3)">No matches to result.</p>'; return; }
@@ -1072,11 +1132,10 @@ async function loadResults() {
 }
 
 async function openResultModal(id, force) {
-  // Always fetch fresh match list
   let m;
   try {
     const ms = await api('/api/matches');
-    matches = ms; // update cache
+    matches = ms;
     m = ms.find(x => x.id === id);
   } catch(e) { toast('Failed to load match: '+e.message,'err'); return; }
   if (!m) { toast('Match not found','err'); return; }
@@ -1131,7 +1190,7 @@ async function loadPlayers() {
         <td class="mono">${p.first_match_num??'—'}</td>
         <td style="font-size:10px;color:var(--text3);max-width:200px;word-break:break-all">${esc(p.all_emails||p.primary_email)}</td>
         <td><div class="btn-row">
-          <button class="btn btn-ghost btn-sm" onclick="editPlayer('${esc(p.primary_email)}','${esc(p.display_name)}',${p.first_match_num||''})">Edit</button>
+          <button class="btn btn-ghost btn-sm" onclick="editPlayer('${esc(p.primary_email)}','${esc(p.display_name)}',${p.first_match_num||'null'},'${esc(p.all_emails||p.primary_email)}')">Edit</button>
           <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delPlayer('${esc(p.primary_email)}')">Delete</button>
         </div></td>
       </tr>`).join('')}</tbody>
@@ -1145,30 +1204,48 @@ function openPlayerModal() {
   document.getElementById('mp-email').disabled = false;
   openModal('modal-player');
 }
-function editPlayer(email, name, first) {
+
+// FIX: editPlayer now passes and pre-fills aliases from all_emails
+function editPlayer(email, name, first, allEmails) {
   document.getElementById('mp-h').textContent = 'Edit player';
-  sv('mp-orig-email',email); sv('mp-name',name); sv('mp-email',email); sv('mp-aliases',''); sv('mp-first',first||'');
+  sv('mp-orig-email', email);
+  sv('mp-name', name);
+  sv('mp-email', email);
+  sv('mp-first', first === 'null' ? '' : first);
+  // Pre-fill aliases: all_emails is comma-separated, remove primary email from it
+  const aliases = (allEmails || '').split(',').map(e=>e.trim()).filter(e=>e && e !== email);
+  sv('mp-aliases', aliases.join(', '));
   document.getElementById('mp-email').disabled = true;
   openModal('modal-player');
 }
+
 async function savePlayer() {
   const orig=gv('mp-orig-email'), name=gv('mp-name'), email=gv('mp-email').toLowerCase();
-  const aliases = gv('mp-aliases').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+  const aliasRaw = gv('mp-aliases');
+  const aliases = aliasRaw ? aliasRaw.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean) : [];
   const first = gv('mp-first');
   if (!name||!email) { toast('Name and email required','err'); return; }
   try {
     if (orig) {
-      await api(`/api/admin/players/${encodeURIComponent(orig)}`,'PATCH',{
-        display_name: name,
-        ...(first ? {first_match_num:+first} : {})
-      });
-      for (const a of aliases) await api('/api/admin/email-map','POST',{alias_email:a,primary_email:orig});
+      // Editing existing player
+      const patchBody = { display_name: name };
+      if (first) patchBody.first_match_num = +first;
+      await api(`/api/admin/players/${encodeURIComponent(orig)}`,'PATCH', patchBody);
+      // Add any new alias emails via email-map
+      if (aliases.length) {
+        for (const a of aliases) {
+          if (a !== orig) {
+            await api('/api/admin/email-map','POST',{alias_email:a,primary_email:orig}).catch(()=>{});
+          }
+        }
+      }
     } else {
       await api('/api/admin/players','POST',{display_name:name,primary_email:email,alias_emails:aliases,first_match_num:first?+first:null});
     }
     closeModal('modal-player'); toast('Player saved'); loadPlayers();
   } catch(e) { toast(e.message,'err'); }
 }
+
 async function delPlayer(email) {
   if (!confirm(`Delete player ${email}? Their votes/scores remain.`)) return;
   try { await api(`/api/admin/players/${encodeURIComponent(email)}`,'DELETE'); toast('Player deleted'); loadPlayers(); }
@@ -1231,6 +1308,7 @@ async function importBulkPlayers() {
 async function loadBRRef() {
   try {
     const ms = await api('/api/matches');
+    matches = ms;
     document.getElementById('br-match-ref').innerHTML = `<table class="tbl">
       <thead><tr><th>DB ID</th><th>M#</th><th>Title</th><th>Teams</th><th>Time (IST)</th><th>Status</th></tr></thead>
       <tbody>${ms.map(m=>`<tr>
@@ -1245,6 +1323,7 @@ async function loadBRRef() {
   } catch(e) { document.getElementById('br-match-ref').innerHTML=`<p style="color:var(--red)">${esc(e.message)}</p>`; }
 }
 
+// FIX: name field (col 2) is now properly stored and sent to the API
 function previewBulkResponses() {
   const raw = document.getElementById('br-input').value.trim();
   const matchId = parseInt(gv('br-match-id'));
@@ -1252,7 +1331,6 @@ function previewBulkResponses() {
   if (isNaN(matchId)) { toast('Enter a Match DB ID first','err'); return; }
 
   const allLines = raw.split('\n').map(l=>l.trim()).filter(Boolean);
-  // Skip header row: any line where col2 doesn't look like email
   const lines = allLines.filter(l => {
     const parts = l.includes('\t') ? l.split('\t') : l.split(',');
     return (parts[1]||'').trim().includes('@');
@@ -1262,18 +1340,13 @@ function previewBulkResponses() {
   lines.forEach(line => {
     const parts = line.includes('\t') ? line.split('\t').map(s=>s.trim()) : line.split(',').map(s=>s.trim());
     if (parts.length < 4) { brParsed.push({ok:false,reason:'Need 4 columns',ts:parts[0]||'',email:parts[1]||'',name:parts[2]||'',team:parts[3]||''}); return; }
-    const [tsRaw,email,name,team] = parts;
+    const [tsRaw, email, name, team] = parts;
     if (!email||!email.includes('@')) { brParsed.push({ok:false,reason:'Invalid email',ts:tsRaw,email,name,team}); return; }
     if (!team) { brParsed.push({ok:false,reason:'Missing team',ts:tsRaw,email,name,team}); return; }
     let tsISO = null;
-    if (tsRaw) {
-      try {
-        let d = new Date(tsRaw);
-        if (isNaN(d.getTime())) d = new Date(tsRaw + ' +05:30');
-        if (!isNaN(d.getTime())) tsISO = d.toISOString();
-      } catch {}
-    }
-    brParsed.push({ok:true,ts:tsRaw,tsISO,email:email.toLowerCase(),name,team,matchId});
+    if (tsRaw) tsISO = parseIST(tsRaw);
+    // FIX: name is now properly captured and stored on the parsed object
+    brParsed.push({ok:true, ts:tsRaw, tsISO, email:email.toLowerCase(), name: name || '', team, matchId});
   });
 
   const ok = brParsed.filter(r=>r.ok).length;
@@ -1283,7 +1356,7 @@ function previewBulkResponses() {
   document.getElementById('br-tbody').innerHTML = brParsed.map(r=>`<tr style="${!r.ok?'background:var(--red-s)':''}">
     <td class="mono" style="font-size:10px">${esc(r.ts)||'—'}</td>
     <td class="mono">${esc(r.email)}</td>
-    <td>${esc(r.name)}</td>
+    <td>${esc(r.name)||'—'}</td>
     <td>${esc(r.team)}</td>
     <td>${r.ok?'<span style="color:var(--green)">✓</span>':'<span style="color:var(--red)">✗ '+esc(r.reason)+'</span>'}</td>
   </tr>`).join('');
@@ -1297,8 +1370,15 @@ async function importBulkResponses() {
   const log = document.getElementById('br-log');
   log.style.display='block'; log.innerHTML='Importing…';
   try {
+    // FIX: name is now included in the payload
     const res = await api('/api/admin/predictions/bulk','POST',{
-      predictions: toImport.map(r=>({email:r.email,match_id:r.matchId,name:r.name||undefined,predicted_team:r.team,submitted_at:r.tsISO||undefined}))
+      predictions: toImport.map(r=>({
+        email: r.email,
+        match_id: r.matchId,
+        name: r.name || undefined,
+        predicted_team: r.team,
+        submitted_at: r.tsISO || undefined
+      }))
     });
     log.innerHTML = `<div class="log-ok">✓ ${res.imported} imported</div>`
       + (res.skipped?`<div class="log-skip">⚠ ${res.skipped} skipped</div>`:'')
@@ -1317,20 +1397,25 @@ async function loadEmailMap() {
   const el = document.getElementById('emailmap-list');
   try {
     const rows = await api('/api/admin/email-map');
-    el.innerHTML = rows.length ? `<table class="tbl">
+    // Filter out self-mappings (alias = primary) for cleaner display
+    const mappings = rows.filter(r => r.alias_email !== r.primary_email);
+    el.innerHTML = mappings.length ? `<table class="tbl">
       <thead><tr><th>Alias email</th><th>→ Primary email</th><th></th></tr></thead>
-      <tbody>${rows.map(r=>`<tr>
+      <tbody>${mappings.map(r=>`<tr>
         <td class="mono">${esc(r.alias_email)}</td>
         <td class="mono">${esc(r.primary_email)}</td>
         <td><button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delAlias('${esc(r.alias_email)}')">Delete</button></td>
       </tr>`).join('')}</tbody>
-    </table>` : '<p style="color:var(--text3)">No mappings.</p>';
+    </table>` : '<p style="color:var(--text3)">No alias mappings. Self-mappings (alias = primary) are hidden.</p>';
   } catch(e) { toast(e.message,'err'); }
 }
+
 function openAliasModal() { sv('al-alias',''); sv('al-primary',''); openModal('modal-alias'); }
+
 async function saveAlias() {
   const alias=gv('al-alias').toLowerCase(), primary=gv('al-primary').toLowerCase();
   if (!alias||!primary) { toast('Fill both','err'); return; }
+  if (alias === primary) { toast('Alias and primary cannot be the same','err'); return; }
   try {
     await api('/api/admin/email-map','POST',{alias_email:alias,primary_email:primary});
     closeModal('modal-alias');
@@ -1338,10 +1423,64 @@ async function saveAlias() {
     loadEmailMap();
   } catch(e) { toast(e.message,'err'); }
 }
+
 async function delAlias(alias) {
-  if (!confirm('Remove this alias mapping? (existing data re-link will NOT be reversed)')) return;
+  if (!confirm('Remove this alias mapping? Existing data re-link will NOT be reversed automatically. Use "Re-link Emails" afterwards if needed.')) return;
   try { await api(`/api/admin/email-map/${encodeURIComponent(alias)}`,'DELETE'); toast('Removed'); loadEmailMap(); }
   catch(e) { toast(e.message,'err'); }
+}
+
+// ── RE-LINK EMAILS ────────────────────────────────────────────────────────────
+async function previewRelink() {
+  const el = document.getElementById('relink-results');
+  el.innerHTML = '<div style="color:var(--text3);font-size:12px">Scanning predictions…</div>';
+  document.getElementById('relink-commit-btn').disabled = true;
+  relinkPreviewData = null;
+  try {
+    const data = await api('/api/admin/predictions/relink-preview','GET');
+    relinkPreviewData = data;
+    if (!data.changes.length) {
+      el.innerHTML = '<div class="success-box">✓ All predictions are already linked to the correct primary email. Nothing to change.</div>';
+      return;
+    }
+    el.innerHTML = `
+      <div class="warn" style="margin-bottom:12px">Found <b>${data.total_affected}</b> prediction(s) with incorrect primary email. Review below, then click "Commit re-link".</div>
+      <div class="card">
+        <div class="card-body scroll-x">
+          <table class="tbl">
+            <thead><tr><th>Pred ID</th><th>Raw email (submitted)</th><th>Current primary</th><th></th><th>New primary</th></tr></thead>
+            <tbody>${data.changes.map(c=>`<tr class="diff-row-changed">
+              <td class="mono" style="color:var(--text3)">#${c.id}</td>
+              <td class="mono" style="font-size:11px">${esc(c.raw_email)}</td>
+              <td class="mono" style="color:var(--red);font-size:11px">${esc(c.old_primary)}</td>
+              <td class="diff-arrow">→</td>
+              <td class="mono" style="color:var(--green);font-size:11px">${esc(c.new_primary)}</td>
+            </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+    document.getElementById('relink-commit-btn').disabled = false;
+  } catch(e) {
+    el.innerHTML = `<div class="err-box">${esc(e.message)}</div>`;
+    toast(e.message,'err');
+  }
+}
+
+async function commitRelink() {
+  if (!relinkPreviewData) { toast('Run preview first','err'); return; }
+  if (!confirm(`Re-link ${relinkPreviewData.total_affected} prediction(s) to correct primary emails? Scores, penalties, and bonuses will be recalculated.`)) return;
+  document.getElementById('relink-commit-btn').disabled = true;
+  try {
+    const res = await api('/api/admin/predictions/relink-emails','POST');
+    document.getElementById('relink-results').innerHTML =
+      `<div class="success-box">✓ Done! ${res.updated} prediction(s) re-linked, ${res.skipped} already correct. Scores recalculated.</div>`;
+    toast(`Re-linked ${res.updated} predictions`);
+    relinkPreviewData = null;
+  } catch(e) {
+    toast(e.message,'err');
+    document.getElementById('relink-commit-btn').disabled = false;
+  }
 }
 
 // ── TEAM ALIASES ──────────────────────────────────────────────────────────────
@@ -1376,8 +1515,9 @@ async function delTeamAlias(id) {
 // ── PREDICTIONS (FULL CRUD + BULK DELETE) ─────────────────────────────────────
 async function loadPredSel() {
   try {
-    const ms = matches.length ? matches : await api('/api/matches');
-    if (ms.length) matches = ms;
+    // Always fetch fresh list
+    const ms = await api('/api/matches');
+    matches = ms;
     const sel = document.getElementById('pred-sel');
     sel.innerHTML = ms.map(m=>`<option value="${m.id}">M${m.match_number} — ${esc(m.title)} (${m.status})</option>`).join('');
     if (!ms.length) document.getElementById('pred-list').innerHTML='<p style="color:var(--text3)">No matches.</p>';
@@ -1415,20 +1555,22 @@ async function loadPreds() {
     <table class="tbl">
       <thead><tr>
         <th class="chk"><input type="checkbox" id="pred-chk-all" onchange="toggleAllPreds(this)"></th>
-        <th>Player</th><th>Email</th><th>Prediction</th><th>Submitted (IST)</th><th>Valid</th><th>Actions</th>
+        <th>Player</th><th>Raw email</th><th>Primary email</th><th>Prediction</th><th>Submitted (IST)</th><th>Valid</th><th>Actions</th>
       </tr></thead>
       <tbody>${preds.map(p=>`<tr id="pred-row-${p.id}">
         <td class="chk"><input type="checkbox" class="pred-chk" value="${p.id}" onchange="updatePredBulkBar()"></td>
         <td>${esc(p.display_name||'—')}</td>
-        <td class="mono" style="font-size:11px">${esc(p.raw_email)}</td>
+        <td class="mono" style="font-size:11px;color:var(--text3)">${esc(p.raw_email)}</td>
+        <td class="mono" style="font-size:11px;${p.raw_email!==p.primary_email?'color:var(--amber)':''}">${esc(p.primary_email)}</td>
         <td style="font-weight:${p.is_valid?600:400}">${esc(p.predicted_team)}</td>
         <td class="mono" style="font-size:10px">${fmtT(p.submitted_at)}</td>
         <td style="color:${p.is_valid?'var(--green)':'var(--red)'}">${p.is_valid?'✓':'✗ '+esc(p.invalid_reason||'')}</td>
         <td><div class="btn-row">
-          <button class="btn btn-ghost btn-sm" onclick="openEditPred(${p.id},${id},'${esc(p.predicted_team)}',${p.is_valid},'${esc(p.invalid_reason||'')}','${esc(p.submitted_at||'')}','${esc(p.primary_email||'')}')">✎ Edit</button>
+          <button class="btn btn-ghost btn-sm" onclick='openEditPred(${JSON.stringify({id:p.id,matchId:+id,team:p.predicted_team,isValid:p.is_valid,reason:p.invalid_reason||"",subAt:p.submitted_at||"",email:p.primary_email||"",name:p.display_name||""})})'>✎ Edit</button>
           <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="deletePred(${p.id})">✕</button>
         </div></td>
-      </tr>`).join('')}</tbody>
+      </tr>`).join('')}
+      </tbody>
     </table>`;
   } catch(e) {
     el.innerHTML=`<p style="color:var(--red)">${esc(e.message)}</p>`;
@@ -1453,11 +1595,14 @@ function clearPredSelection() {
   document.getElementById('pred-bulk-bar').classList.remove('on');
 }
 
-function openEditPred(id, matchId, team, isValid, reason, subAt, email) {
-  sv('ep-id',id); sv('ep-match-id',matchId);
+// FIX: openEditPred now takes a single object argument (avoids escaping issues)
+// and pre-fills display_name
+function openEditPred(data) {
+  const { id, matchId, team, isValid, reason, subAt, email, name } = data;
+  sv('ep-id', id);
+  sv('ep-match-id', matchId);
   const m = matches.find(x=>x.id==matchId);
   document.getElementById('ep-sub').textContent = m ? `${m.title} · ${m.team_a} vs ${m.team_b}` : `Match ID: ${matchId}`;
-  // Populate team select
   const sel = document.getElementById('ep-team');
   if (m) {
     sel.innerHTML = `<option value="${esc(m.team_a)}" ${team===m.team_a?'selected':''}>${esc(m.team_a)}</option>
@@ -1465,10 +1610,12 @@ function openEditPred(id, matchId, team, isValid, reason, subAt, email) {
   } else {
     sel.innerHTML = `<option value="${esc(team)}" selected>${esc(team)}</option>`;
   }
-  sv('ep-valid', isValid?'1':'0');
+  sv('ep-valid', isValid ? '1' : '0');
   sv('ep-reason', reason);
   sv('ep-subat', subAt);
   sv('ep-email', email);
+  // FIX: pre-fill display name
+  sv('ep-display-name', name);
   openModal('modal-edit-pred');
 }
 
@@ -1479,15 +1626,18 @@ async function saveEditPred() {
   const team = gv('ep-team');
   if (team) body.predicted_team = team;
   const valid = gv('ep-valid');
-  if (valid!=='') body.is_valid = +valid;
-  const reason = gv('ep-reason');
-  if (reason!==undefined) body.invalid_reason = reason;
+  if (valid !== '') body.is_valid = +valid;
+  const reason = document.getElementById('ep-reason').value; // don't trim — could be empty intentionally
+  body.invalid_reason = reason;
   const subAt = gv('ep-subat');
   if (subAt) body.submitted_at = subAt;
   const email = gv('ep-email');
   if (email) body.primary_email = email.toLowerCase();
+  // FIX: include display_name to update the player's name
+  const displayName = gv('ep-display-name');
+  if (displayName) body.display_name = displayName;
   try {
-    await api(`/api/admin/predictions/${id}`,'PATCH',body);
+    await api(`/api/admin/predictions/${id}`,'PATCH', body);
     closeModal('modal-edit-pred');
     toast('Prediction updated');
     loadPreds();
@@ -1500,6 +1650,7 @@ async function deletePred(id) {
     await api(`/api/admin/predictions/${id}`,'DELETE');
     document.getElementById(`pred-row-${id}`)?.remove();
     toast('Prediction deleted');
+    updatePredBulkBar();
   } catch(e) { toast(e.message,'err'); }
 }
 
@@ -1526,14 +1677,15 @@ async function loadPenalties() {
         <td class="mono" style="font-size:11px">${p.match_number?'M'+p.match_number+' '+esc(p.title):esc(p.match_id||'—')}</td>
         <td class="num mono" style="color:var(--red)">${p.penalty_pts}</td>
         <td class="mono" style="font-size:11px">${esc(p.reason)}</td>
-        <td><button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delPenalty(${p.id})">Delete</button></td>
+        <td><button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="delPenalty(${p.id})" title="Delete and exempt from recalculation">Delete</button></td>
       </tr>`).join('')}</tbody>
     </table>` : '<p style="color:var(--text3)">No penalties.</p>';
   } catch(e) { toast(e.message,'err'); }
 }
+
 async function delPenalty(id) {
-  if (!confirm('Remove this penalty? It will not be re-added on next recalculation (it stays deleted).')) return;
-  try { await api(`/api/admin/penalties/${id}`,'DELETE'); toast('Penalty removed'); loadPenalties(); }
+  if (!confirm('Remove this penalty? This player will be permanently exempt from this missed-vote penalty — it will not be re-added on recalculation.')) return;
+  try { await api(`/api/admin/penalties/${id}`,'DELETE'); toast('Penalty removed and exempted'); loadPenalties(); }
   catch(e) { toast(e.message,'err'); }
 }
 
@@ -1561,7 +1713,7 @@ async function loadAdminLB() {
 }
 
 async function recalcAll() {
-  if (!confirm('Recalculate ALL scores, penalties, and bonuses from scratch? This may take a few seconds.')) return;
+  if (!confirm('Recalculate ALL scores, penalties, and bonuses from scratch? Manually-exempted penalties will be preserved. This may take a few seconds.')) return;
   try {
     toast('Recalculating…','info');
     const res = await api('/api/admin/recalculate-all','POST');
@@ -1705,7 +1857,7 @@ async function dlCSV() {
     const lb = await api('/api/leaderboard');
     const h = ['Rank','Name','Email','Gross','Penalties','Bonuses','Net','Played','Correct'];
     const rows = lb.map(p=>[p.rank,p.display_name,p.primary_email,p.gross_points,p.penalties,p.bonuses,p.net_points,p.matches_played,p.correct_predictions]);
-    const csv = [h,...rows].map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+    const csv = [h,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
     const blob = new Blob([csv],{type:'text/csv'});
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
     a.download = `leaderboard-${new Date().toISOString().slice(0,10)}.csv`; a.click();
