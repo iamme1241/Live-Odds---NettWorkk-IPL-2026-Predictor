@@ -13,6 +13,7 @@
   --teal:#0D7C7C;--teal-s:#E8F5F5;--teal-b:#A8D8D8;
   --cherry:#C2380A;--cherry-s:#FBF0EC;--cherry-b:#EFB09A;
   --green:#1A7A4A;--green-s:#EEF8F3;--green-b:#8FCFAA;--red:#B02020;
+  --blue:#2563EB;--blue-s:#EFF6FF;--blue-b:#93C5FD;
   --shadow:0 1px 4px rgba(0,0,0,0.07),0 4px 16px rgba(0,0,0,0.05);
   --topbar:rgba(250,250,248,0.94);
 }
@@ -23,6 +24,7 @@
   --teal:#3AAFAF;--teal-s:#0A2222;--teal-b:#145858;
   --cherry:#E06040;--cherry-s:#2A1008;--cherry-b:#6E2A18;
   --green:#34C478;--green-s:#0C2018;--green-b:#1A5030;--red:#E05050;
+  --blue:#60A5FA;--blue-s:#0C1A2E;--blue-b:#1E3A5F;
   --shadow:0 1px 4px rgba(0,0,0,0.3),0 4px 16px rgba(0,0,0,0.25);
   --topbar:rgba(22,18,14,0.96);
 }
@@ -32,7 +34,6 @@ body{background:var(--page);color:var(--ink);font-family:'Outfit',sans-serif;fon
 button,input,select,textarea{font-family:'Outfit',sans-serif;}
 button{cursor:pointer;}
 
-/* TICKER */
 .ticker-wrap{background:var(--surface2);border-bottom:1px solid var(--line);height:30px;overflow:hidden;display:flex;align-items:center;}
 .ticker-inner{display:flex;white-space:nowrap;animation:tick 60s linear infinite;}
 .ticker-inner:hover{animation-play-state:paused;}
@@ -42,7 +43,6 @@ button{cursor:pointer;}
 .ti-l{color:var(--teal);font-weight:600;}
 @keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-/* TOPBAR */
 .topbar{background:var(--topbar);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
 .topbar-brand{display:flex;align-items:center;gap:11px;}
 .topbar-logo{width:32px;height:32px;border-radius:8px;flex-shrink:0;background:var(--amber);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;letter-spacing:-.5px;}
@@ -58,7 +58,6 @@ button{cursor:pointer;}
 [data-theme="light"] .icon-l{display:block;}
 [data-theme="dark"] .icon-d{display:block;}
 
-/* TABS */
 .tab-nav{background:var(--topbar);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:0 20px;display:flex;position:sticky;top:56px;z-index:199;overflow-x:auto;-webkit-overflow-scrolling:touch;}
 .tab-nav::-webkit-scrollbar{display:none;}
 .tab-btn{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--ink3);padding:14px 18px;font-size:14px;font-weight:600;letter-spacing:-.1px;transition:color .15s,border-color .15s;white-space:nowrap;margin-bottom:-1px;flex-shrink:0;}
@@ -67,12 +66,10 @@ button{cursor:pointer;}
 .tab-panel{display:none;}
 .tab-panel.active{display:block;}
 
-/* LAYOUT */
 .page{max-width:680px;margin:0 auto;padding:28px 18px;}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);}
 .section-title{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:14px;}
 
-/* HOW BOX */
 .how-box{background:var(--amber-s);border:1px solid var(--amber-b);border-radius:12px;padding:14px 18px;margin-bottom:22px;}
 .how-lbl{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--amber);margin-bottom:6px;}
 .how-text{font-family:'DM Mono',monospace;font-size:12px;color:var(--ink3);line-height:1.9;}
@@ -89,9 +86,18 @@ button{cursor:pointer;}
 .leg{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink3);}
 .leg-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 
+/* MY RECORD LOOKUP (on leaderboard tab) */
+.lookup-box{background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:22px;}
+.lookup-form{display:flex;gap:8px;}
+.lookup-inp{flex:1;padding:9px 14px;background:var(--surface);border:1px solid var(--line2);border-radius:10px;color:var(--ink);font-size:14px;outline:none;transition:border-color .15s;}
+.lookup-inp:focus{border-color:var(--teal);}
+.lookup-inp::placeholder{color:var(--ink4);}
+.lookup-btn{padding:9px 18px;background:var(--amber);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;transition:opacity .15s;white-space:nowrap;}
+.lookup-btn:hover{opacity:.9;}
+
 /* PODIUM */
 .podium{display:flex;justify-content:center;align-items:flex-end;gap:10px;margin-bottom:20px;}
-.pod{background:var(--surface2);border:1px solid var(--line2);border-radius:18px;padding:20px 12px 16px;text-align:center;position:relative;transition:transform .25s;cursor:default;flex:1;min-width:0;}
+.pod{background:var(--surface2);border:1px solid var(--line2);border-radius:18px;padding:20px 12px 16px;text-align:center;position:relative;transition:transform .25s;cursor:pointer;flex:1;min-width:0;}
 .pod:hover{transform:translateY(-3px);}
 .pod.p1{border-color:rgba(255,209,102,.4);background:linear-gradient(160deg,rgba(255,209,102,.08) 0%,var(--surface2) 100%);padding-top:30px;box-shadow:0 0 40px rgba(255,209,102,.12),var(--shadow);transform:scale(1.08);z-index:2;}
 .pod.p2{transform:scale(0.95);}
@@ -111,7 +117,7 @@ button{cursor:pointer;}
 .lb-head{display:grid;grid-template-columns:56px 1fr 58px 90px 76px 70px 70px;padding:10px 20px;background:var(--surface2);border-bottom:1px solid var(--line);}
 .lb-th{font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--ink3);text-align:right;}
 .lb-th:nth-child(2){text-align:left;}
-.lb-row{display:grid;grid-template-columns:56px 1fr 58px 90px 76px 70px 70px;padding:14px 20px;border-bottom:1px solid var(--line);align-items:center;transition:background .12s;}
+.lb-row{display:grid;grid-template-columns:56px 1fr 58px 90px 76px 70px 70px;padding:14px 20px;border-bottom:1px solid var(--line);align-items:center;transition:background .12s;cursor:pointer;}
 .lb-row:last-child{border-bottom:none;}
 .lb-row:hover{background:var(--surface2);}
 .lb-row.r1{background:linear-gradient(90deg,rgba(200,118,12,.06) 0%,transparent 60%);}
@@ -140,6 +146,8 @@ button{cursor:pointer;}
 .s-closed{background:var(--amber-s);border:1px solid var(--amber-b);color:var(--amber);}
 .s-resulted{background:var(--green-s);border:1px solid var(--green-b);color:var(--green);}
 .s-upcoming{background:var(--surface3);border:1px solid var(--line2);color:var(--ink3);}
+.s-abandoned{background:var(--blue-s);border:1px solid var(--blue-b);color:var(--blue);}
+.s-cancelled{background:var(--surface3);border:1px solid var(--line2);color:var(--ink4);}
 .mh-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
 .m-date{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3);}
 .countdown{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--teal);background:var(--teal-s);border:1px solid var(--teal-b);border-radius:6px;padding:2px 8px;}
@@ -170,74 +178,21 @@ button{cursor:pointer;}
 .tile-votes{margin-top:10px;padding-top:7px;border-top:1px solid var(--line);font-size:12px;color:var(--ink3);}
 .tile-votes b{color:var(--ink2);font-weight:600;}
 .tile-won{display:inline-flex;margin-top:6px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;background:var(--teal-s);border:1px solid var(--teal);color:var(--teal);}
-.result-banner{margin:0 20px 12px;padding:9px 14px;border-radius:10px;background:var(--teal-s);border:1px solid var(--teal);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.result-banner{margin:0 20px 12px;padding:9px 14px;border-radius:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.result-banner.won{background:var(--teal-s);border:1px solid var(--teal);}
+.result-banner.abandoned{background:var(--blue-s);border:1px solid var(--blue-b);}
 .result-w{font-size:14px;font-weight:700;color:var(--teal);}
+.result-banner.abandoned .result-w{color:var(--blue);}
 .result-sub{font-size:11px;color:var(--ink3);}
 .m-footer{background:var(--surface2);border-top:1px solid var(--line);padding:10px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;}
 .pool-val{font-size:18px;font-weight:700;color:var(--amber);font-family:'DM Mono',monospace;}
 .pool-meta{font-size:12px;color:var(--ink3);}
 
-/* PREDICT */
-.predict-area{border-top:1px solid var(--line);padding:16px 20px 18px;}
-.predict-lbl{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--ink3);margin-bottom:12px;}
-.team-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
-.team-sel{border:1.5px solid var(--line2);border-radius:10px;padding:10px 8px;background:var(--surface2);font-size:13px;font-weight:600;color:var(--ink2);transition:all .15s;text-align:center;line-height:1.3;}
-.team-sel:hover{border-color:var(--teal);color:var(--teal);background:var(--teal-s);}
-.team-sel.sel-a{background:var(--teal-s);border-color:var(--teal);color:var(--teal);}
-.team-sel.sel-b{background:var(--cherry-s);border-color:var(--cherry);color:var(--cherry);}
-.email-row{display:flex;gap:8px;margin-bottom:8px;}
-.email-inp{flex:1;padding:10px 13px;background:var(--surface);border:1px solid var(--line2);border-radius:10px;color:var(--ink);font-size:13px;outline:none;transition:border-color .15s;}
-.email-inp:focus{border-color:var(--teal);}
-.email-inp::placeholder{color:var(--ink4);}
-.pred-btn{padding:10px 20px;background:var(--amber);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;transition:opacity .15s,transform .1s;white-space:nowrap;}
-.pred-btn:hover{opacity:.9;}
-.pred-btn:active{transform:scale(.97);}
-.pred-btn:disabled{opacity:.4;cursor:not-allowed;}
-.card-msg{font-size:12px;text-align:center;padding:8px 12px;border-radius:8px;margin-top:4px;}
-.card-msg.ok{background:var(--green-s);color:var(--green);border:1px solid var(--green-b);}
-.card-msg.err{background:var(--cherry-s);color:var(--cherry);border:1px solid var(--cherry-b);}
-.divider{display:flex;align-items:center;gap:10px;margin:12px 0;font-size:11px;color:var(--ink4);}
-.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line);}
-.gform-btn{width:100%;padding:10px;background:var(--surface2);border:1px solid var(--line2);border-radius:10px;font-size:13px;font-weight:600;color:var(--ink2);display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,border-color .15s;text-decoration:none;}
-.gform-btn:hover{background:var(--surface3);border-color:var(--ink3);}
+/* Voting handled via Google Forms */
 
-/* ACTIONS */
 .m-actions{padding:0 20px 14px;display:flex;gap:8px;flex-wrap:wrap;}
 .act-btn{background:var(--surface2);border:1px solid var(--line2);border-radius:10px;padding:7px 14px;font-size:13px;font-weight:600;color:var(--ink2);display:flex;align-items:center;gap:6px;transition:background .15s,border-color .15s;}
 .act-btn:hover{background:var(--surface3);border-color:var(--ink3);}
-
-/* BANTER */
-.banter-section{border-top:1px solid var(--line);}
-.banter-toggle{width:100%;background:transparent;border:none;padding:11px 20px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600;color:var(--ink3);transition:background .12s;}
-.banter-toggle:hover{background:var(--surface2);}
-.banter-toggle .arr{font-size:10px;color:var(--ink4);transition:transform .2s;}
-.banter-toggle.open .arr{transform:rotate(180deg);}
-.banter-body{display:none;padding:14px 20px 18px;border-top:1px solid var(--line);}
-.banter-body.open{display:block;}
-.react-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;}
-.react-btn{display:flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--line2);border-radius:22px;padding:6px 12px;font-size:13px;font-family:'DM Mono',monospace;color:var(--ink3);transition:all .15s;}
-.react-btn:hover{border-color:var(--amber-b);background:var(--amber-s);}
-.react-btn.active{border-color:var(--amber);background:var(--amber-s);color:var(--amber);}
-.react-em{font-size:15px;}
-.react-n{font-size:12px;font-weight:600;}
-.clist{display:flex;flex-direction:column;gap:8px;margin-bottom:13px;max-height:220px;overflow-y:auto;}
-.clist::-webkit-scrollbar{width:3px;}
-.clist::-webkit-scrollbar-thumb{background:var(--line2);border-radius:4px;}
-.c-item{background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;}
-.c-name{font-size:13px;font-weight:700;color:var(--teal);margin-bottom:2px;}
-.c-text{font-size:13px;color:var(--ink2);line-height:1.5;word-break:break-word;}
-.c-meta{display:flex;align-items:center;justify-content:space-between;margin-top:4px;}
-.c-time{font-size:10px;color:var(--ink4);font-family:'DM Mono',monospace;}
-.c-del{background:transparent;border:none;padding:2px 6px;border-radius:4px;font-size:11px;color:var(--ink4);cursor:pointer;transition:color .15s;}
-.c-del:hover{color:var(--red);}
-.no-comments{text-align:center;padding:12px;font-size:12px;color:var(--ink3);}
-.c-form{display:flex;flex-direction:column;gap:8px;}
-.c-row{display:grid;grid-template-columns:1fr 2fr;gap:8px;}
-.c-input{width:100%;background:var(--surface);border:1px solid var(--line2);border-radius:8px;padding:8px 12px;font-size:13px;color:var(--ink);outline:none;transition:border-color .15s;}
-.c-input:focus{border-color:var(--teal);}
-.c-input::placeholder{color:var(--ink4);}
-.c-post{align-self:flex-end;background:var(--amber);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:14px;font-weight:600;transition:opacity .15s;}
-.c-post:hover{opacity:.88;}
 
 /* PAST */
 .past-note{font-family:'DM Mono',monospace;font-size:12px;color:var(--ink3);line-height:1.8;padding:12px 16px;background:var(--surface2);border:1px solid var(--line);border-radius:12px;margin-bottom:20px;}
@@ -249,6 +204,7 @@ button{cursor:pointer;}
 .acc-date{font-size:12px;color:var(--ink3);font-family:'DM Mono',monospace;}
 .acc-r{display:flex;align-items:center;gap:8px;flex-shrink:0;}
 .win-tag{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--teal-s);border:1px solid var(--teal);color:var(--teal);}
+.win-tag.abandoned{background:var(--blue-s);border-color:var(--blue-b);color:var(--blue);}
 .acc-arr{font-size:11px;color:var(--ink3);transition:transform .2s;}
 .acc.open .acc-arr{transform:rotate(180deg);}
 .acc-body{display:none;padding:0 20px 16px;border-top:1px solid var(--line);}
@@ -288,7 +244,6 @@ button{cursor:pointer;}
 .pts-neg{color:var(--red)!important;}
 .pts-zer{color:var(--ink3)!important;}
 
-/* STATES */
 .loading{text-align:center;padding:56px 20px;color:var(--ink3);font-family:'DM Mono',monospace;font-size:13px;line-height:2;}
 .spinner{display:inline-block;width:24px;height:24px;border:2px solid var(--line2);border-top-color:var(--amber);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:10px;}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -299,10 +254,18 @@ button{cursor:pointer;}
 .refresh-btn:hover{opacity:.9;transform:translateY(-1px);}
 .last-upd{text-align:center;margin-top:12px;font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3);}
 
+/* Inline record popup */
+.record-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:300;padding:20px;}
+.record-overlay.open{display:flex;}
+.record-modal{background:var(--surface);border:1px solid var(--line);border-radius:18px;max-width:560px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:var(--shadow);padding:24px;}
+.record-modal::-webkit-scrollbar{width:3px;}
+.record-modal::-webkit-scrollbar-thumb{background:var(--line2);border-radius:4px;}
+.record-close{float:right;background:var(--surface2);border:1px solid var(--line2);border-radius:8px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--ink3);cursor:pointer;transition:background .15s;}
+.record-close:hover{background:var(--surface3);color:var(--ink);}
+
 @media(max-width:580px){
   .lb-head,.lb-row{grid-template-columns:46px 1fr 56px 84px;}
   .lb-th:nth-child(n+5),.lb-cell:nth-child(n+5){display:none;}
-  .c-row{grid-template-columns:1fr;}
   .topbar-name{font-size:14px;}
   .tab-btn{padding:13px 14px;font-size:13px;}
   .lb-headline{font-size:23px;}
@@ -314,31 +277,24 @@ button{cursor:pointer;}
 </head>
 <body>
 
-<div class="ticker-wrap"><div class="ticker-inner" id="ticker">
-  <span class="ti"><span class="ti-m">Loading odds…</span></span>
-</div></div>
+<div class="ticker-wrap"><div class="ticker-inner" id="ticker"><span class="ti"><span class="ti-m">Loading odds…</span></span></div></div>
 
 <div class="topbar">
   <div class="topbar-brand">
     <div class="topbar-logo">NW</div>
-    <div>
-      <div class="topbar-name">NettWorkk Predictor</div>
-      <div class="topbar-sub">IPL 2026</div>
-    </div>
+    <div><div class="topbar-name">NettWorkk Predictor</div><div class="topbar-sub">IPL 2026</div></div>
   </div>
   <div class="topbar-right">
     <div class="live-pill"><div class="live-dot"></div> LIVE</div>
-    <button class="theme-btn" onclick="toggleTheme()">
-      <span class="icon-l">🌙</span><span class="icon-d">☀️</span>
-    </button>
+    <button class="theme-btn" onclick="toggleTheme()"><span class="icon-l">🌙</span><span class="icon-d">☀️</span></button>
   </div>
 </div>
 
 <div class="tab-nav">
-  <button class="tab-btn active" id="tab-lb"      onclick="switchTab('lb')">Leaderboard</button>
-  <button class="tab-btn"        id="tab-odds"    onclick="switchTab('odds')">Live Odds</button>
-  <button class="tab-btn"        id="tab-past"    onclick="switchTab('past')">Past Matches</button>
-  <button class="tab-btn"        id="tab-tracker" onclick="switchTab('tracker')">My History</button>
+  <button class="tab-btn active" id="tab-lb" onclick="switchTab('lb')">Leaderboard</button>
+  <button class="tab-btn" id="tab-odds" onclick="switchTab('odds')">Live Odds</button>
+  <button class="tab-btn" id="tab-past" onclick="switchTab('past')">Past Matches</button>
+  <button class="tab-btn" id="tab-tracker" onclick="switchTab('tracker')">My History</button>
 </div>
 
 <!-- LEADERBOARD -->
@@ -351,10 +307,19 @@ button{cursor:pointer;}
       </div>
       <button class="btn-secondary" onclick="manualRefreshLB(this)">↻ Refresh</button>
     </div>
+    <!-- FIX: Email lookup right on leaderboard -->
+    <div class="lookup-box">
+      <div class="section-title">🔍 Look up your record</div>
+      <div class="lookup-form">
+        <input class="lookup-inp" id="lb-email" type="email" placeholder="Enter your email to see your full record…" autocomplete="email">
+        <button class="lookup-btn" onclick="lookupFromLB()">View</button>
+      </div>
+    </div>
     <div class="legend">
       <span class="leg"><span class="leg-dot" style="background:var(--amber)"></span>Net Points</span>
       <span class="leg"><span class="leg-dot" style="background:var(--teal)"></span>Correct</span>
       <span class="leg"><span class="leg-dot" style="background:var(--red)"></span>Penalty</span>
+      <span class="leg"><span class="leg-dot" style="background:var(--saffron)"></span>Bonus</span>
     </div>
     <div id="lb-container"><div class="loading"><div class="spinner"></div><br>Loading standings…</div></div>
     <div class="last-upd" id="lb-last"></div>
@@ -382,7 +347,7 @@ button{cursor:pointer;}
 <!-- PAST MATCHES -->
 <div class="tab-panel" id="panel-past">
   <div class="page">
-    <div class="past-note">Tap any match to see the final odds snapshot.</div>
+    <div class="past-note">Tap any match to see the final odds snapshot. Includes abandoned matches.</div>
     <div id="past-container"><div class="loading"><div class="spinner"></div><br>Loading…</div></div>
   </div>
 </div>
@@ -401,28 +366,25 @@ button{cursor:pointer;}
   </div>
 </div>
 
+<!-- RECORD POPUP (clickable from leaderboard) -->
+<div class="record-overlay" id="record-overlay" onclick="if(event.target===this)closeRecord()">
+  <div class="record-modal">
+    <button class="record-close" onclick="closeRecord()">✕</button>
+    <div id="record-content"></div>
+  </div>
+</div>
+
 <script>
-/* ── CONFIG ── */
-const API = 'https://predictor-league-api.iamme1241.workers.dev';
+const API='https://predictor-league-api.iamme1241.workers.dev';
+(function(){document.documentElement.setAttribute('data-theme',localStorage.getItem('nw_theme')||'light');})();
+function toggleTheme(){const n=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('nw_theme',n);}
 
-/* ── THEME ── */
-(function(){ document.documentElement.setAttribute('data-theme', localStorage.getItem('nw_theme')||'light'); })();
-function toggleTheme(){
-  const n = document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';
-  document.documentElement.setAttribute('data-theme',n);
-  localStorage.setItem('nw_theme',n);
-}
-
-/* ── STATE ── */
-let matches=[], leaderboard=[];
+let matches=[],leaderboard=[];
 const tabLoaded={lb:false,odds:false,past:false,tracker:false};
-const selections={};
 const cdTimers={};
-const bCache={};
 const savedEmail=()=>localStorage.getItem('nw_email')||'';
 const saveEmail=e=>localStorage.setItem('nw_email',e);
 
-/* ── TABS ── */
 function switchTab(t){
   ['lb','odds','past','tracker'].forEach(x=>{
     document.getElementById('panel-'+x).classList.toggle('active',x===t);
@@ -433,240 +395,47 @@ function switchTab(t){
   if(t==='lb'&&!tabLoaded.lb){loadLB();tabLoaded.lb=true;}
 }
 
-/* ── COUNTDOWN ── */
 function startCD(el,iso){
   const target=new Date(iso).getTime();
-  const tick=()=>{
-    const diff=target-Date.now();
-    if(diff<=0){el.textContent='Voting closed';el.className='countdown urgent';return;}
-    const h=Math.floor(diff/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
-    el.className='countdown'+(diff<3600000?' urgent':'');
-    el.textContent=h>0?`Closes in ${h}h ${m}m`:m>0?`Closes in ${m}m ${s}s`:`Closes in ${s}s`;
-    cdTimers[iso]=setTimeout(tick,1000);
-  };
-  tick();
+  const tick=()=>{const diff=target-Date.now();if(diff<=0){el.textContent='Voting closed';el.className='countdown urgent';return;}const h=Math.floor(diff/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);el.className='countdown'+(diff<3600000?' urgent':'');el.textContent=h>0?`Closes in ${h}h ${m}m`:m>0?`Closes in ${m}m ${s}s`:`Closes in ${s}s`;cdTimers[iso]=setTimeout(tick,1000);};tick();
 }
 
-/* ── TICKER ── */
 function buildTicker(ms){
   const items=ms.filter(m=>m.status==='open'||m.status==='resulted').map(m=>{
     const o=m._odds;
-    return `<span class="ti"><span class="ti-m">M${m.match_number} · ${esc(m.team_a)} vs ${esc(m.team_b)}</span>`+
-      (o?`<span class="ti-o">${m.team_a} ${o.team_a_odds??'–'}x · ${m.team_b} ${o.team_b_odds??'–'}x</span>`:`<span class="ti-l">OPEN</span>`)+
-      `</span>`;
+    return `<span class="ti"><span class="ti-m">M${m.match_number} · ${esc(m.team_a)} vs ${esc(m.team_b)}</span>`+(o?`<span class="ti-o">${m.team_a} ${o.team_a_odds??'–'}x · ${m.team_b} ${o.team_b_odds??'–'}x</span>`:`<span class="ti-l">OPEN</span>`)+`</span>`;
   });
   if(!items.length)return;
   document.getElementById('ticker').innerHTML=[...items,...items].join('');
 }
 
-/* ── LOAD MATCHES ── */
-async function loadOdds(){
-  const con=document.getElementById('matches-container');
-  con.innerHTML='<div class="loading"><div class="spinner"></div><br>Fetching live odds…</div>';
-  try{
-    const res=await fetch(`${API}/api/matches`);
-    matches=await res.json();
-    await Promise.all(matches.map(async m=>{
-      if(['open','closed','resulted'].includes(m.status)){
-        try{const r=await fetch(`${API}/api/matches/${m.id}/odds`);m._odds=await r.json();}catch{}
-      }
-    }));
-    const ordered=[...matches].sort((a,b)=>{
-      const o={open:0,closed:1,upcoming:2,resulted:3};
-      return (o[a.status]??9)-(o[b.status]??9)||a.match_number-b.match_number;
-    });
-    con.innerHTML='';
-    if(!ordered.length){con.innerHTML='<div class="empty-state">No matches right now.</div>';return;}
-    ordered.forEach(m=>con.appendChild(renderMatch(m)));
-    ordered.forEach(m=>{
-      if((m.status==='open'||m.status==='upcoming')&&m.match_time){
-        const el=document.getElementById('cd-'+m.id);
-        if(el)startCD(el,m.match_time);
-      }
-    });
-    document.getElementById('odds-last').textContent='Last updated: '+new Date().toLocaleTimeString();
-    buildTicker(matches);
-  }catch(e){
-    con.innerHTML='<div class="error-box">Could not load matches. Please refresh.</div>';
-  }
-}
-
-function fmtT(iso){
-  return new Date(iso).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Kolkata'})+' IST';
-}
-
-function renderMatch(m){
-  const el=document.createElement('div');
-  el.className='card match-card'+(m.status==='open'?' is-open':'');
-  el.id='card-'+m.id;
-
-  const o=m._odds;
-  const aV=o?.team_a_votes??0, bV=o?.team_b_votes??0, tot=o?.total_votes??0;
-  const aOdds=o?.team_a_odds, bOdds=o?.team_b_odds;
-  const aPct=tot>0?Math.round(aV/tot*100):50, bPct=100-aPct;
-  const wonA=m.status==='resulted'&&m.winner===m.team_a;
-  const wonB=m.status==='resulted'&&m.winner===m.team_b;
-
-  const statusMap={open:'s-open',closed:'s-closed',resulted:'s-resulted',upcoming:'s-upcoming'};
-  const statusLabel={open:'Open',closed:'Awaiting result',resulted:'Completed',upcoming:'Coming up'};
-  const cdHtml=(m.status==='open'||m.status==='upcoming')?`<div class="countdown" id="cd-${m.id}">…</div>`:'';
-
-  const bar=tot>0?`<div class="bar-wrap">
-    <div class="bar-labels">
-      <span class="bar-pct blue-pct">${esc(m.team_a)} · ${aPct}%</span>
-      <span class="bar-pct orange-pct">${bPct}% · ${esc(m.team_b)}</span>
-    </div>
-    <div class="bar-track"><div class="bar-blue" style="width:${aPct}%"></div><div class="bar-orange"></div></div>
-  </div>`:'';
-
-  // predict area
-  let predictHTML='';
-  if(m.status==='open'){
-    const sel=selections[m.id];
-    predictHTML=`<div class="predict-area">
-      <div class="predict-lbl">Lock in your prediction</div>
-      <div class="team-btns">
-        <button class="team-sel${sel===m.team_a?' sel-a':''}" id="btn-a-${m.id}"
-          onclick="selectTeam(${m.id},'${esc(m.team_a)}','a')">${esc(m.team_a)}</button>
-        <button class="team-sel${sel===m.team_b?' sel-b':''}" id="btn-b-${m.id}"
-          onclick="selectTeam(${m.id},'${esc(m.team_b)}','b')">${esc(m.team_b)}</button>
-      </div>
-      <div class="email-row">
-        <input class="email-inp" id="email-${m.id}" type="email"
-          placeholder="your@email.com" value="${esc(savedEmail())}" autocomplete="email">
-        <button class="pred-btn" id="pbtn-${m.id}" onclick="submitPred(${m.id})">Lock in</button>
-      </div>
-      <div id="msg-${m.id}" style="display:none" class="card-msg"></div>
-      ${m._gform_url?`<div class="divider">or</div>
-      <a class="gform-btn" href="${esc(m._gform_url)}" target="_blank">
-        📋 Submit via Google Form
-      </a>`:''}
-    </div>`;
-  }else if(m.status==='closed'){
-    predictHTML=`<div style="padding:12px 20px 14px;font-size:13px;color:var(--ink3)">Voting closed — result pending.</div>`;
-  }else if(m.status==='upcoming'){
-    predictHTML=`<div style="padding:12px 20px 14px;font-size:13px;color:var(--ink3)">Opens ${fmtT(m.match_time)}</div>`;
-  }
-
-  const resultBanner=m.status==='resulted'&&m.winner?`<div class="result-banner">
-    <span class="result-w">🏆 ${esc(m.winner)}</span><span class="result-sub">won this match</span>
-  </div>`:'';
-
-  const bid='b-'+m.id;
-  const shareText=encodeURIComponent(`🏏 Match ${m.match_number} · ${m.team_a} vs ${m.team_b}\n`+
-    (aOdds?`${m.team_a}: ${aOdds}x · ${m.team_b}: ${bOdds}x\n`:'')+
-    `Check live odds → https://nettworkkpredictor.pages.dev`);
-
-  el.innerHTML=`
-    <div class="mh">
-      <div class="mh-left">
-        <span class="m-label">Match ${m.match_number}</span>
-        <span class="m-status ${statusMap[m.status]||'s-upcoming'}">${statusLabel[m.status]||m.status}</span>
-      </div>
-      <div class="mh-right">
-        <span class="m-date">${fmtT(m.match_time)}</span>
-        ${cdHtml}
-      </div>
-    </div>
-    <div class="m-title">
-      <span class="t-name blue-team">${esc(m.team_a)}</span>
-      <span class="vs">VS</span>
-      <span class="t-name orange-team">${esc(m.team_b)}</span>
-    </div>
-    ${bar}
-    <div class="tiles">
-      <div class="tile blue-tile">
-        <div class="tile-name">${esc(m.team_a)}</div>
-        <div class="tile-payout">${aOdds?aOdds+'x':'—'}</div>
-        <div class="tile-votes"><b>${aV}</b> vote${aV!==1?'s':''}</div>
-        ${wonA?'<div class="tile-won">🏆 Won</div>':''}
-      </div>
-      <div class="tile orange-tile">
-        <div class="tile-name">${esc(m.team_b)}</div>
-        <div class="tile-payout">${bOdds?bOdds+'x':'—'}</div>
-        <div class="tile-votes"><b>${bV}</b> vote${bV!==1?'s':''}</div>
-        ${wonB?'<div class="tile-won">🏆 Won</div>':''}
-      </div>
-    </div>
-    ${resultBanner}
-    <div class="m-footer">
-      <span class="pool-val">${tot>0?(tot*100).toLocaleString()+' pt pool':'—'}</span>
-      <span class="pool-meta">${tot} vote${tot!==1?'s':''} cast</span>
-    </div>
-    ${predictHTML}
-    <div class="m-actions">
-      <button class="act-btn" onclick="doShare('${shareText}')">📤 Share on WhatsApp</button>
-      <button class="act-btn" onclick="copyLink()">🔗 Copy link</button>
-    </div>
-    <div class="banter-section">
-      <button class="banter-toggle" onclick="openBanter(this,'${bid}')">
-        💬 Banter Board <span class="arr">▼</span>
-      </button>
-      <div class="banter-body" id="${bid}"></div>
-    </div>`;
-  return el;
-}
-
-function selectTeam(id,team,side){
-  selections[id]=team;
-  const a=document.getElementById('btn-a-'+id),b=document.getElementById('btn-b-'+id);
-  if(a)a.className='team-sel'+(side==='a'?' sel-a':'');
-  if(b)b.className='team-sel'+(side==='b'?' sel-b':'');
-}
-
-async function submitPred(matchId){
-  const email=document.getElementById('email-'+matchId)?.value?.trim();
-  const team=selections[matchId];
-  const msgEl=document.getElementById('msg-'+matchId);
-  const btn=document.getElementById('pbtn-'+matchId);
-  if(!email||!email.includes('@')){showMsg(msgEl,'Enter a valid email.','err');return;}
-  if(!team){showMsg(msgEl,'Select a team first.','err');return;}
-  saveEmail(email);
-  btn.disabled=true;btn.textContent='…';
-  try{
-    const res=await fetch(`${API}/api/predict`,{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({email,match_id:matchId,predicted_team:team}),
-    });
-    const data=await res.json();
-    if(res.ok){
-      showMsg(msgEl,`✓ Locked in — ${team}`,'ok');
-      setTimeout(loadOdds,1200);
-    }else{
-      showMsg(msgEl,data.error||'Something went wrong.','err');
-      btn.disabled=false;btn.textContent='Lock in';
-    }
-  }catch{
-    showMsg(msgEl,'Network error. Try again.','err');
-    btn.disabled=false;btn.textContent='Lock in';
-  }
-}
-function showMsg(el,msg,type){el.style.display='block';el.className='card-msg '+type;el.textContent=msg;}
-function doShare(txt){window.open('https://wa.me/?text='+txt,'_blank');}
-function copyLink(){navigator.clipboard?navigator.clipboard.writeText(window.location.href).then(()=>alert('Link copied!')):prompt('Copy:',window.location.href);}
-function manualRefresh(btn){btn.textContent='Refreshing…';btn.style.opacity='.7';loadOdds();setTimeout(()=>{btn.textContent='Updated ✓';},900);setTimeout(()=>{btn.textContent='↻ Refresh';btn.style.opacity='1';},2400);}
+function fmtT(iso){return new Date(iso).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Kolkata'})+' IST';}
 
 /* ── LEADERBOARD ── */
 async function loadLB(){
   const con=document.getElementById('lb-container');
   con.innerHTML='<div class="loading"><div class="spinner"></div><br>Loading standings…</div>';
   try{
-    const res=await fetch(`${API}/api/leaderboard`);
-    leaderboard=await res.json();
+    const [lbRes,mRes]=await Promise.all([fetch(`${API}/api/leaderboard`),fetch(`${API}/api/matches`)]);
+    leaderboard=await lbRes.json();
+    const allMatches=await mRes.json();
+    // FIX: count actual resulted+abandoned matches for "After X matches"
+    const resultedCount=allMatches.filter(m=>m.status==='resulted'||m.status==='abandoned').length;
+
     if(!leaderboard.length){
       con.innerHTML='<div class="empty-state">No results yet. First match result pending.</div>';
       document.getElementById('lb-stmt').style.display='none';
       return;
     }
     const stmt=document.getElementById('lb-stmt');
-    stmt.textContent=`After ${leaderboard[0]?.matches_played??0} match${(leaderboard[0]?.matches_played??0)!==1?'es':''}`;
+    stmt.textContent=`After ${resultedCount} match${resultedCount!==1?'es':''}`;
     stmt.style.display='inline-flex';
 
     const top3=leaderboard.slice(0,Math.min(3,leaderboard.length));
     const medals=['🥇','🥈','🥉'];
     let h='<div class="podium">';
     top3.forEach(p=>{
-      h+=`<div class="pod p${p.rank}">${p.rank===1?'<div class="pod-crown">👑</div>':''}
+      h+=`<div class="pod p${p.rank}" onclick="showRecord('${escAttr(p.primary_email)}')">${p.rank===1?'<div class="pod-crown">👑</div>':''}
         <div class="pod-medal">${medals[p.rank-1]}</div>
         <div class="pod-name">${esc(p.display_name)}</div>
         <div class="pod-pts">${p.net_points.toLocaleString()}</div>
@@ -688,24 +457,177 @@ async function loadLB(){
       const rc=p.rank<=3?` r${p.rank===1?'1':''}`:'';
       const nc=p.rank===1?'rn1':p.rank===2?'rn2':p.rank===3?'rn3':'rnn';
       const netc='cn'+(p.net_points<0?' neg':'');
-      h+=`<div class="lb-row${rc}">
+      // FIX: rows are clickable → show record popup
+      // FIX: bonus column shows actual value
+      h+=`<div class="lb-row${rc}" onclick="showRecord('${escAttr(p.primary_email)}')">
         <div class="lb-cell"><span class="rank-num ${nc}">${p.rank}</span></div>
         <div class="lb-cell name">${esc(p.display_name)}</div>
         <div class="lb-cell cv">${p.correct_predictions}</div>
         <div class="lb-cell ${netc}">${p.net_points>=0?'+':''}${p.net_points.toLocaleString()}</div>
         <div class="lb-cell">${p.gross_points.toLocaleString()}</div>
         <div class="lb-cell cp">${p.penalties<0?'−'+Math.abs(p.penalties):'—'}</div>
-        <div class="lb-cell cb">—</div>
+        <div class="lb-cell cb">${p.bonuses>0?'+'+p.bonuses:p.bonuses<0?p.bonuses:'—'}</div>
       </div>`;
     });
     h+='</div>';
     con.innerHTML=h;
     document.getElementById('lb-last').textContent='Last updated: '+new Date().toLocaleTimeString();
   }catch(e){
-    document.getElementById('lb-container').innerHTML=`<div class="error-box">Could not load leaderboard.<br>${e.message}</div>`;
+    con.innerHTML=`<div class="error-box">Could not load leaderboard.<br>${e.message}</div>`;
   }
 }
 function manualRefreshLB(btn){btn.textContent='Refreshing…';loadLB();setTimeout(()=>btn.textContent='Updated ✓',900);setTimeout(()=>btn.textContent='↻ Refresh',2400);}
+
+/* ── RECORD POPUP (from leaderboard click or email lookup) ── */
+async function showRecord(email){
+  const el=document.getElementById('record-content');
+  el.innerHTML='<div class="loading"><div class="spinner"></div><br>Loading…</div>';
+  document.getElementById('record-overlay').classList.add('open');
+  try{
+    const res=await fetch(`${API}/api/players/${encodeURIComponent(email)}/history`);
+    if(!res.ok){el.innerHTML='<div class="empty-state">Player not found.</div>';return;}
+    const data=await res.json();
+    el.innerHTML=renderHistoryHTML(data);
+  }catch{
+    el.innerHTML='<div class="error-box">Error loading record.</div>';
+  }
+}
+function closeRecord(){document.getElementById('record-overlay').classList.remove('open');}
+
+function lookupFromLB(){
+  const email=document.getElementById('lb-email').value.trim();
+  if(!email||!email.includes('@')){alert('Enter a valid email');return;}
+  saveEmail(email);
+  showRecord(email);
+}
+
+/* ── SHARED HISTORY RENDERER ── */
+function renderHistoryHTML(data){
+  const {player,summary,history,general_bonuses}=data;
+  // FIX: correct count excludes abandoned
+  const correct=history.filter(h=>h.points_earned>0&&h.winner!=='abandoned').length;
+  const net=summary.net_points;
+  return `
+    <div style="margin-bottom:18px">
+      <div style="font-size:22px;font-weight:800;color:var(--ink)">${esc(player.display_name)}</div>
+      <div style="font-size:12px;color:var(--ink3);font-family:'DM Mono',monospace">Active from Match ${player.first_match_num??'–'} · ${esc(player.primary_email||'')}</div>
+    </div>
+    <div class="h-summary">
+      <div><div class="h-stat-val" style="color:${net>=0?'var(--teal)':'var(--red)'}">${net>=0?'+':''}${net.toFixed(0)}</div><div class="h-stat-lbl">Net points</div></div>
+      <div><div class="h-stat-val">${summary.gross_points.toFixed(0)}</div><div class="h-stat-lbl">Earned</div></div>
+      <div><div class="h-stat-val" style="color:var(--red)">${summary.penalties.toFixed(0)}</div><div class="h-stat-lbl">Penalties</div></div>
+      <div><div class="h-stat-val" style="color:var(--saffron)">${summary.bonuses>0?'+':''}${summary.bonuses.toFixed(0)}</div><div class="h-stat-lbl">Bonuses</div></div>
+      <div><div class="h-stat-val" style="color:var(--teal)">${correct}</div><div class="h-stat-lbl">Correct</div></div>
+    </div>
+    <div class="h-grid">
+      ${history.map(h=>{
+        const pts=h.points_earned,pen=h.penalty_pts,bon=h.bonus_pts;
+        const pc=pts===null?'':pts>0?'pts-pos':pts===0?'pts-zer':'pts-neg';
+        const isAbandoned=h.winner==='abandoned';
+        return `<div class="h-card">
+          <div class="h-title">M${h.match_number} · ${esc(h.title)}${isAbandoned?' 🚫':''}${h.status==='open'?' 🟢':''}</div>
+          <div class="h-row"><span>Predicted</span><span>${h.predicted_team??'(missed)'}</span></div>
+          <div class="h-row"><span>Winner</span><span>${isAbandoned?'🚫 Abandoned':esc(h.winner??'–')}</span></div>
+          <div class="h-row"><span>Odds</span><span>${h.odds_at_close?h.odds_at_close+'x':'–'}</span></div>
+          <div class="h-row"><span>Points</span><span class="${pc}">${pts!==null?(pts>0?'+':'')+pts:'–'}</span></div>
+          ${pen?`<div class="h-row"><span>Penalty</span><span class="pts-neg">${pen}</span></div>`:''}
+          ${bon?`<div class="h-row"><span>Bonus</span><span class="pts-pos">+${bon}</span></div>`:''}
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+/* ── LOAD ODDS ── */
+async function loadOdds(){
+  const con=document.getElementById('matches-container');
+  con.innerHTML='<div class="loading"><div class="spinner"></div><br>Fetching live odds…</div>';
+  try{
+    const res=await fetch(`${API}/api/matches`);
+    matches=await res.json();
+    await Promise.all(matches.map(async m=>{
+      if(['open','closed','resulted','abandoned'].includes(m.status)){
+        try{const r=await fetch(`${API}/api/matches/${m.id}/odds`);m._odds=await r.json();}catch{}
+      }
+    }));
+    const ordered=[...matches].sort((a,b)=>{
+      const o={open:0,closed:1,upcoming:2,resulted:3,abandoned:4,cancelled:5};
+      return (o[a.status]??9)-(o[b.status]??9)||a.match_number-b.match_number;
+    });
+    con.innerHTML='';
+    if(!ordered.length){con.innerHTML='<div class="empty-state">No matches right now.</div>';return;}
+    ordered.forEach(m=>{if(m.status!=='cancelled')con.appendChild(renderMatch(m));});
+    ordered.forEach(m=>{
+      if((m.status==='open'||m.status==='upcoming')&&m.match_time){
+        const el=document.getElementById('cd-'+m.id);
+        if(el)startCD(el,m.match_time);
+      }
+    });
+    document.getElementById('odds-last').textContent='Last updated: '+new Date().toLocaleTimeString();
+    buildTicker(matches);
+  }catch{
+    con.innerHTML='<div class="error-box">Could not load matches. Please refresh.</div>';
+  }
+}
+
+function renderMatch(m){
+  const el=document.createElement('div');
+  el.className='card match-card'+(m.status==='open'?' is-open':'');
+  el.id='card-'+m.id;
+  const o=m._odds;
+  const aV=o?.team_a_votes??0,bV=o?.team_b_votes??0,tot=o?.total_votes??0;
+  const aOdds=o?.team_a_odds,bOdds=o?.team_b_odds;
+  const aPct=tot>0?Math.round(aV/tot*100):50,bPct=100-aPct;
+  const isAbandoned=m.winner==='abandoned';
+  const wonA=m.status==='resulted'&&m.winner===m.team_a;
+  const wonB=m.status==='resulted'&&m.winner===m.team_b;
+  // FIX: status map includes abandoned/cancelled
+  const statusMap={open:'s-open',closed:'s-closed',resulted:'s-resulted',upcoming:'s-upcoming',abandoned:'s-abandoned',cancelled:'s-cancelled'};
+  const statusLabel={open:'Open',closed:'Awaiting result',resulted:'Completed',upcoming:'Coming up',abandoned:'Abandoned',cancelled:'Cancelled'};
+  const cdHtml=(m.status==='open'||m.status==='upcoming')?`<div class="countdown" id="cd-${m.id}">…</div>`:'';
+  const bar=tot>0?`<div class="bar-wrap"><div class="bar-labels"><span class="bar-pct blue-pct">${esc(m.team_a)} · ${aPct}%</span><span class="bar-pct orange-pct">${bPct}% · ${esc(m.team_b)}</span></div><div class="bar-track"><div class="bar-blue" style="width:${aPct}%"></div><div class="bar-orange"></div></div></div>`:'';
+
+  let predictHTML='';
+  if(m.status==='open'){
+    predictHTML=`<div style="border-top:1px solid var(--line);padding:14px 20px 16px;text-align:center;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--teal);margin-bottom:6px;">Voting Open</div>
+      <div style="font-size:13px;color:var(--ink3)">Submit your prediction via the Google Form shared in the group</div>
+    </div>`;
+  }else if(m.status==='closed'){
+    predictHTML='<div style="padding:12px 20px 14px;font-size:13px;color:var(--ink3)">Voting closed — result pending.</div>';
+  }else if(m.status==='upcoming'){
+    predictHTML=`<div style="padding:12px 20px 14px;font-size:13px;color:var(--ink3)">Opens ${fmtT(m.match_time)}</div>`;
+  }
+
+  let resultBanner='';
+  if(isAbandoned) resultBanner=`<div class="result-banner abandoned"><span class="result-w">🚫 Abandoned</span><span class="result-sub">Pool split equally among all voters</span></div>`;
+  else if(m.status==='resulted'&&m.winner) resultBanner=`<div class="result-banner won"><span class="result-w">🏆 ${esc(m.winner)}</span><span class="result-sub">won this match</span></div>`;
+
+  const shareText=encodeURIComponent(`🏏 Match ${m.match_number} · ${m.team_a} vs ${m.team_b}\n`+(aOdds?`${m.team_a}: ${aOdds}x · ${m.team_b}: ${bOdds}x\n`:'')+`Check live odds → https://nettworkkpredictor.pages.dev`);
+
+  el.innerHTML=`
+    <div class="mh">
+      <div class="mh-left"><span class="m-label">Match ${m.match_number}</span><span class="m-status ${statusMap[m.status]||'s-upcoming'}">${statusLabel[m.status]||m.status}</span></div>
+      <div class="mh-right"><span class="m-date">${fmtT(m.match_time)}</span>${cdHtml}</div>
+    </div>
+    <div class="m-title"><span class="t-name blue-team">${esc(m.team_a)}</span><span class="vs">VS</span><span class="t-name orange-team">${esc(m.team_b)}</span></div>
+    ${bar}
+    <div class="tiles">
+      <div class="tile blue-tile"><div class="tile-name">${esc(m.team_a)}</div><div class="tile-payout">${aOdds?aOdds+'x':'—'}</div><div class="tile-votes"><b>${aV}</b> vote${aV!==1?'s':''}</div>${wonA?'<div class="tile-won">🏆 Won</div>':''}</div>
+      <div class="tile orange-tile"><div class="tile-name">${esc(m.team_b)}</div><div class="tile-payout">${bOdds?bOdds+'x':'—'}</div><div class="tile-votes"><b>${bV}</b> vote${bV!==1?'s':''}</div>${wonB?'<div class="tile-won">🏆 Won</div>':''}</div>
+    </div>
+    ${resultBanner}
+    <div class="m-footer"><span class="pool-val">${tot>0?(tot*100).toLocaleString()+' pt pool':'—'}</span><span class="pool-meta">${tot} vote${tot!==1?'s':''} cast</span></div>
+    ${predictHTML}
+    <div class="m-actions">
+      <button class="act-btn" onclick="doShare('${shareText}')">📤 Share</button>
+      <button class="act-btn" onclick="copyLink()">🔗 Copy link</button>
+    </div>`;
+  return el;
+}
+
+function doShare(txt){window.open('https://wa.me/?text='+txt,'_blank');}
+function copyLink(){navigator.clipboard?navigator.clipboard.writeText(window.location.href).then(()=>alert('Link copied!')):prompt('Copy:',window.location.href);}
+function manualRefresh(btn){btn.textContent='Refreshing…';btn.style.opacity='.7';loadOdds();setTimeout(()=>{btn.textContent='Updated ✓';},900);setTimeout(()=>{btn.textContent='↻ Refresh';btn.style.opacity='1';},2400);}
 
 /* ── PAST MATCHES ── */
 async function loadPast(){
@@ -713,7 +635,8 @@ async function loadPast(){
   try{
     const res=await fetch(`${API}/api/matches`);
     const all=await res.json();
-    const past=all.filter(m=>m.status==='resulted').sort((a,b)=>b.match_number-a.match_number);
+    // FIX: include abandoned matches in past
+    const past=all.filter(m=>m.status==='resulted'||m.status==='abandoned').sort((a,b)=>b.match_number-a.match_number);
     if(!past.length){con.innerHTML='<div class="empty-state">No completed matches yet.</div>';return;}
     const oddsAll=await Promise.all(past.map(m=>fetch(`${API}/api/matches/${m.id}/odds`).then(r=>r.json()).catch(()=>null)));
     let h='';
@@ -722,7 +645,8 @@ async function loadPast(){
       const aV=o?.team_a_votes??0,bV=o?.team_b_votes??0;
       const aOdds=o?.team_a_odds,bOdds=o?.team_b_odds;
       const pool=(aV+bV)*100;
-      const wonA=m.winner===m.team_a,wonB=m.winner===m.team_b;
+      const isAbandoned=m.winner==='abandoned';
+      const wonA=!isAbandoned&&m.winner===m.team_a,wonB=!isAbandoned&&m.winner===m.team_b;
       const id='acc-'+m.id;
       h+=`<div class="card acc" id="${id}">
         <button class="acc-header" onclick="togAcc('${id}')">
@@ -731,33 +655,22 @@ async function loadPast(){
             <div class="acc-date">${fmtT(m.match_time)}</div>
           </div>
           <div class="acc-r">
-            ${m.winner?`<span class="win-tag">🏆 ${esc(m.winner)}</span>`:''}
+            ${isAbandoned?'<span class="win-tag abandoned">🚫 Abandoned</span>':m.winner?`<span class="win-tag">🏆 ${esc(m.winner)}</span>`:''}
             <span class="acc-arr">▼</span>
           </div>
         </button>
         <div class="acc-body">
+          ${isAbandoned?'<div style="padding:10px 0 6px;font-size:12px;color:var(--blue);font-weight:600">Pool split equally — 100 pts to each voter</div>':''}
           <div class="past-tiles">
-            <div class="ptile blue-tile">
-              <div class="ptile-name">${esc(m.team_a)}</div>
-              <div class="ptile-pay">${aOdds?aOdds+'x':'—'}</div>
-              <div class="ptile-v">${aV} vote${aV!==1?'s':''}</div>
-              ${wonA?'<div class="won-badge">✓ Won</div>':''}
-            </div>
-            <div class="ptile orange-tile">
-              <div class="ptile-name">${esc(m.team_b)}</div>
-              <div class="ptile-pay">${bOdds?bOdds+'x':'—'}</div>
-              <div class="ptile-v">${bV} vote${bV!==1?'s':''}</div>
-              ${wonB?'<div class="won-badge">✓ Won</div>':''}
-            </div>
+            <div class="ptile blue-tile"><div class="ptile-name">${esc(m.team_a)}</div><div class="ptile-pay">${isAbandoned?'100':aOdds?aOdds+'x':'—'}</div><div class="ptile-v">${aV} vote${aV!==1?'s':''}</div>${wonA?'<div class="won-badge">✓ Won</div>':''}</div>
+            <div class="ptile orange-tile"><div class="ptile-name">${esc(m.team_b)}</div><div class="ptile-pay">${isAbandoned?'100':bOdds?bOdds+'x':'—'}</div><div class="ptile-v">${bV} vote${bV!==1?'s':''}</div>${wonB?'<div class="won-badge">✓ Won</div>':''}</div>
           </div>
           <div class="past-pool"><span>Total pool</span><b>${pool.toLocaleString()} pts</b></div>
         </div>
       </div>`;
     });
     con.innerHTML=h;
-  }catch{
-    con.innerHTML='<div class="error-box">Could not load past matches.</div>';
-  }
+  }catch{con.innerHTML='<div class="error-box">Could not load past matches.</div>';}
 }
 function togAcc(id){document.getElementById(id).classList.toggle('open');}
 
@@ -765,132 +678,25 @@ function togAcc(id){document.getElementById(id).classList.toggle('open');}
 async function loadHistory(){
   const email=document.getElementById('tracker-email').value.trim();
   if(!email||!email.includes('@')){alert('Enter a valid email');return;}
+  saveEmail(email);
   const el=document.getElementById('tracker-container');
   el.innerHTML='<div class="loading"><div class="spinner"></div><br>Loading…</div>';
   try{
     const res=await fetch(`${API}/api/players/${encodeURIComponent(email)}/history`);
     if(!res.ok){el.innerHTML='<div class="empty-state">Player not found. Check email and try again.</div>';return;}
-    const {player,history}=await res.json();
-    const gross=history.reduce((s,h)=>s+(h.points_earned??0),0);
-    const penalty=history.reduce((s,h)=>s+(h.penalty_pts??0),0);
-    const net=gross+penalty;
-    const correct=history.filter(h=>h.points_earned>0).length;
-    el.innerHTML=`
-      <div class="h-summary">
-        <div>
-          <div class="h-stat-val" style="color:${net>=0?'var(--teal)':'var(--red)'}">${net>=0?'+':''}${net.toFixed(0)}</div>
-          <div class="h-stat-lbl">Net points</div>
-        </div>
-        <div>
-          <div class="h-stat-val">${esc(player.display_name)}</div>
-          <div class="h-stat-lbl">Active from Match ${player.first_match_num??'–'}</div>
-        </div>
-        <div style="margin-left:auto;text-align:right">
-          <div style="font-family:'DM Mono',monospace;font-size:13px;color:var(--ink3)">Gross: <span style="color:var(--ink2)">${gross.toFixed(0)}</span></div>
-          <div style="font-family:'DM Mono',monospace;font-size:13px;color:var(--ink3)">Penalties: <span style="color:var(--red)">${penalty.toFixed(0)}</span></div>
-          <div style="font-family:'DM Mono',monospace;font-size:13px;color:var(--ink3)">Correct: <span style="color:var(--teal)">${correct}</span></div>
-        </div>
-      </div>
-      <div class="h-grid">
-        ${history.map(h=>{
-          const pts=h.points_earned,pen=h.penalty_pts;
-          const pc=pts===null?'':pts>0?'pts-pos':pts===0?'pts-zer':'pts-neg';
-          return `<div class="h-card">
-            <div class="h-title">M${h.match_number} · ${esc(h.title)}</div>
-            <div class="h-row"><span>Predicted</span><span>${h.predicted_team??'(missed)'}</span></div>
-            <div class="h-row"><span>Winner</span><span>${h.winner??'–'}</span></div>
-            <div class="h-row"><span>Odds</span><span>${h.odds_at_close?h.odds_at_close+'x':'–'}</span></div>
-            <div class="h-row"><span>Points</span><span class="${pc}">${pts!==null?pts:'–'}</span></div>
-            ${pen!==null?`<div class="h-row"><span>Penalty</span><span class="pts-neg">${pen}</span></div>`:''}
-          </div>`;
-        }).join('')}
-      </div>`;
-  }catch{
-    el.innerHTML='<div class="error-box">Error loading history. Try again.</div>';
-  }
+    const data=await res.json();
+    el.innerHTML=renderHistoryHTML(data);
+  }catch{el.innerHTML='<div class="error-box">Error loading history. Try again.</div>';}
 }
 
-/* ── BANTER ── */
-function defB(){return{r:{"🔥":0,"😂":0,"💀":0,"🙏":0,"🤞":0},c:[]};}
-function loadB(id){try{const x=localStorage.getItem('nwb_'+id);return x?JSON.parse(x):defB();}catch{return defB();}}
-function saveB(id,d){try{localStorage.setItem('nwb_'+id,JSON.stringify(d));}catch{}}
-function openBanter(btn,id){
-  const body=document.getElementById(id);
-  const isOpen=body.classList.contains('open');
-  btn.classList.toggle('open',!isOpen);
-  body.classList.toggle('open',!isOpen);
-  if(!isOpen&&!bCache[id]){bCache[id]=loadB(id);drawBanter(id,body,bCache[id]);}
-}
-function drawBanter(id,body,d){
-  const EMS=["🔥","😂","💀","🙏","🤞"];
-  let myR={};try{myR=JSON.parse(localStorage.getItem('nwr_'+id)||'{}');}catch{}
-  let rh='<div class="react-row">';
-  EMS.forEach(em=>{
-    rh+=`<button class="react-btn${myR[em]?' active':''}" onclick="addReact('${id}','${em}')" data-bid="${id}" data-em="${em}">
-      <span class="react-em">${em}</span><span class="react-n">${d.r[em]||0}</span></button>`;
-  });
-  rh+='</div>';
-  let ch=`<div class="clist" id="cl-${id}">`;
-  if(!d.c?.length)ch+='<div class="no-comments">No comments yet — be first 🏏</div>';
-  else d.c.slice().reverse().slice(0,50).forEach((c,i)=>{
-    const ri=d.c.length-1-i;
-    ch+=`<div class="c-item"><div class="c-name">${esc(c.name||'Anonymous')}</div>
-      <div class="c-text">${esc(c.text)}</div>
-      <div class="c-meta"><span class="c-time">${c.time}</span>
-      <button class="c-del" onclick="delComment('${id}',${ri})">✕</button></div></div>`;
-  });
-  ch+='</div>';
-  const fh=`<div class="c-form"><div class="c-row">
-    <input class="c-input" id="cn-${id}" placeholder="Your name" maxlength="30">
-    <input class="c-input" id="ct-${id}" placeholder="Say something… 🏏" maxlength="160">
-  </div><button class="c-post" onclick="postComment('${id}')">Post</button></div>`;
-  body.innerHTML=rh+ch+fh;
-  const ti=document.getElementById('ct-'+id);
-  if(ti)ti.addEventListener('keydown',e=>{if(e.key==='Enter')postComment(id);});
-}
-function addReact(id,em){
-  let myR={};try{myR=JSON.parse(localStorage.getItem('nwr_'+id)||'{}');}catch{}
-  const d=bCache[id]||defB();
-  if(myR[em]){delete myR[em];d.r[em]=Math.max(0,(d.r[em]||1)-1);}
-  else{myR[em]=true;d.r[em]=(d.r[em]||0)+1;}
-  localStorage.setItem('nwr_'+id,JSON.stringify(myR));
-  bCache[id]=d;saveB(id,d);
-  document.querySelectorAll(`[data-bid="${id}"][data-em="${em}"]`).forEach(btn=>{
-    btn.classList.toggle('active',!!myR[em]);
-    btn.querySelector('.react-n').textContent=d.r[em];
-  });
-}
-function postComment(id){
-  const ne=document.getElementById('cn-'+id),te=document.getElementById('ct-'+id);
-  if(!ne||!te)return;
-  const name=(ne.value||'').trim()||'Anonymous',text=(te.value||'').trim();
-  if(!text)return;
-  const d=bCache[id]||defB();
-  const now=new Date();
-  d.c.push({name,text,time:now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+' · '+now.toLocaleDateString([],{day:'numeric',month:'short'})});
-  bCache[id]=d;saveB(id,d);te.value='';refreshComments(id,d);
-}
-function delComment(id,idx){const d=bCache[id]||defB();d.c.splice(idx,1);bCache[id]=d;saveB(id,d);refreshComments(id,d);}
-function refreshComments(id,d){
-  const cl=document.getElementById('cl-'+id);if(!cl)return;
-  let h='';
-  if(!d.c?.length)h='<div class="no-comments">No comments yet — be first 🏏</div>';
-  else d.c.slice().reverse().slice(0,50).forEach((c,i)=>{
-    const ri=d.c.length-1-i;
-    h+=`<div class="c-item"><div class="c-name">${esc(c.name||'Anonymous')}</div>
-      <div class="c-text">${esc(c.text)}</div>
-      <div class="c-meta"><span class="c-time">${c.time}</span>
-      <button class="c-del" onclick="delComment('${id}',${ri})">✕</button></div></div>`;
-  });
-  cl.innerHTML=h;
-}
+function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function escAttr(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
-function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-
-/* ── INIT ── */
-loadLB();
-tabLoaded.lb=true;
+loadLB();tabLoaded.lb=true;
 setInterval(()=>{if(tabLoaded.odds)loadOdds();},30000);
+// Pre-fill email fields from saved email
+document.getElementById('lb-email').value=savedEmail();
+document.getElementById('tracker-email').value=savedEmail();
 </script>
 </body>
 </html>
