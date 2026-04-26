@@ -742,7 +742,9 @@ function switchTab(t) {
    ══════════════════════════════════════════════════════ */
 function fetchSheet(id, name) {
   var g = name ? "&sheet=" + encodeURIComponent(name) : "";
-  var url = "https://docs.google.com/spreadsheets/d/"+id+"/gviz/tq?tqx=out:json"+g;
+  var url = "https://docs.google.com/spreadsheets/d/" + id +
+          "/gviz/tq?tqx=out:json" + g +
+          "&_=" + Date.now();  // 🔥 cache buster
   return Promise.race([
     fetch(url, {cache:"no-cache"})
       .then(function(r){ if(!r.ok) throw new Error("HTTP "+r.status); return r.text(); })
@@ -889,10 +891,17 @@ function copyLink(){
 }
 
 function manualRefresh(btn){
-  btn.textContent="Refreshing…"; btn.style.opacity=".7";
-  loadOdds();
-  setTimeout(function(){ btn.textContent="Updated ✓"; }, 900);
-  setTimeout(function(){ btn.textContent="↻ Refresh"; btn.style.opacity="1"; }, 2400);
+  btn.textContent="Refreshing…";
+  btn.style.opacity=".7";
+
+  loadOdds().then(function(){
+    btn.textContent="Updated ✓";
+    btn.style.opacity="1";
+
+    setTimeout(function(){
+      btn.textContent="↻ Refresh";
+    }, 1500);
+  });
 }
 
 function loadOdds() {
@@ -902,7 +911,7 @@ function loadOdds() {
   });
   var con = document.getElementById("matches-container");
   con.innerHTML = '<div class="loading"><div class="spinner"></div><br>Fetching live odds…</div>';
-  Promise.all(ms.map(function(m){
+  return Promise.all(ms.map(function(m){
     if (m.status==="completed") return Promise.resolve({m:m,v:{t1:0,t2:0},o:calcOdds(C.ppv,{t1:0,t2:0}),err:false});
     return fetchSheet(m.sheetId)
       .then(function(d){ var v=countVotes(d,m.col,m.t1,m.t2); return {m:m,v:v,o:calcOdds(C.ppv,v),err:false}; })
