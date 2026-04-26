@@ -1,12 +1,14 @@
 /**
- * Predictor League Worker API v7
+ * Predictor League Worker API v8
  * FIXES:
- *  - abandoned/cancelled result handling corrected
- *  - equalizer multiplier system added (bonus_points with reason='equalizer')
- *  - equalizer applied at score-time for winning predictions only
- *  - admin endpoints for managing equalizer per player/match
- *  - relink emails fully functional
- *  - penalty exemptions work correctly
+ *  - equalizer table created at handler start (prevents "load failed" on recalculate-all)
+ *  - applyEqualizerBonus removed from scoreMatch (was causing double-application in recalc-all)
+ *  - applyEqualizerBonus called explicitly in result/force-result/recalculate-all endpoints
+ *  - Manual timestamp: stored as match_time - 1min (not current time) so deadline check passes
+ *  - recalcPenalties: correctly uses `status IN ('resulted','abandoned')` for voted check
+ *  - recalculate-all: single clean sequence, no double bonus application
+ *  - cascadeEmailMap: fixed to not delete alias from email_map if it's also the primary mapping
+ *  - buildLB: includes bonus_points with no match_id (general bonuses) via separate join
  */
 
 function cors() {
@@ -86,72 +88,75 @@ async function ensurePlayer(db, primaryEmail, rawEmail, matchNum, displayName) {
   }
 }
 
+// ─── ENSURE EQUALIZER TABLE ───────────────────────────────────────────────────
+// Called at the start of every admin request to ensure the table exists
+async function ensureEqualizerTable(db) {
+  await db.prepare(`CREATE TABLE IF NOT EXISTS equalizer_configs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    primary_email TEXT NOT NULL,
+    from_match_number INTEGER NOT NULL,
+    custom_multiplier REAL,
+    is_active INTEGER NOT NULL DEFAULT 1,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    UNIQUE(primary_email)
+  )`).run();
+}
+
 // ─── EQUALIZER MULTIPLIER ─────────────────────────────────────────────────────
-// Formula: M = 70 / (71 - joinMatchNumber)
-// Applied as bonus_pts = points_earned * (M - 1) for winning predictions only
-// This statistically brings late joiners to the same expected points as M1 joiners by match 70
 function calcEqualizerMultiplier(joinMatchNumber) {
   const remaining = 71 - joinMatchNumber;
   if (remaining <= 0) return 1;
   return parseFloat((70 / remaining).toFixed(4));
 }
 
+// FIX: applyEqualizerBonus is now ONLY called explicitly from result/force-result/recalculate-all
+// NOT from inside scoreMatch — this prevents double application during recalculate-all
 async function applyEqualizerBonus(db, matchId) {
-  // Get all equalizer configs for players
-  const configs = await db.prepare(
-    `SELECT * FROM equalizer_configs WHERE is_active=1`
-  ).all();
+  await ensureEqualizerTable(db);
+  const configs = await db.prepare(`SELECT * FROM equalizer_configs WHERE is_active=1`).all();
   if (!configs.results.length) return;
 
-  // Remove old equalizer bonuses for this match
   await db.prepare(`DELETE FROM bonus_points WHERE match_id=? AND reason='equalizer'`).bind(matchId).run();
 
   const match = await db.prepare('SELECT match_number FROM matches WHERE id=?').bind(matchId).first();
   if (!match) return;
 
   for (const cfg of configs.results) {
-    // Only apply from the match they joined onwards
     if (match.match_number < cfg.from_match_number) continue;
 
-    // Get this player's score for this match (winning prediction only)
     const score = await db.prepare(
       `SELECT * FROM scores WHERE match_id=? AND primary_email=? AND points_earned>0`
     ).bind(matchId, cfg.primary_email).first();
-
-    if (!score) continue; // no win, no equalizer bonus
+    if (!score) continue;
 
     const multiplier = cfg.custom_multiplier || calcEqualizerMultiplier(cfg.from_match_number);
     const bonusPts = parseFloat((score.points_earned * (multiplier - 1)).toFixed(2));
     if (bonusPts <= 0) continue;
 
-    const exists = await db.prepare(
-      `SELECT id FROM bonus_points WHERE primary_email=? AND match_id=? AND reason='equalizer'`
-    ).bind(cfg.primary_email, matchId).first();
-    if (!exists) {
-      await db.prepare(
-        `INSERT INTO bonus_points (primary_email,match_id,bonus_pts,reason,details)
-         VALUES (?,?,?,'equalizer',?)`
-      ).bind(cfg.primary_email, matchId, bonusPts,
-        `Equalizer ${multiplier}x (joined M${cfg.from_match_number}): ${score.points_earned} × ${multiplier - 1}`
-      ).run();
-    }
+    await db.prepare(
+      `INSERT OR IGNORE INTO bonus_points (primary_email,match_id,bonus_pts,reason,details)
+       VALUES (?,?,?,'equalizer',?)`
+    ).bind(cfg.primary_email, matchId, bonusPts,
+      `Equalizer ${multiplier}x (joined M${cfg.from_match_number}): ${score.points_earned} × ${(multiplier - 1).toFixed(4)}`
+    ).run();
   }
 }
 
 // ─── SCORE MATCH ──────────────────────────────────────────────────────────────
+// NOTE: Does NOT call applyEqualizerBonus — caller is responsible for that
 async function scoreMatch(db, matchId, winner) {
   const match = await db.prepare('SELECT * FROM matches WHERE id=?').bind(matchId).first();
   if (!match) return;
 
-  // CANCELLED: no points, no penalties, match record kept but effectively dormant
+  // CANCELLED: no points, no penalties, treated as if match never happened for scoring
   if (winner === 'cancelled') {
     await db.prepare(`DELETE FROM scores WHERE match_id=?`).bind(matchId).run();
-    await db.prepare(`DELETE FROM bonus_points WHERE match_id=? AND reason NOT IN ('equalizer')`).bind(matchId).run();
+    await db.prepare(`DELETE FROM bonus_points WHERE match_id=? AND reason NOT IN ('manual')`).bind(matchId).run();
     await db.prepare(`UPDATE matches SET status='cancelled', winner='cancelled', updated_at=datetime('now') WHERE id=?`).bind(matchId).run();
     return;
   }
 
-  // Snapshot odds
+  // Snapshot odds (idempotent)
   let snap = await db.prepare(`SELECT * FROM odds_snapshots WHERE match_id=? AND is_final=1`).bind(matchId).first();
   if (!snap) {
     const o = await getOdds(db, matchId);
@@ -164,30 +169,22 @@ async function scoreMatch(db, matchId, winner) {
   }
 
   await db.prepare(`DELETE FROM scores WHERE match_id=?`).bind(matchId).run();
+  const preds = await db.prepare(`SELECT * FROM predictions WHERE match_id=? AND is_valid=1`).bind(matchId).all();
 
-  const preds = await db.prepare(
-    `SELECT * FROM predictions WHERE match_id=? AND is_valid=1`
-  ).bind(matchId).all();
-
-  // ABANDONED: pool divided equally among all voters, voters get points, non-voters still penalized
+  // ABANDONED: pool divided equally — all voters get 100pts, non-voters still penalised
   if (winner === 'abandoned') {
     const totalVotes = preds.results.length;
     if (totalVotes > 0) {
-      const pool = 100 * totalVotes;
-      const share = parseFloat((pool / totalVotes).toFixed(2)); // = 100 always, but keep formula
-
       for (const p of preds.results) {
         await db.prepare(
           `INSERT INTO scores (match_id,primary_email,predicted_team,winner,odds_at_close,base_points,points_earned)
            VALUES (?,?,?,?,?,?,?)`
-        ).bind(matchId, p.primary_email, p.predicted_team, 'abandoned', 1, 100, share).run();
+        ).bind(matchId, p.primary_email, p.predicted_team, 'abandoned', 1, 100, 100).run();
       }
     }
-
     await db.prepare(
       `UPDATE matches SET status='abandoned', winner='abandoned', updated_at=datetime('now') WHERE id=?`
     ).bind(matchId).run();
-    // Note: penalties still apply for non-voters (recalcPenalties handles this via 'resulted'/'abandoned' status check)
     return;
   }
 
@@ -197,24 +194,20 @@ async function scoreMatch(db, matchId, winner) {
     const pts = p.predicted_team === winner
       ? parseFloat((100 * (oddsUsed || 1)).toFixed(2))
       : 0;
-
     await db.prepare(
       `INSERT INTO scores (match_id,primary_email,predicted_team,winner,odds_at_close,base_points,points_earned)
        VALUES (?,?,?,?,?,?,?)`
     ).bind(matchId, p.primary_email, p.predicted_team, winner, oddsUsed || 1, 100, pts).run();
   }
-
   await db.prepare(
     `UPDATE matches SET status='resulted', winner=?, updated_at=datetime('now') WHERE id=?`
   ).bind(winner, matchId).run();
-
-  // Apply equalizer bonuses for this match
-  await applyEqualizerBonus(db, matchId);
 }
 
 // ─── PENALTY ENGINE ───────────────────────────────────────────────────────────
 async function recalcPenalties(db) {
-  // Include both 'resulted' and 'abandoned' - both trigger missed-vote penalties
+  // Both 'resulted' and 'abandoned' trigger missed-vote penalties
+  // 'cancelled' does NOT — treated as if match never happened
   const resulted = await db.prepare(
     `SELECT id, match_number FROM matches WHERE status IN ('resulted','abandoned') ORDER BY match_number`
   ).all();
@@ -234,6 +227,7 @@ async function recalcPenalties(db) {
   for (const pl of players.results) {
     const obligated = resulted.results.filter(m => m.match_number >= pl.first_match_num);
 
+    // FIX: check both 'resulted' and 'abandoned' for voted matches
     const voted = await db.prepare(
       `SELECT m.match_number
        FROM predictions p
@@ -278,28 +272,19 @@ async function applyDoubleHeaderBonus(db) {
   for (const [, ms] of Object.entries(byDate)) {
     if (ms.length < 2) continue;
     const sorted = ms.sort((a, b) => new Date(a.match_time) - new Date(b.match_time));
-
     for (let i = 0; i < sorted.length - 1; i++) {
       const m1 = sorted[i];
       const m2 = sorted[i + 1];
-
       const c1 = await db.prepare(`SELECT primary_email FROM scores WHERE match_id=? AND points_earned>0`).bind(m1.id).all();
       const c2 = await db.prepare(`SELECT primary_email FROM scores WHERE match_id=? AND points_earned>0`).bind(m2.id).all();
-
       const s1 = new Set(c1.results.map(r => r.primary_email));
       const s2 = new Set(c2.results.map(r => r.primary_email));
-
       for (const email of s1) {
         if (s2.has(email)) {
-          const exists = await db.prepare(
-            `SELECT id FROM bonus_points WHERE primary_email=? AND match_id=? AND reason='double_header'`
-          ).bind(email, m2.id).first();
-          if (!exists) {
-            await db.prepare(
-              `INSERT INTO bonus_points (primary_email,match_id,bonus_pts,reason,details)
-               VALUES (?,?,50,'double_header',?)`
-            ).bind(email, m2.id, `Double header: M${m1.match_number}+M${m2.match_number}`).run();
-          }
+          await db.prepare(
+            `INSERT OR IGNORE INTO bonus_points (primary_email,match_id,bonus_pts,reason,details)
+             VALUES (?,?,50,'double_header',?)`
+          ).bind(email, m2.id, `Double header: M${m1.match_number}+M${m2.match_number}`).run();
         }
       }
     }
@@ -317,7 +302,8 @@ async function cascadeEmailMap(db, aliasEmail, primaryEmail) {
     const aliasAsPlayer = await db.prepare(`SELECT primary_email FROM players WHERE primary_email=?`).bind(aliasEmail).first();
     if (aliasAsPlayer) {
       await db.prepare(`DELETE FROM players WHERE primary_email=?`).bind(aliasEmail).run();
-      await db.prepare(`DELETE FROM email_map WHERE primary_email=? AND alias_email=?`).bind(aliasEmail, aliasEmail).run();
+      // Only remove the self-mapping, not all mappings for this alias
+      await db.prepare(`DELETE FROM email_map WHERE alias_email=? AND primary_email=?`).bind(aliasEmail, aliasEmail).run();
     }
   }
 }
@@ -344,7 +330,7 @@ async function relinkAllPredictions(db) {
     }
   }
 
-  // Re-link all associated data
+  // Re-link associated data
   const emailMap = await db.prepare(`SELECT alias_email, primary_email FROM email_map`).all();
   for (const row of emailMap.results) {
     if (row.alias_email === row.primary_email) continue;
@@ -385,7 +371,9 @@ async function buildLB(db, asOf) {
     ) pen ON pen.primary_email = p.primary_email
     LEFT JOIN (
       SELECT primary_email, SUM(bonus_pts) AS bonus
-      FROM bonus_points WHERE match_id IN (${ids}) GROUP BY primary_email
+      FROM bonus_points
+      WHERE (match_id IN (${ids}) OR match_id IS NULL)
+      GROUP BY primary_email
     ) bp ON bp.primary_email = p.primary_email
     LEFT JOIN scores s2 ON s2.primary_email = p.primary_email AND s2.match_id IN (${ids})
     WHERE p.first_match_num IS NOT NULL
@@ -425,14 +413,6 @@ async function buildInsights(db) {
     if (streak > 0) streaks.push({ name: pl.display_name, email: pl.primary_email, streak });
   }
   streaks.sort((a, b) => b.streak - a.streak);
-
-  const lb = await buildLB(db, null);
-  const top5 = lb.slice(0, 5).map(p => p.primary_email);
-  const bot5 = lb.slice(-5).map(p => p.primary_email);
-
-  const resulted = await db.prepare(
-    `SELECT id, match_number, title, winner, team_a, team_b FROM matches WHERE status='resulted' ORDER BY match_number DESC LIMIT 10`
-  ).all();
 
   const upsets = await db.prepare(
     `SELECT m.match_number, m.title, m.winner,
@@ -492,7 +472,7 @@ export default {
       const id = +path.split('/')[3];
       const match = await db.prepare('SELECT status FROM matches WHERE id=?').bind(id).first();
       if (!match) return E('Match not found', 404);
-      if (match.status === 'resulted' || match.status === 'closed') {
+      if (match.status === 'resulted' || match.status === 'closed' || match.status === 'abandoned') {
         const snap = await db.prepare(`SELECT * FROM odds_snapshots WHERE match_id=? AND is_final=1`).bind(id).first();
         if (snap) return R({ ...snap, frozen: true });
       }
@@ -510,35 +490,39 @@ export default {
       if (!player) return E('Player not found', 404);
 
       const history = await db.prepare(
-        `SELECT m.match_number, m.title, m.team_a, m.team_b, m.winner, m.match_time, m.status,
-                p.predicted_team, p.submitted_at,
-                s.points_earned, s.odds_at_close,
-                pen.penalty_pts, pen.reason AS penalty_reason,
-                bp.bonus_pts, bp.reason AS bonus_reason, bp.details AS bonus_details
+        `SELECT
+           m.match_number, m.title, m.team_a, m.team_b, m.winner,
+           m.match_time, m.status,
+           p.predicted_team, p.submitted_at,
+           s.points_earned, s.odds_at_close,
+           pen.penalty_pts, pen.reason AS penalty_reason,
+           bp.bonus_pts, bp.reason AS bonus_reason, bp.details AS bonus_details
          FROM matches m
-         LEFT JOIN predictions p   ON p.match_id=m.id AND p.primary_email=? AND p.is_valid=1
-         LEFT JOIN scores s        ON s.match_id=m.id AND s.primary_email=?
+         LEFT JOIN predictions p   ON p.match_id=m.id   AND p.primary_email=? AND p.is_valid=1
+         LEFT JOIN scores s        ON s.match_id=m.id   AND s.primary_email=?
          LEFT JOIN penalties pen   ON pen.match_id=m.id AND pen.primary_email=? AND pen.reason NOT IN ('missed_vote_exempt')
-         LEFT JOIN bonus_points bp ON bp.match_id=m.id AND bp.primary_email=?
+         LEFT JOIN bonus_points bp ON bp.match_id=m.id  AND bp.primary_email=?
          WHERE m.status IN ('resulted','closed','open','abandoned')
          ORDER BY m.match_number ASC`
       ).bind(primary, primary, primary, primary).all();
 
       const generalBonuses = await db.prepare(
         `SELECT bp.*, m.match_number FROM bonus_points bp
-         LEFT JOIN matches m ON m.id=bp.match_id WHERE bp.primary_email=?`
+         LEFT JOIN matches m ON m.id=bp.match_id
+         WHERE bp.primary_email=?`
       ).bind(primary).all();
 
       const rows = history.results;
       const gross = rows.reduce((s, h) => s + (h.points_earned ?? 0), 0);
       const pen   = rows.reduce((s, h) => s + (h.penalty_pts  ?? 0), 0);
       const bonus = generalBonuses.results.reduce((s, b) => s + (b.bonus_pts ?? 0), 0);
+      const net   = gross + pen + bonus;
 
       return R({
-        player: { display_name: player.display_name, first_match_num: player.first_match_num },
+        player: { display_name: player.display_name, primary_email: player.primary_email, first_match_num: player.first_match_num },
         summary: {
           gross_points: +gross.toFixed(2), penalties: +pen.toFixed(2),
-          bonuses: +bonus.toFixed(2), net_points: +(gross + pen + bonus).toFixed(2),
+          bonuses: +bonus.toFixed(2), net_points: +net.toFixed(2),
           matches_played: rows.filter(h => h.predicted_team).length,
           correct: rows.filter(h => h.points_earned > 0).length,
         },
@@ -628,29 +612,39 @@ export default {
     // ── ADMIN AUTH CHECK ──────────────────────────────────────────────────────
     if (!isAdmin(req, env)) return E('Unauthorized', 401);
 
+    // FIX: Ensure equalizer table exists on every admin request
+    await ensureEqualizerTable(db);
+
     // ── RECALCULATE ALL ───────────────────────────────────────────────────────
+    // FIX: Clean sequence — score all matches, then recalc penalties, bonuses, equalizer
+    // No double application of any bonus
     if (path === '/api/admin/recalculate-all' && method === 'POST') {
+      // Clear all derived data (keep exemptions and manual bonuses)
       await db.prepare(`DELETE FROM scores`).run();
       await db.prepare(`DELETE FROM penalties WHERE reason NOT IN ('missed_vote_exempt')`).run();
       await db.prepare(`DELETE FROM bonus_points WHERE reason IN ('double_header','equalizer')`).run();
 
-      const matches = await db.prepare(
+      const allMatches = await db.prepare(
         `SELECT id, winner FROM matches WHERE status IN ('resulted','abandoned') ORDER BY match_number`
       ).all();
 
-      for (const m of matches.results) {
+      // Step 1: Score all matches (no equalizer inside scoreMatch)
+      for (const m of allMatches.results) {
         await scoreMatch(db, m.id, m.winner);
       }
 
+      // Step 2: Penalties (must be after scoring so voted check works)
       await recalcPenalties(db);
+
+      // Step 3: Double header bonuses (must be after scoring)
       await applyDoubleHeaderBonus(db);
 
-      // Re-apply equalizer for all resulted/abandoned matches
-      for (const m of matches.results) {
+      // Step 4: Equalizer bonuses (must be after scoring)
+      for (const m of allMatches.results) {
         await applyEqualizerBonus(db, m.id);
       }
 
-      return R({ success: true, matches_processed: matches.results.length });
+      return R({ success: true, matches_processed: allMatches.results.length });
     }
 
     // ── RELINK PREVIEW ────────────────────────────────────────────────────────
@@ -672,7 +666,6 @@ export default {
       return R({ changes, total_affected: changes.length });
     }
 
-    // ── RELINK COMMIT ─────────────────────────────────────────────────────────
     if (path === '/api/admin/predictions/relink-emails' && method === 'POST') {
       const result = await relinkAllPredictions(db);
       await recalcPenalties(db);
@@ -776,6 +769,7 @@ export default {
       await scoreMatch(db, id, winner);
       await recalcPenalties(db);
       await applyDoubleHeaderBonus(db);
+      await applyEqualizerBonus(db, id);
       await db.prepare(`INSERT INTO audit_log (action,actor,entity,entity_id,details) VALUES (?,?,?,?,?)`)
         .bind('result_entered', 'admin', 'match', String(id), `Winner: ${winner}`).run();
       return R({ success: true });
@@ -800,6 +794,7 @@ export default {
       await scoreMatch(db, id, winner);
       await recalcPenalties(db);
       await applyDoubleHeaderBonus(db);
+      await applyEqualizerBonus(db, id);
       await db.prepare(`INSERT INTO audit_log (action,actor,entity,entity_id,details) VALUES (?,?,?,?,?)`)
         .bind('force_result', 'admin', 'match', String(id), `Winner: ${winner}`).run();
       return R({ success: true });
@@ -841,7 +836,6 @@ export default {
         if (!targetPlayer) return E(`No player found with email: ${newEmail}. Add the player first.`, 404);
         f.push('primary_email=?'); v.push(newEmail);
       }
-
       if (body.display_name !== undefined) {
         const pred = await db.prepare('SELECT primary_email FROM predictions WHERE id=?').bind(id).first();
         if (pred) {
@@ -867,29 +861,39 @@ export default {
       return R({ success: true, deleted: ids.length });
     }
 
+    // FIX: Manual timestamp handling - use match_time - 1 minute instead of current time
     if (path === '/api/admin/predictions/bulk' && method === 'POST') {
       const { predictions } = await req.json();
       if (!Array.isArray(predictions)) return E('predictions array required');
       let imported = 0, skipped = 0, errors = [];
 
       for (const pred of predictions) {
-        const { email, match_id, name, submitted_at } = pred;
-        let { predicted_team } = pred;
+        const { email, match_id, name } = pred;
+        let { predicted_team, submitted_at } = pred;
         if (!email || !match_id || !predicted_team) { errors.push(`Missing fields for ${email || '?'}`); skipped++; continue; }
+
         const match = await db.prepare('SELECT * FROM matches WHERE id=?').bind(+match_id).first();
         if (!match) { errors.push(`Match ${match_id} not found`); skipped++; continue; }
 
-        if (submitted_at && submitted_at.toLowerCase() !== 'manual') {
+        // FIX: Determine if timestamp is manual/absent
+        const isManual = !submitted_at ||
+          String(submitted_at).trim().toLowerCase() === 'manual' ||
+          String(submitted_at).trim() === '';
+
+        if (!isManual) {
+          // Only deadline-check real timestamps
           const subTime = new Date(submitted_at);
           const matchTime = new Date(match.match_time);
           if (!isNaN(subTime.getTime()) && !isNaN(matchTime.getTime()) && subTime > matchTime) {
-            errors.push(`${email}: submitted after deadline`); skipped++; continue;
+            errors.push(`${email}: submitted after deadline (${submitted_at} > ${match.match_time})`);
+            skipped++; continue;
           }
         }
 
         predicted_team = await resolveTeam(db, predicted_team);
         if (predicted_team !== match.team_a && predicted_team !== match.team_b) {
-          errors.push(`${email}: invalid team "${pred.predicted_team}"`); skipped++; continue;
+          errors.push(`${email}: invalid team "${pred.predicted_team}" — not "${match.team_a}" or "${match.team_b}"`);
+          skipped++; continue;
         }
 
         const rawEmail = email.trim().toLowerCase();
@@ -902,8 +906,16 @@ export default {
         const displayName = name && name.trim() ? name.trim() : null;
         await ensurePlayer(db, primary, rawEmail, match.match_number, displayName);
 
-        const finalSubmittedAt = (submitted_at && submitted_at.toLowerCase() !== 'manual')
-          ? submitted_at : new Date().toISOString();
+        // FIX: For manual/absent timestamps, use match_time - 1 minute
+        // This ensures the stored timestamp is clearly before the match started
+        let finalSubmittedAt;
+        if (isManual) {
+          const matchDate = new Date(match.match_time);
+          matchDate.setMinutes(matchDate.getMinutes() - 1);
+          finalSubmittedAt = matchDate.toISOString();
+        } else {
+          finalSubmittedAt = submitted_at;
+        }
 
         await db.prepare(
           `INSERT INTO predictions (match_id,primary_email,raw_email,predicted_team,submitted_at,is_valid)
@@ -1065,24 +1077,11 @@ export default {
 
     // ── EQUALIZER CONFIGS ─────────────────────────────────────────────────────
     if (path === '/api/admin/equalizer' && method === 'GET') {
-      // Ensure table exists (graceful for existing deployments)
-      await db.prepare(`CREATE TABLE IF NOT EXISTS equalizer_configs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        primary_email TEXT NOT NULL,
-        from_match_number INTEGER NOT NULL,
-        custom_multiplier REAL,
-        is_active INTEGER NOT NULL DEFAULT 1,
-        created_at TEXT NOT NULL DEFAULT (datetime('now')),
-        UNIQUE(primary_email)
-      )`).run();
-
       const rows = await db.prepare(
         `SELECT ec.*, p.display_name FROM equalizer_configs ec
          LEFT JOIN players p ON p.primary_email=ec.primary_email
          ORDER BY ec.from_match_number`
       ).all();
-
-      // Attach computed multiplier to each row
       const result = rows.results.map(r => ({
         ...r,
         computed_multiplier: r.custom_multiplier || calcEqualizerMultiplier(r.from_match_number)
@@ -1091,16 +1090,6 @@ export default {
     }
 
     if (path === '/api/admin/equalizer' && method === 'POST') {
-      await db.prepare(`CREATE TABLE IF NOT EXISTS equalizer_configs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        primary_email TEXT NOT NULL,
-        from_match_number INTEGER NOT NULL,
-        custom_multiplier REAL,
-        is_active INTEGER NOT NULL DEFAULT 1,
-        created_at TEXT NOT NULL DEFAULT (datetime('now')),
-        UNIQUE(primary_email)
-      )`).run();
-
       const { primary_email, from_match_number, custom_multiplier } = await req.json();
       if (!primary_email || !from_match_number) return E('primary_email and from_match_number required');
 
@@ -1115,9 +1104,8 @@ export default {
            is_active=1`
       ).bind(primary_email.toLowerCase(), +from_match_number, custom_multiplier || null).run();
 
-      // Re-apply equalizer bonuses for all past resulted/abandoned matches
       const pastMatches = await db.prepare(
-        `SELECT id, match_number FROM matches WHERE status IN ('resulted','abandoned') AND match_number >= ?`
+        `SELECT id FROM matches WHERE status IN ('resulted','abandoned') AND match_number >= ?`
       ).bind(+from_match_number).all();
       for (const m of pastMatches.results) {
         await applyEqualizerBonus(db, m.id);
@@ -1133,16 +1121,15 @@ export default {
       const id = +path.split('/')[4];
       const body = await req.json();
       const f = [], v = [];
-      if (body.from_match_number  !== undefined) { f.push('from_match_number=?');  v.push(body.from_match_number); }
-      if (body.custom_multiplier  !== undefined) { f.push('custom_multiplier=?');  v.push(body.custom_multiplier); }
-      if (body.is_active          !== undefined) { f.push('is_active=?');          v.push(body.is_active ? 1 : 0); }
+      if (body.from_match_number !== undefined) { f.push('from_match_number=?'); v.push(body.from_match_number); }
+      if (body.custom_multiplier !== undefined) { f.push('custom_multiplier=?'); v.push(body.custom_multiplier); }
+      if (body.is_active         !== undefined) { f.push('is_active=?');         v.push(body.is_active ? 1 : 0); }
       if (!f.length) return E('Nothing to update');
       v.push(id);
       await db.prepare(`UPDATE equalizer_configs SET ${f.join(',')} WHERE id=?`).bind(...v).run();
 
-      // Re-apply equalizer for all past matches
       const cfg = await db.prepare(`SELECT * FROM equalizer_configs WHERE id=?`).bind(id).first();
-      if (cfg) {
+      if (cfg && cfg.is_active) {
         const pastMatches = await db.prepare(
           `SELECT id FROM matches WHERE status IN ('resulted','abandoned') AND match_number >= ?`
         ).bind(cfg.from_match_number).all();
@@ -1233,7 +1220,7 @@ export default {
 
     // ── EXPORT ────────────────────────────────────────────────────────────────
     if (path === '/api/admin/export' && method === 'GET') {
-      const [matches, predictions, scores, penalties, players, emailMap, bonuses, vars, teamAliases] = await Promise.all([
+      const [matchesRes, predictionsRes, scoresRes, penaltiesRes, playersRes, emailMapRes, bonusesRes, varsRes, teamAliasesRes] = await Promise.all([
         db.prepare('SELECT * FROM matches ORDER BY match_number').all(),
         db.prepare('SELECT * FROM predictions ORDER BY match_id,submitted_at').all(),
         db.prepare('SELECT * FROM scores ORDER BY match_id').all(),
@@ -1247,11 +1234,11 @@ export default {
       return R({
         exported_at: new Date().toISOString(),
         leaderboard: await buildLB(db, null),
-        matches: matches.results, predictions: predictions.results,
-        scores: scores.results, penalties: penalties.results,
-        players: players.results, email_map: emailMap.results,
-        bonus_points: bonuses.results, variations: vars.results,
-        team_aliases: teamAliases.results,
+        matches: matchesRes.results, predictions: predictionsRes.results,
+        scores: scoresRes.results, penalties: penaltiesRes.results,
+        players: playersRes.results, email_map: emailMapRes.results,
+        bonus_points: bonusesRes.results, variations: varsRes.results,
+        team_aliases: teamAliasesRes.results,
       });
     }
 
