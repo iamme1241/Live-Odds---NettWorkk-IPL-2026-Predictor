@@ -388,6 +388,7 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
           <div class="page-title">Leaderboard</div>
           <div class="btn-row">
             <button class="btn btn-red btn-sm" onclick="recalcAll()">⚡ Recalculate All</button>
+            <button class="btn btn-outline btn-sm" onclick="dlCSV()">↓ CSV</button>
             <span style="font-size:12px;color:var(--text3)">As of:</span>
             <input type="date" id="lb-asof" style="padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--mono);font-size:12px;outline:none;">
             <button class="btn btn-accent btn-sm" onclick="loadAdminLB()">Apply</button>
@@ -449,7 +450,8 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
         <div class="page-hdr"><div class="page-title">Export / Backup</div></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
           <div class="card"><div class="card-hdr"><div class="card-title">Full JSON export</div></div><div class="card-body"><p style="font-size:12px;color:var(--text3);margin-bottom:14px">All matches, votes, scores, penalties, bonuses, players.</p><button class="btn btn-accent" onclick="dlExport()">↓ Download JSON</button></div></div>
-          <div class="card"><div class="card-hdr"><div class="card-title">Leaderboard CSV</div></div><div class="card-body"><p style="font-size:12px;color:var(--text3);margin-bottom:14px">Net points leaderboard for Google Sheets.</p><button class="btn btn-outline" onclick="dlCSV()">↓ Download CSV</button></div></div>
+          <div class="card"><div class="card-hdr"><div class="card-title">Leaderboard CSV</div></div><div class="card-body"><p style="font-size:12px;color:var(--text3);margin-bottom:14px">Net points leaderboard for Google Sheets / Excel.</p><button class="btn btn-outline" onclick="dlCSV()">↓ Download CSV</button></div></div>
+          <div class="card" style="grid-column:1/-1;border-color:var(--accent)"><div class="card-hdr"><div class="card-title">📊 Full Excel Export (all tables)</div></div><div class="card-body"><p style="font-size:12px;color:var(--text3);margin-bottom:14px">Downloads leaderboard, matches, predictions, scores, penalties, and bonuses as separate CSV files. Open all in Excel.</p><button class="btn btn-accent" onclick="dlFullExcel()">↓ Export all to Excel CSVs</button></div></div>
           <div class="card"><div class="card-hdr"><div class="card-title">Push to Google Sheets</div></div><div class="card-body"><p style="font-size:12px;color:var(--text3);margin-bottom:10px">Paste your Apps Script web app URL:</p><input class="field-input" id="sheets-url" type="url" placeholder="https://script.google.com/..." style="margin-bottom:10px;font-size:11px;"><button class="btn btn-green" onclick="pushSheets()">↑ Push to Sheets</button></div></div>
           <div class="card"><div class="card-hdr"><div class="card-title">Google Forms webhook URL</div></div><div class="card-body"><p style="font-size:12px;color:var(--text3);margin-bottom:8px">Use in your Google Forms Apps Script:</p><div id="forms-url" style="font-family:var(--mono);font-size:11px;background:var(--surface2);padding:8px;border-radius:var(--r);word-break:break-all;color:var(--accent2);"></div></div></div>
         </div>
@@ -461,6 +463,33 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
           <button class="btn btn-outline btn-sm" onclick="loadAudit()">↺ Refresh</button>
         </div>
         <div class="card"><div class="card-body scroll-x" id="audit-list">Loading…</div></div>
+      </div>
+
+      <!-- PLAYER RECORDS -->
+      <div class="panel" id="p-player-records">
+        <div class="page-hdr"><div class="page-title">Player Records</div></div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-body" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <select id="pr-player-sel" style="flex:1;min-width:220px;padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--mono);font-size:12px;outline:none;"></select>
+            <button class="btn btn-accent" onclick="loadPlayerRecord()">Load record</button>
+            <button class="btn btn-outline" onclick="exportPlayerRecord()">↓ Export CSV</button>
+          </div>
+        </div>
+        <div id="pr-content"><p style="color:var(--text3);font-size:12px">Select a player above.</p></div>
+      </div>
+
+      <!-- EQUALIZER -->
+      <div class="panel" id="p-equalizer">
+        <div class="page-hdr">
+          <div class="page-title">Equalizer <small>Late-joiner multiplier</small></div>
+          <button class="btn btn-accent" onclick="openEqualizerModal()">+ Add player</button>
+        </div>
+        <div class="info">
+          <b>Formula: M = 70 / (71 − joinMatch)</b><br>
+          For wins only, the player earns <code>points × M</code> instead of <code>points</code>. The extra <code>points × (M−1)</code> is added as an equalizer bonus.<br><br>
+          Examples: Join M31 → <b>1.75×</b> · Join M34 → <b>1.89×</b> · Join M40 → <b>2.26×</b> · Join M50 → <b>3.33×</b>
+        </div>
+        <div id="equalizer-list">Loading…</div>
       </div>
 
     </div>
@@ -655,30 +684,6 @@ input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:po
     </div>
   </div>
 </div>
-
-      <div class="panel" id="p-player-records">
-        <div class="page-hdr"><div class="page-title">Player Records</div></div>
-        <div class="card" style="margin-bottom:14px">
-          <div class="card-body" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-            <select id="pr-player-sel" style="flex:1;min-width:220px;padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--mono);font-size:12px;outline:none;"></select>
-            <button class="btn btn-accent" onclick="loadPlayerRecord()">Load record</button>
-          </div>
-        </div>
-        <div id="pr-content"><p style="color:var(--text3);font-size:12px">Select a player above.</p></div>
-      </div>
-
-      <div class="panel" id="p-equalizer">
-        <div class="page-hdr">
-          <div class="page-title">Equalizer <small>Late-joiner multiplier</small></div>
-          <button class="btn btn-accent" onclick="openEqualizerModal()">+ Add player</button>
-        </div>
-        <div class="info">
-          <b>Formula: M = 70 / (71 − joinMatch)</b><br>
-          For wins only, the player earns <code>points × M</code> instead of <code>points</code>. The extra <code>points × (M−1)</code> is added as an equalizer bonus. This statistically brings them to the same expected position as a Match 1 player by Match 70.<br><br>
-          Examples: Join M31 → <b>1.75×</b> · Join M34 → <b>1.89×</b> · Join M40 → <b>2.26×</b> · Join M50 → <b>3.33×</b>
-        </div>
-        <div id="equalizer-list">Loading…</div>
-      </div>
 
 <div id="toast"></div>
 
@@ -1915,18 +1920,109 @@ async function dlExport() {
     toast('Downloaded');
   } catch(e) { toast(e.message,'err'); }
 }
+
+// Generic CSV download helper
+function downloadCSV(headers, rows, filename) {
+  const csv = [headers, ...rows].map(r => r.map(v => `"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  // Use BOM for Excel to recognise UTF-8
+  const blob = new Blob(['\uFEFF' + csv], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = filename; a.click();
+}
+
 async function dlCSV() {
   try {
     const lb = await api('/api/leaderboard');
     const h = ['Rank','Name','Email','Gross','Penalties','Bonuses','Net','Played','Correct'];
     const rows = lb.map(p=>[p.rank,p.display_name,p.primary_email,p.gross_points,p.penalties,p.bonuses,p.net_points,p.matches_played,p.correct_predictions]);
-    const csv = [h,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
-    const blob = new Blob([csv],{type:'text/csv'});
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-    a.download = `leaderboard-${new Date().toISOString().slice(0,10)}.csv`; a.click();
+    downloadCSV(h, rows, `leaderboard-${new Date().toISOString().slice(0,10)}.csv`);
     toast('Downloaded');
   } catch(e) { toast(e.message,'err'); }
 }
+
+// Full export to multiple CSV files in a zip-like approach (individual downloads)
+async function dlFullExcel() {
+  toast('Exporting…','info');
+  try {
+    const d = await api('/api/admin/export');
+
+    // Leaderboard
+    downloadCSV(
+      ['Rank','Name','Email','Gross','Penalties','Bonuses','Net','Played','Correct'],
+      d.leaderboard.map(p=>[p.rank,p.display_name,p.primary_email,p.gross_points,p.penalties,p.bonuses,p.net_points,p.matches_played,p.correct_predictions]),
+      `leaderboard-${new Date().toISOString().slice(0,10)}.csv`
+    );
+
+    // Matches
+    setTimeout(()=> downloadCSV(
+      ['ID','Match#','Title','Team A','Team B','Time','Status','Winner'],
+      d.matches.map(m=>[m.id,m.match_number,m.title,m.team_a,m.team_b,m.match_time,m.status,m.winner||'']),
+      `matches-${new Date().toISOString().slice(0,10)}.csv`
+    ), 500);
+
+    // Predictions
+    setTimeout(()=> downloadCSV(
+      ['ID','Match ID','Primary Email','Raw Email','Predicted Team','Submitted At','Valid','Invalid Reason'],
+      d.predictions.map(p=>[p.id,p.match_id,p.primary_email,p.raw_email,p.predicted_team,p.submitted_at,p.is_valid,p.invalid_reason||'']),
+      `predictions-${new Date().toISOString().slice(0,10)}.csv`
+    ), 1000);
+
+    // Scores
+    setTimeout(()=> downloadCSV(
+      ['ID','Match ID','Primary Email','Predicted Team','Winner','Odds','Base Points','Points Earned'],
+      d.scores.map(s=>[s.id,s.match_id,s.primary_email,s.predicted_team,s.winner,s.odds_at_close,s.base_points,s.points_earned]),
+      `scores-${new Date().toISOString().slice(0,10)}.csv`
+    ), 1500);
+
+    // Penalties
+    setTimeout(()=> downloadCSV(
+      ['ID','Primary Email','Match ID','Penalty Points','Reason'],
+      d.penalties.map(p=>[p.id,p.primary_email,p.match_id,p.penalty_pts,p.reason]),
+      `penalties-${new Date().toISOString().slice(0,10)}.csv`
+    ), 2000);
+
+    // Bonus Points
+    setTimeout(()=> {
+      downloadCSV(
+        ['ID','Primary Email','Match ID','Bonus Points','Reason','Details'],
+        d.bonus_points.map(b=>[b.id,b.primary_email,b.match_id||'',b.bonus_pts,b.reason,b.details||'']),
+        `bonus-points-${new Date().toISOString().slice(0,10)}.csv`
+      );
+      toast('All CSVs downloaded — open in Excel');
+    }, 2500);
+
+  } catch(e) { toast(e.message,'err'); }
+}
+
+// Export any visible table on the page
+function exportVisibleTable(tableEl, filename) {
+  if (!tableEl) { toast('No table found','err'); return; }
+  const headers = [...tableEl.querySelectorAll('thead th')].map(th => th.textContent.trim());
+  const rows = [...tableEl.querySelectorAll('tbody tr')].map(tr =>
+    [...tr.querySelectorAll('td')].map(td => td.textContent.trim())
+  );
+  downloadCSV(headers, rows, filename);
+  toast('Downloaded');
+}
+
+// Player record to CSV
+async function exportPlayerRecord() {
+  const email = gv('pr-player-sel');
+  if (!email) { toast('Load a player first','err'); return; }
+  try {
+    const data = await api(`/api/players/${encodeURIComponent(email)}/history`);
+    const h = ['Match#','Title','Predicted','Winner','Odds','Points','Penalty','Bonus','Net'];
+    const rows = data.history.map(r => {
+      const pts = r.points_earned ?? 0;
+      const pen = r.penalty_pts ?? 0;
+      const bon = r.bonus_pts ?? 0;
+      return [r.match_number,r.title,r.predicted_team||'(missed)',r.winner||'',r.odds_at_close||'',pts,pen,bon,(pts+pen+bon).toFixed(2)];
+    });
+    downloadCSV(h, rows, `player-${email.split('@')[0]}-${new Date().toISOString().slice(0,10)}.csv`);
+    toast('Downloaded');
+  } catch(e) { toast(e.message,'err'); }
+}
+
 async function pushSheets() {
   const url = gv('sheets-url');
   if (!url) { toast('Enter webhook URL','err'); return; }
