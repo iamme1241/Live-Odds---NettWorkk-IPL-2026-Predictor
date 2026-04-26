@@ -34,14 +34,7 @@ body{background:var(--page);color:var(--ink);font-family:'Outfit',sans-serif;fon
 button,input,select,textarea{font-family:'Outfit',sans-serif;}
 button{cursor:pointer;}
 
-.ticker-wrap{background:var(--surface2);border-bottom:1px solid var(--line);height:30px;overflow:hidden;display:flex;align-items:center;}
-.ticker-inner{display:flex;white-space:nowrap;animation:tick 60s linear infinite;}
-.ticker-inner:hover{animation-play-state:paused;}
-.ti{display:inline-flex;align-items:center;gap:8px;padding:0 28px;border-right:1px solid var(--line);font-family:'DM Mono',monospace;font-size:11px;}
-.ti-m{color:var(--ink3);}
-.ti-o{color:var(--amber);font-weight:500;}
-.ti-l{color:var(--teal);font-weight:600;}
-@keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
 
 .topbar{background:var(--topbar);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
 .topbar-brand{display:flex;align-items:center;gap:11px;}
@@ -260,21 +253,106 @@ button{cursor:pointer;}
 .record-close{float:right;background:var(--surface2);border:1px solid var(--line2);border-radius:8px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--ink3);cursor:pointer;transition:background .15s;}
 .record-close:hover{background:var(--surface3);color:var(--ink);}
 
-@media(max-width:580px){
-  .lb-head,.lb-row{grid-template-columns:46px 1fr 56px 84px;}
-  .lb-th:nth-child(n+5),.lb-cell:nth-child(n+5){display:none;}
+@media(max-width:600px){
+  body{font-size:14px;padding-bottom:80px;}
+  .page{padding:16px 12px;}
+
+  .topbar{padding:0 14px;height:52px;}
   .topbar-name{font-size:14px;}
-  .tab-btn{padding:13px 14px;font-size:13px;}
-  .lb-headline{font-size:23px;}
-  .pod.p1{transform:scale(1.05);}
-  .pod.p2{transform:scale(0.98);}
-  .pod.p3{transform:scale(0.95);}
+  .topbar-sub{display:none;}
+  .live-pill{padding:3px 8px;font-size:10px;}
+
+  .tab-nav{padding:0;display:grid;grid-template-columns:repeat(4,1fr);}
+  .tab-btn{padding:12px 4px;font-size:11px;text-align:center;letter-spacing:0;}
+
+  .lb-topbar{gap:8px;margin-bottom:16px;}
+  .lb-headline{font-size:22px;}
+  .lb-updated{font-size:11px;padding:4px 10px;}
+  .btn-secondary{padding:7px 12px;font-size:12px;}
+
+  .lookup-box{padding:12px 14px;}
+  .lookup-form{flex-direction:column;gap:8px;}
+  .lookup-inp{font-size:14px;}
+  .lookup-btn{width:100%;padding:11px;font-size:14px;font-weight:700;border-radius:10px;}
+
+  .legend{gap:8px;padding:10px 12px;}
+  .leg{font-size:11px;}
+
+  .podium{gap:6px;margin-bottom:16px;}
+  .pod{padding:14px 8px 12px;border-radius:14px;}
+  .pod.p1{transform:scale(1.04);padding-top:22px;}
+  .pod.p2,.pod.p3{transform:none;}
+  .pod-crown{font-size:16px;top:-12px;}
+  .pod-medal{font-size:20px;margin-bottom:4px;}
+  .pod-name{font-size:12px;margin-bottom:3px;}
+  .pod-pts{font-size:15px;}
+  .pod-tag{font-size:9px;}
+  .pod-won{font-size:10px;}
+
+  .lb-head,.lb-row{grid-template-columns:44px 1fr 46px 80px;padding:10px 12px;}
+  .lb-th:nth-child(n+5),.lb-cell:nth-child(n+5){display:none;}
+  .lb-cell.name{font-size:14px;padding-left:10px;}
+  .lb-cell{font-size:13px;}
+  .rank-num{width:24px;height:24px;font-size:11px;}
+
+  .mh{padding:10px 14px;}
+  .m-title{padding:14px 14px 6px;gap:8px;}
+  .t-name{font-size:17px;}
+  .vs{font-size:10px;padding:2px 7px;}
+  .bar-wrap{padding:6px 14px 4px;}
+  .bar-labels{font-size:10px;}
+  .tiles{padding:10px 14px 14px;gap:8px;}
+  .tile{padding:12px 10px;}
+  .tile-name{font-size:13px;margin-bottom:6px;}
+  .tile-payout{font-size:20px;}
+  .tile-payout-sub{font-size:9px;}
+  .tile-votes{font-size:11px;margin-top:8px;padding-top:6px;}
+  .m-footer{padding:8px 14px;}
+  .pool-val{font-size:16px;}
+  .pool-meta{font-size:11px;}
+  .m-actions{padding:0 14px 12px;gap:6px;}
+  .act-btn{padding:6px 12px;font-size:12px;}
+
+  .how-box{padding:12px 14px;margin-bottom:16px;}
+  .how-text{font-size:11px;line-height:1.8;}
+
+  .acc-header{padding:13px 14px;}
+  .acc-match{font-size:14px;}
+  .acc-date{font-size:11px;}
+  .win-tag{font-size:10px;padding:2px 8px;}
+  .acc-body{padding:0 14px 14px;}
+  .past-tiles{gap:8px;padding-top:12px;}
+  .ptile{padding:11px 10px;}
+  .ptile-name{font-size:12px;}
+  .ptile-pay{font-size:16px;}
+  .ptile-pay-sub{font-size:9px;}
+  .ptile-v{font-size:10px;}
+  .past-pool{padding:8px 10px;font-size:11px;}
+  .past-pool b{font-size:13px;}
+
+  .tracker-box{padding:14px;}
+  .tracker-form{flex-direction:column;gap:8px;}
+  .tracker-inp{font-size:14px;}
+  .tracker-btn{width:100%;padding:11px;font-size:14px;}
+  .h-summary{padding:14px;gap:14px;}
+  .h-stat-val{font-size:22px;}
+  .h-stat-lbl{font-size:10px;}
+  .h-grid{grid-template-columns:1fr 1fr;gap:10px;}
+  .h-card{padding:12px;}
+  .h-title{font-size:12px;margin-bottom:8px;}
+  .h-row{font-size:11px;}
+  .h-row span:last-child{font-size:11px;}
+
+  .record-modal{padding:18px 16px;border-radius:14px;max-height:88vh;}
+  .record-close{width:28px;height:28px;font-size:12px;}
+
+  .countdown{font-size:10px;padding:2px 6px;}
+  .refresh-btn{padding:10px 20px;font-size:13px;}
+  .refresh-wrap{margin-top:12px;}
 }
 </style>
 </head>
 <body>
-
-<div class="ticker-wrap"><div class="ticker-inner" id="ticker"><span class="ti"><span class="ti-m">Loading odds…</span></span></div></div>
 
 <div class="topbar">
   <div class="topbar-brand">
@@ -403,18 +481,7 @@ function calcPts(teamVotes, totalVotes){
   return Math.round((totalVotes * 100) / teamVotes);
 }
 
-function buildTicker(ms){
-  const items=ms.filter(m=>m.status==='open'||m.status==='closed').map(m=>{
-    const o=m._odds;
-    const aV=o?.team_a_votes??0, bV=o?.team_b_votes??0, tot=o?.total_votes??0;
-    const aPts=calcPts(aV,tot), bPts=calcPts(bV,tot);
-    return `<span class="ti"><span class="ti-m">M${m.match_number} · ${esc(m.team_a)} vs ${esc(m.team_b)}</span>`
-      +(aPts?`<span class="ti-o">${m.team_a} ${aPts} pts · ${m.team_b} ${bPts??'–'} pts</span>`:`<span class="ti-l">OPEN</span>`)
-      +`</span>`;
-  });
-  if(!items.length)return;
-  document.getElementById('ticker').innerHTML=[...items,...items].join('');
-}
+
 
 function fmtT(iso){return new Date(iso).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Kolkata'})+' IST';}
 
@@ -562,7 +629,6 @@ async function loadOdds(){
     con.innerHTML='';
     if(!ordered.length){
       con.innerHTML='<div class="empty-state">No open or closed matches right now.<br>Check back soon!</div>';
-      buildTicker(matches);
       return;
     }
     ordered.forEach(m=>con.appendChild(renderMatch(m)));
@@ -573,7 +639,6 @@ async function loadOdds(){
       }
     });
     document.getElementById('odds-last').textContent='Last updated: '+new Date().toLocaleTimeString();
-    buildTicker(matches);
   }catch{
     con.innerHTML='<div class="error-box">Could not load matches. Please refresh.</div>';
   }
