@@ -86,7 +86,6 @@ button{cursor:pointer;}
 .leg{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink3);}
 .leg-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 
-/* MY RECORD LOOKUP (on leaderboard tab) */
 .lookup-box{background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:22px;}
 .lookup-form{display:flex;gap:8px;}
 .lookup-inp{flex:1;padding:9px 14px;background:var(--surface);border:1px solid var(--line2);border-radius:10px;color:var(--ink);font-size:14px;outline:none;transition:border-color .15s;}
@@ -175,9 +174,9 @@ button{cursor:pointer;}
 .tile-payout{font-family:'DM Mono',monospace;font-size:24px;font-weight:500;line-height:1;}
 .tile.blue-tile .tile-payout{color:var(--teal);}
 .tile.orange-tile .tile-payout{color:var(--cherry);}
+.tile-payout-sub{font-size:10px;color:var(--ink3);margin-top:2px;letter-spacing:.3px;}
 .tile-votes{margin-top:10px;padding-top:7px;border-top:1px solid var(--line);font-size:12px;color:var(--ink3);}
 .tile-votes b{color:var(--ink2);font-weight:600;}
-.tile-won{display:inline-flex;margin-top:6px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;background:var(--teal-s);border:1px solid var(--teal);color:var(--teal);}
 .result-banner{margin:0 20px 12px;padding:9px 14px;border-radius:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .result-banner.won{background:var(--teal-s);border:1px solid var(--teal);}
 .result-banner.abandoned{background:var(--blue-s);border:1px solid var(--blue-b);}
@@ -187,8 +186,6 @@ button{cursor:pointer;}
 .m-footer{background:var(--surface2);border-top:1px solid var(--line);padding:10px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;}
 .pool-val{font-size:18px;font-weight:700;color:var(--amber);font-family:'DM Mono',monospace;}
 .pool-meta{font-size:12px;color:var(--ink3);}
-
-/* Voting handled via Google Forms */
 
 .m-actions{padding:0 20px 14px;display:flex;gap:8px;flex-wrap:wrap;}
 .act-btn{background:var(--surface2);border:1px solid var(--line2);border-radius:10px;padding:7px 14px;font-size:13px;font-weight:600;color:var(--ink2);display:flex;align-items:center;gap:6px;transition:background .15s,border-color .15s;}
@@ -219,6 +216,7 @@ button{cursor:pointer;}
 .ptile-pay{font-family:'DM Mono',monospace;font-size:19px;font-weight:500;}
 .ptile.blue-tile .ptile-pay{color:var(--teal);}
 .ptile.orange-tile .ptile-pay{color:var(--cherry);}
+.ptile-pay-sub{font-size:10px;color:var(--ink3);margin-top:1px;}
 .ptile-v{font-size:11px;color:var(--ink3);font-family:'DM Mono',monospace;margin-top:4px;}
 .won-badge{display:inline-flex;align-items:center;margin-top:5px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;background:var(--teal-s);border:1px solid var(--teal);color:var(--teal);}
 .past-pool{margin-top:12px;padding:9px 13px;background:var(--surface2);border-radius:10px;display:flex;justify-content:space-between;font-size:12px;color:var(--ink3);font-family:'DM Mono',monospace;}
@@ -254,7 +252,6 @@ button{cursor:pointer;}
 .refresh-btn:hover{opacity:.9;transform:translateY(-1px);}
 .last-upd{text-align:center;margin-top:12px;font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3);}
 
-/* Inline record popup */
 .record-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:300;padding:20px;}
 .record-overlay.open{display:flex;}
 .record-modal{background:var(--surface);border:1px solid var(--line);border-radius:18px;max-width:560px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:var(--shadow);padding:24px;}
@@ -307,7 +304,6 @@ button{cursor:pointer;}
       </div>
       <button class="btn-secondary" onclick="manualRefreshLB(this)">↻ Refresh</button>
     </div>
-    <!-- FIX: Email lookup right on leaderboard -->
     <div class="lookup-box">
       <div class="section-title">🔍 Look up your record</div>
       <div class="lookup-form">
@@ -332,13 +328,13 @@ button{cursor:pointer;}
     <div class="how-box">
       <div class="how-lbl">How it works</div>
       <div class="how-text">
-        Every correct prediction earns <b>100 × odds points</b>. Odds = total votes ÷ votes for your team.<br>
-        Fewer backers on your team = <b>higher payout</b>. Odds are locked at match start.<br>
-        <b>Example:</b> 40 votes total · 10 pick MI · 30 pick CSK<br>
+        Every correct prediction earns <b>total pool ÷ voters for your team</b>.<br>
+        Fewer backers on your team = <b>higher payout</b>. Points are locked at match start.<br>
+        <b>Example:</b> 40 votes total · 10 pick MI · 30 pick CSK → pool = 4000 pts<br>
         MI wins → <b>400 pts each</b> &nbsp;·&nbsp; CSK wins → <b>133 pts each</b>
       </div>
     </div>
-    <div id="matches-container"><div class="empty-state">No matches right now.</div></div>
+    <div id="matches-container"><div class="empty-state">No open matches right now.</div></div>
     <div class="last-upd" id="odds-last"></div>
     <div class="refresh-wrap"><button class="refresh-btn" onclick="manualRefresh(this)">↻ Refresh</button></div>
   </div>
@@ -347,7 +343,7 @@ button{cursor:pointer;}
 <!-- PAST MATCHES -->
 <div class="tab-panel" id="panel-past">
   <div class="page">
-    <div class="past-note">Tap any match to see the final odds snapshot. Includes abandoned matches.</div>
+    <div class="past-note">Tap any match to see the final points payout. Includes abandoned matches.</div>
     <div id="past-container"><div class="loading"><div class="spinner"></div><br>Loading…</div></div>
   </div>
 </div>
@@ -366,7 +362,7 @@ button{cursor:pointer;}
   </div>
 </div>
 
-<!-- RECORD POPUP (clickable from leaderboard) -->
+<!-- RECORD POPUP -->
 <div class="record-overlay" id="record-overlay" onclick="if(event.target===this)closeRecord()">
   <div class="record-modal">
     <button class="record-close" onclick="closeRecord()">✕</button>
@@ -400,10 +396,21 @@ function startCD(el,iso){
   const tick=()=>{const diff=target-Date.now();if(diff<=0){el.textContent='Voting closed';el.className='countdown urgent';return;}const h=Math.floor(diff/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);el.className='countdown'+(diff<3600000?' urgent':'');el.textContent=h>0?`Closes in ${h}h ${m}m`:m>0?`Closes in ${m}m ${s}s`:`Closes in ${s}s`;cdTimers[iso]=setTimeout(tick,1000);};tick();
 }
 
+// Points = total pool / voters for that team = (totalVotes * 100) / teamVotes
+// This is what a correct voter actually receives
+function calcPts(teamVotes, totalVotes){
+  if(!teamVotes||!totalVotes) return null;
+  return Math.round((totalVotes * 100) / teamVotes);
+}
+
 function buildTicker(ms){
-  const items=ms.filter(m=>m.status==='open'||m.status==='resulted').map(m=>{
+  const items=ms.filter(m=>m.status==='open'||m.status==='closed').map(m=>{
     const o=m._odds;
-    return `<span class="ti"><span class="ti-m">M${m.match_number} · ${esc(m.team_a)} vs ${esc(m.team_b)}</span>`+(o?`<span class="ti-o">${m.team_a} ${o.team_a_odds??'–'}x · ${m.team_b} ${o.team_b_odds??'–'}x</span>`:`<span class="ti-l">OPEN</span>`)+`</span>`;
+    const aV=o?.team_a_votes??0, bV=o?.team_b_votes??0, tot=o?.total_votes??0;
+    const aPts=calcPts(aV,tot), bPts=calcPts(bV,tot);
+    return `<span class="ti"><span class="ti-m">M${m.match_number} · ${esc(m.team_a)} vs ${esc(m.team_b)}</span>`
+      +(aPts?`<span class="ti-o">${m.team_a} ${aPts} pts · ${m.team_b} ${bPts??'–'} pts</span>`:`<span class="ti-l">OPEN</span>`)
+      +`</span>`;
   });
   if(!items.length)return;
   document.getElementById('ticker').innerHTML=[...items,...items].join('');
@@ -419,7 +426,6 @@ async function loadLB(){
     const [lbRes,mRes]=await Promise.all([fetch(`${API}/api/leaderboard`),fetch(`${API}/api/matches`)]);
     leaderboard=await lbRes.json();
     const allMatches=await mRes.json();
-    // FIX: count actual resulted+abandoned matches for "After X matches"
     const resultedCount=allMatches.filter(m=>m.status==='resulted'||m.status==='abandoned').length;
 
     if(!leaderboard.length){
@@ -454,11 +460,9 @@ async function loadLB(){
       <div class="lb-th">Bonus</div>
     </div>`;
     leaderboard.forEach(p=>{
-      const rc=p.rank<=3?` r${p.rank===1?'1':''}`:'';
+      const rc=p.rank===1?' r1':'';
       const nc=p.rank===1?'rn1':p.rank===2?'rn2':p.rank===3?'rn3':'rnn';
       const netc='cn'+(p.net_points<0?' neg':'');
-      // FIX: rows are clickable → show record popup
-      // FIX: bonus column shows actual value
       h+=`<div class="lb-row${rc}" onclick="showRecord('${escAttr(p.primary_email)}')">
         <div class="lb-cell"><span class="rank-num ${nc}">${p.rank}</span></div>
         <div class="lb-cell name">${esc(p.display_name)}</div>
@@ -478,7 +482,7 @@ async function loadLB(){
 }
 function manualRefreshLB(btn){btn.textContent='Refreshing…';loadLB();setTimeout(()=>btn.textContent='Updated ✓',900);setTimeout(()=>btn.textContent='↻ Refresh',2400);}
 
-/* ── RECORD POPUP (from leaderboard click or email lookup) ── */
+/* ── RECORD POPUP ── */
 async function showRecord(email){
   const el=document.getElementById('record-content');
   el.innerHTML='<div class="loading"><div class="spinner"></div><br>Loading…</div>';
@@ -504,13 +508,12 @@ function lookupFromLB(){
 /* ── SHARED HISTORY RENDERER ── */
 function renderHistoryHTML(data){
   const {player,summary,history,general_bonuses}=data;
-  // FIX: correct count excludes abandoned
   const correct=history.filter(h=>h.points_earned>0&&h.winner!=='abandoned').length;
   const net=summary.net_points;
   return `
     <div style="margin-bottom:18px">
       <div style="font-size:22px;font-weight:800;color:var(--ink)">${esc(player.display_name)}</div>
-      <div style="font-size:12px;color:var(--ink3);font-family:'DM Mono',monospace">Active from Match ${player.first_match_num??'–'} · ${esc(player.primary_email||'')}</div>
+      <div style="font-size:12px;color:var(--ink3);font-family:'DM Mono',monospace">Active from Match ${player.first_match_num??'–'}</div>
     </div>
     <div class="h-summary">
       <div><div class="h-stat-val" style="color:${net>=0?'var(--teal)':'var(--red)'}">${net>=0?'+':''}${net.toFixed(0)}</div><div class="h-stat-lbl">Net points</div></div>
@@ -528,7 +531,6 @@ function renderHistoryHTML(data){
           <div class="h-title">M${h.match_number} · ${esc(h.title)}${isAbandoned?' 🚫':''}${h.status==='open'?' 🟢':''}</div>
           <div class="h-row"><span>Predicted</span><span>${h.predicted_team??'(missed)'}</span></div>
           <div class="h-row"><span>Winner</span><span>${isAbandoned?'🚫 Abandoned':esc(h.winner??'–')}</span></div>
-          <div class="h-row"><span>Odds</span><span>${h.odds_at_close?h.odds_at_close+'x':'–'}</span></div>
           <div class="h-row"><span>Points</span><span class="${pc}">${pts!==null?(pts>0?'+':'')+pts:'–'}</span></div>
           ${pen?`<div class="h-row"><span>Penalty</span><span class="pts-neg">${pen}</span></div>`:''}
           ${bon?`<div class="h-row"><span>Bonus</span><span class="pts-pos">+${bon}</span></div>`:''}
@@ -537,27 +539,35 @@ function renderHistoryHTML(data){
     </div>`;
 }
 
-/* ── LOAD ODDS ── */
+/* ── LOAD ODDS — only open/closed ── */
 async function loadOdds(){
   const con=document.getElementById('matches-container');
   con.innerHTML='<div class="loading"><div class="spinner"></div><br>Fetching live odds…</div>';
   try{
     const res=await fetch(`${API}/api/matches`);
     matches=await res.json();
-    await Promise.all(matches.map(async m=>{
-      if(['open','closed','resulted','abandoned'].includes(m.status)){
-        try{const r=await fetch(`${API}/api/matches/${m.id}/odds`);m._odds=await r.json();}catch{}
-      }
+
+    // Only show open or closed matches in Live Odds tab
+    const active=matches.filter(m=>m.status==='open'||m.status==='closed');
+
+    await Promise.all(active.map(async m=>{
+      try{const r=await fetch(`${API}/api/matches/${m.id}/odds`);m._odds=await r.json();}catch{}
     }));
-    const ordered=[...matches].sort((a,b)=>{
-      const o={open:0,closed:1,upcoming:2,resulted:3,abandoned:4,cancelled:5};
+
+    const ordered=[...active].sort((a,b)=>{
+      const o={open:0,closed:1};
       return (o[a.status]??9)-(o[b.status]??9)||a.match_number-b.match_number;
     });
+
     con.innerHTML='';
-    if(!ordered.length){con.innerHTML='<div class="empty-state">No matches right now.</div>';return;}
-    ordered.forEach(m=>{if(m.status!=='cancelled')con.appendChild(renderMatch(m));});
+    if(!ordered.length){
+      con.innerHTML='<div class="empty-state">No open or closed matches right now.<br>Check back soon!</div>';
+      buildTicker(matches);
+      return;
+    }
+    ordered.forEach(m=>con.appendChild(renderMatch(m)));
     ordered.forEach(m=>{
-      if((m.status==='open'||m.status==='upcoming')&&m.match_time){
+      if(m.status==='open'&&m.match_time){
         const el=document.getElementById('cd-'+m.id);
         if(el)startCD(el,m.match_time);
       }
@@ -575,16 +585,24 @@ function renderMatch(m){
   el.id='card-'+m.id;
   const o=m._odds;
   const aV=o?.team_a_votes??0,bV=o?.team_b_votes??0,tot=o?.total_votes??0;
-  const aOdds=o?.team_a_odds,bOdds=o?.team_b_odds;
+
+  // Points = total pool / voters for that team
+  const aPts=calcPts(aV,tot);
+  const bPts=calcPts(bV,tot);
+
   const aPct=tot>0?Math.round(aV/tot*100):50,bPct=100-aPct;
-  const isAbandoned=m.winner==='abandoned';
-  const wonA=m.status==='resulted'&&m.winner===m.team_a;
-  const wonB=m.status==='resulted'&&m.winner===m.team_b;
-  // FIX: status map includes abandoned/cancelled
-  const statusMap={open:'s-open',closed:'s-closed',resulted:'s-resulted',upcoming:'s-upcoming',abandoned:'s-abandoned',cancelled:'s-cancelled'};
-  const statusLabel={open:'Open',closed:'Awaiting result',resulted:'Completed',upcoming:'Coming up',abandoned:'Abandoned',cancelled:'Cancelled'};
-  const cdHtml=(m.status==='open'||m.status==='upcoming')?`<div class="countdown" id="cd-${m.id}">…</div>`:'';
-  const bar=tot>0?`<div class="bar-wrap"><div class="bar-labels"><span class="bar-pct blue-pct">${esc(m.team_a)} · ${aPct}%</span><span class="bar-pct orange-pct">${bPct}% · ${esc(m.team_b)}</span></div><div class="bar-track"><div class="bar-blue" style="width:${aPct}%"></div><div class="bar-orange"></div></div></div>`:'';
+
+  const statusMap={open:'s-open',closed:'s-closed'};
+  const statusLabel={open:'Open',closed:'Awaiting result'};
+  const cdHtml=m.status==='open'?`<div class="countdown" id="cd-${m.id}">…</div>`:'';
+
+  const bar=tot>0?`<div class="bar-wrap">
+    <div class="bar-labels">
+      <span class="bar-pct blue-pct">${esc(m.team_a)} · ${aV} vote${aV!==1?'s':''}</span>
+      <span class="bar-pct orange-pct">${bV} vote${bV!==1?'s':''} · ${esc(m.team_b)}</span>
+    </div>
+    <div class="bar-track"><div class="bar-blue" style="width:${aPct}%"></div><div class="bar-orange"></div></div>
+  </div>`:'';
 
   let predictHTML='';
   if(m.status==='open'){
@@ -594,15 +612,11 @@ function renderMatch(m){
     </div>`;
   }else if(m.status==='closed'){
     predictHTML='<div style="padding:12px 20px 14px;font-size:13px;color:var(--ink3)">Voting closed — result pending.</div>';
-  }else if(m.status==='upcoming'){
-    predictHTML=`<div style="padding:12px 20px 14px;font-size:13px;color:var(--ink3)">Opens ${fmtT(m.match_time)}</div>`;
   }
 
-  let resultBanner='';
-  if(isAbandoned) resultBanner=`<div class="result-banner abandoned"><span class="result-w">🚫 Abandoned</span><span class="result-sub">Pool split equally among all voters</span></div>`;
-  else if(m.status==='resulted'&&m.winner) resultBanner=`<div class="result-banner won"><span class="result-w">🏆 ${esc(m.winner)}</span><span class="result-sub">won this match</span></div>`;
-
-  const shareText=encodeURIComponent(`🏏 Match ${m.match_number} · ${m.team_a} vs ${m.team_b}\n`+(aOdds?`${m.team_a}: ${aOdds}x · ${m.team_b}: ${bOdds}x\n`:'')+`Check live odds → https://nettworkkpredictor.pages.dev`);
+  const shareText=encodeURIComponent(`🏏 Match ${m.match_number} · ${m.team_a} vs ${m.team_b}\n`
+    +(aPts?`${m.team_a}: ${aPts} pts · ${m.team_b}: ${bPts??'–'} pts\n`:'')
+    +`Check live odds → https://nettworkkpredictor.pages.dev`);
 
   el.innerHTML=`
     <div class="mh">
@@ -612,10 +626,19 @@ function renderMatch(m){
     <div class="m-title"><span class="t-name blue-team">${esc(m.team_a)}</span><span class="vs">VS</span><span class="t-name orange-team">${esc(m.team_b)}</span></div>
     ${bar}
     <div class="tiles">
-      <div class="tile blue-tile"><div class="tile-name">${esc(m.team_a)}</div><div class="tile-payout">${aOdds?aOdds+'x':'—'}</div><div class="tile-votes"><b>${aV}</b> vote${aV!==1?'s':''}</div>${wonA?'<div class="tile-won">🏆 Won</div>':''}</div>
-      <div class="tile orange-tile"><div class="tile-name">${esc(m.team_b)}</div><div class="tile-payout">${bOdds?bOdds+'x':'—'}</div><div class="tile-votes"><b>${bV}</b> vote${bV!==1?'s':''}</div>${wonB?'<div class="tile-won">🏆 Won</div>':''}</div>
+      <div class="tile blue-tile">
+        <div class="tile-name">${esc(m.team_a)}</div>
+        <div class="tile-payout">${aPts!==null?aPts+' pts':'—'}</div>
+        <div class="tile-payout-sub">if ${esc(m.team_a)} wins</div>
+        <div class="tile-votes"><b>${aV}</b> vote${aV!==1?'s':''}</div>
+      </div>
+      <div class="tile orange-tile">
+        <div class="tile-name">${esc(m.team_b)}</div>
+        <div class="tile-payout">${bPts!==null?bPts+' pts':'—'}</div>
+        <div class="tile-payout-sub">if ${esc(m.team_b)} wins</div>
+        <div class="tile-votes"><b>${bV}</b> vote${bV!==1?'s':''}</div>
+      </div>
     </div>
-    ${resultBanner}
     <div class="m-footer"><span class="pool-val">${tot>0?(tot*100).toLocaleString()+' pt pool':'—'}</span><span class="pool-meta">${tot} vote${tot!==1?'s':''} cast</span></div>
     ${predictHTML}
     <div class="m-actions">
@@ -635,18 +658,23 @@ async function loadPast(){
   try{
     const res=await fetch(`${API}/api/matches`);
     const all=await res.json();
-    // FIX: include abandoned matches in past
     const past=all.filter(m=>m.status==='resulted'||m.status==='abandoned').sort((a,b)=>b.match_number-a.match_number);
     if(!past.length){con.innerHTML='<div class="empty-state">No completed matches yet.</div>';return;}
     const oddsAll=await Promise.all(past.map(m=>fetch(`${API}/api/matches/${m.id}/odds`).then(r=>r.json()).catch(()=>null)));
     let h='';
     past.forEach((m,i)=>{
       const o=oddsAll[i];
-      const aV=o?.team_a_votes??0,bV=o?.team_b_votes??0;
-      const aOdds=o?.team_a_odds,bOdds=o?.team_b_odds;
-      const pool=(aV+bV)*100;
+      const aV=o?.team_a_votes??0,bV=o?.team_b_votes??0,tot=o?.total_votes??0;
+      // Points per voter: pool / team voters
+      const aPts=calcPts(aV,tot);
+      const bPts=calcPts(bV,tot);
+      const pool=tot*100;
       const isAbandoned=m.winner==='abandoned';
-      const wonA=!isAbandoned&&m.winner===m.team_a,wonB=!isAbandoned&&m.winner===m.team_b;
+      const wonA=!isAbandoned&&m.winner===m.team_a;
+      const wonB=!isAbandoned&&m.winner===m.team_b;
+      // Abandoned: everyone gets 100 pts (pool/total)
+      const aDisplay=isAbandoned?'100 pts':aPts!==null?aPts+' pts':'—';
+      const bDisplay=isAbandoned?'100 pts':bPts!==null?bPts+' pts':'—';
       const id='acc-'+m.id;
       h+=`<div class="card acc" id="${id}">
         <button class="acc-header" onclick="togAcc('${id}')">
@@ -662,8 +690,20 @@ async function loadPast(){
         <div class="acc-body">
           ${isAbandoned?'<div style="padding:10px 0 6px;font-size:12px;color:var(--blue);font-weight:600">Pool split equally — 100 pts to each voter</div>':''}
           <div class="past-tiles">
-            <div class="ptile blue-tile"><div class="ptile-name">${esc(m.team_a)}</div><div class="ptile-pay">${isAbandoned?'100':aOdds?aOdds+'x':'—'}</div><div class="ptile-v">${aV} vote${aV!==1?'s':''}</div>${wonA?'<div class="won-badge">✓ Won</div>':''}</div>
-            <div class="ptile orange-tile"><div class="ptile-name">${esc(m.team_b)}</div><div class="ptile-pay">${isAbandoned?'100':bOdds?bOdds+'x':'—'}</div><div class="ptile-v">${bV} vote${bV!==1?'s':''}</div>${wonB?'<div class="won-badge">✓ Won</div>':''}</div>
+            <div class="ptile blue-tile">
+              <div class="ptile-name">${esc(m.team_a)}</div>
+              <div class="ptile-pay">${aDisplay}</div>
+              <div class="ptile-pay-sub">per correct voter</div>
+              <div class="ptile-v">${aV} vote${aV!==1?'s':''}</div>
+              ${wonA?'<div class="won-badge">✓ Won</div>':''}
+            </div>
+            <div class="ptile orange-tile">
+              <div class="ptile-name">${esc(m.team_b)}</div>
+              <div class="ptile-pay">${bDisplay}</div>
+              <div class="ptile-pay-sub">per correct voter</div>
+              <div class="ptile-v">${bV} vote${bV!==1?'s':''}</div>
+              ${wonB?'<div class="won-badge">✓ Won</div>':''}
+            </div>
           </div>
           <div class="past-pool"><span>Total pool</span><b>${pool.toLocaleString()} pts</b></div>
         </div>
@@ -694,7 +734,6 @@ function escAttr(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt
 
 loadLB();tabLoaded.lb=true;
 setInterval(()=>{if(tabLoaded.odds)loadOdds();},30000);
-// Pre-fill email fields from saved email
 document.getElementById('lb-email').value=savedEmail();
 document.getElementById('tracker-email').value=savedEmail();
 </script>
