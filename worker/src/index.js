@@ -142,25 +142,24 @@ async function recalculateAllFast(db) {
 
   for (const match of allMatches) {
     const preds = predsByMatch[match.id] || [];
-    let snap = snapMap[match.id];
 
     if (match.winner === 'cancelled') continue;
 
-    // Ensure snapshot exists (compute from predictions if missing)
-    if (!snap) {
-      const aVotes = preds.filter(p => p.predicted_team === match.team_a).length;
-      const bVotes = preds.filter(p => p.predicted_team === match.team_b).length;
-      const tot = aVotes + bVotes;
-      snap = {
-        match_id: match.id,
-        team_a_votes: aVotes,
-        team_b_votes: bVotes,
-        total_votes: tot,
-        team_a_odds: tot > 0 && aVotes > 0 ? parseFloat((tot / aVotes).toFixed(2)) : null,
-        team_b_odds: tot > 0 && bVotes > 0 ? parseFloat((tot / bVotes).toFixed(2)) : null,
-      };
-      newSnapshots.push(snap);
-    }
+    // FIX: ALWAYS recompute odds from actual valid predictions during recalc
+    // This ensures consistency even when votes were bulk-imported after snapshots were taken
+    const aVotes = preds.filter(p => p.predicted_team === match.team_a).length;
+    const bVotes = preds.filter(p => p.predicted_team === match.team_b).length;
+    const tot = aVotes + bVotes;
+    const snap = {
+      match_id: match.id,
+      team_a_votes: aVotes,
+      team_b_votes: bVotes,
+      total_votes: tot,
+      team_a_odds: tot > 0 && aVotes > 0 ? parseFloat((tot / aVotes).toFixed(2)) : null,
+      team_b_odds: tot > 0 && bVotes > 0 ? parseFloat((tot / bVotes).toFixed(2)) : null,
+    };
+    // Update the snapshot in DB so future single-match results use correct odds
+    newSnapshots.push(snap);
 
     if (match.winner === 'abandoned') {
       // All voters get 100 pts each
@@ -198,10 +197,15 @@ async function recalculateAllFast(db) {
     await db.batch(stmts);
   }
 
-  // Write any new snapshots
-  for (const snap of newSnapshots) {
-    await db.prepare(`INSERT OR IGNORE INTO odds_snapshots (match_id,team_a_votes,team_b_votes,total_votes,team_a_odds,team_b_odds,is_final) VALUES (?,?,?,?,?,?,1)`)
-      .bind(snap.match_id, snap.team_a_votes, snap.team_b_votes, snap.total_votes, snap.team_a_odds, snap.team_b_odds).run();
+  // Write/update snapshots
+  if (newSnapshots.length > 0) {
+    for (let i = 0; i < newSnapshots.length; i += 50) {
+      const batch = newSnapshots.slice(i, i + 50).map(snap =>
+        db.prepare(`INSERT OR REPLACE INTO odds_snapshots (match_id,team_a_votes,team_b_votes,total_votes,team_a_odds,team_b_odds,is_final) VALUES (?,?,?,?,?,?,1)`)
+          .bind(snap.match_id, snap.team_a_votes, snap.team_b_votes, snap.total_votes, snap.team_a_odds, snap.team_b_odds)
+      );
+      await db.batch(batch);
+    }
   }
 
   // ── COMPUTE PENALTIES IN MEMORY ──
@@ -510,7 +514,7 @@ async function buildLB(db, asOf) {
     SELECT p.primary_email, p.display_name, p.first_match_num,
       COALESCE(s.gross,0) AS gross, COALESCE(pen.pen,0) AS pen, COALESCE(bp.bonus,0) AS bonus,
       COUNT(DISTINCT s2.match_id) AS played,
-      COUNT(DISTINCT CASE WHEN s2.points_earned>0 THEN s2.match_id END) AS correct
+      COUNT(DISTINCT CASE WHEN s2.points_earned>0 AND s2.winner!='abandoned' THEN s2.match_id END) AS correct
     FROM players p
     LEFT JOIN (SELECT primary_email, SUM(points_earned) AS gross FROM scores WHERE match_id IN (${ids}) GROUP BY primary_email) s ON s.primary_email=p.primary_email
     LEFT JOIN (SELECT primary_email, SUM(penalty_pts) AS pen FROM penalties WHERE match_id IN (${ids}) AND reason NOT IN ('missed_vote_exempt') GROUP BY primary_email) pen ON pen.primary_email=p.primary_email
@@ -609,7 +613,7 @@ export default {
       const bonus = generalBonuses.results.reduce((s,b)=>s+(b.bonus_pts??0),0);
       return R({
         player:{display_name:player.display_name,primary_email:player.primary_email,first_match_num:player.first_match_num},
-        summary:{gross_points:+gross.toFixed(2),penalties:+pen.toFixed(2),bonuses:+bonus.toFixed(2),net_points:+(gross+pen+bonus).toFixed(2),matches_played:rows.filter(h=>h.predicted_team).length,correct:rows.filter(h=>h.points_earned>0).length},
+        summary:{gross_points:+gross.toFixed(2),penalties:+pen.toFixed(2),bonuses:+bonus.toFixed(2),net_points:+(gross+pen+bonus).toFixed(2),matches_played:rows.filter(h=>h.predicted_team).length,correct:rows.filter(h=>h.points_earned>0&&h.winner!=='abandoned').length},
         history:rows, general_bonuses:generalBonuses.results,
       });
     }
